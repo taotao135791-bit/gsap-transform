@@ -299,6 +299,30 @@ gsap.timeline({ scrollTrigger: { trigger: ".panel", scrub: true } }).to(".panel"
 - **Fix:** lock one accent for the whole page; use neutrals for differentiation, not new accents.
 - **Severity:** `block`.
 
+### F6. Declared accent overridden by CSS specificity (computed color mismatch)
+
+- **Detect:** the project declares a single accent token (e.g. `--accent: #b8732a`) and assigns it to an element via a low-specificity selector, but a more-specific or later-defined sibling rule overrides it. The page "declares" one accent but **renders** another. Mechanically: `getComputedStyle(el).color` for the supposed accent element does not equal the declared accent token.
+- **Wrong:**
+
+```css
+:root { --accent: #b8732a; --mute: rgba(247,243,235,0.62); }
+.eyebrow      { color: var(--accent); }   /* specificity (0,1,0) */
+.hero p       { color: var(--mute);   }   /* specificity (0,1,1) — wins, eyebrow renders mute */
+```
+
+- **Fix:** raise the accent rule's specificity, OR scope the competing rule out:
+
+```css
+/* option A: raise the accent rule */
+.hero p.eyebrow { color: var(--accent); }
+
+/* option B: scope the competing rule out */
+.hero p:not(.eyebrow) { color: var(--mute); }
+```
+
+- **Detect at smoke-test:** for every element that should carry the accent, run `getComputedStyle(el).color` and compare against the resolved value of the accent token. Any mismatch is an F6 hit.
+- **Severity:** `block`. Treated as a sibling of F5: F5 catches "two different accents declared", F6 catches "one accent declared but not actually rendered".
+
 ## Group G — Wiring & Loading Tells
 
 These rules catch behavioral and infrastructure bugs that silently disable animations even when the rest of the code is well-formed. They are not performance issues (Group E) and not composition issues (Group F).

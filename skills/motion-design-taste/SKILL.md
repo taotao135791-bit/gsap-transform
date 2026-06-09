@@ -262,7 +262,7 @@ Run mechanically before declaring done. A single failure means the work is not s
 1. **Design Read** declared in one line at the top of the response.
 2. Three dials are stated explicitly (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`).
 3. **Typography:** no `Inter` / `Roboto` / `Arial` as default unless brief justifies; no mixed-family emphasis inside a single headline.
-4. **Color:** one accent color used consistently from nav to footer; no AI-purple gradient unless brief asks; no pure black on light.
+4. **Color:** one accent color used consistently from nav to footer; no AI-purple gradient unless brief asks; no pure black on light. Verify with `getComputedStyle` that every supposed accent element actually renders the declared accent token — a low-specificity accent rule silently overridden by a sibling rule is a [motion-anti-slop](../motion-anti-slop/SKILL.md) **F6** failure.
 5. **Hero:** fits in `100dvh`, headline ≤ 2 lines, subtext ≤ 20 words, ≤ 4 text elements total.
 6. **Layout:** ≤ 1 eyebrow per 3 sections, ≤ 2 consecutive zigzag splits, no two CTAs with same intent on the page.
 7. **Motion mode** matches `MOTION_INTENSITY` band (Section 6); duration / ease / stagger fall inside the band.
