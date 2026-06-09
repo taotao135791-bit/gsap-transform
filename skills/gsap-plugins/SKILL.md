@@ -21,18 +21,38 @@ Every GSAP plugin is **free**, including for commercial use. Since [Webflow's ac
 
 ## Browser-native ESM CDN (no bundler)
 
-For static HTML demos that import GSAP directly via `<script type="module">`, prefer **`https://esm.sh/gsap@<version>`** and `https://esm.sh/gsap@<version>/<Plugin>` over `https://cdn.jsdelivr.net/npm/gsap@<version>/<file>.js`. `esm.sh` rewrites the package as a true browser-friendly ESM module graph, normalises `default` exports into named exports, and is more reliable for plugin paths (e.g. `SplitText`) under modern browsers. Single-file `cdn.jsdelivr.net/npm/<pkg>/<file>.js` paths can fail intermittently in browsers (`ERR_CONNECTION_CLOSED`) even when reachable via curl, breaking the entire ESM module graph and silently disabling all GSAP code in the page — see [motion-anti-slop](../motion-anti-slop/SKILL.md) Anti-Slop **G3**.
+For static HTML demos that import GSAP directly via `<script type="module">`, prefer **`https://esm.sh/gsap@<version>`** and `https://esm.sh/gsap@<version>/<Plugin>` over `https://cdn.jsdelivr.net/npm/gsap@<version>/<file>.js`. `esm.sh` rewrites the package as a true browser-friendly ESM module graph and is more reliable for plugin paths (e.g. `SplitText`) under modern browsers. Single-file `cdn.jsdelivr.net/npm/<pkg>/<file>.js` paths can fail intermittently in browsers (`ERR_CONNECTION_CLOSED`) even when reachable via curl, breaking the entire ESM module graph and silently disabling all GSAP code in the page — see [motion-anti-slop](../motion-anti-slop/SKILL.md) Anti-Slop **G3**.
+
+### Use `default` import for every plugin (named imports are unreliable)
+
+All GSAP plugins ship as `export { Plugin as default }` in the npm source. The esm.sh facade *attempts* to also re-export the named identifier, but in practice this is **inconsistent**: `Draggable` and `InertiaPlugin` consistently resolve to `undefined` under named import via `https://esm.sh/gsap@<v>/<Plugin>`, while `ScrollTrigger` / `SplitText` / `MorphSVGPlugin` happen to work. Class-style usage (`Draggable.create()`, `Flip.getState()`, `SplitText.create()`, `CustomEase.create()`) on an `undefined` import throws a TypeError that is often swallowed silently by GSAP's own try/catch, leaving the page with broken animations and no obvious error.
+
+**Rule: in browser-native ESM, always use default import for GSAP plugins.** This matches the npm source and works regardless of CDN normalisation:
 
 ```html
 <script type="module">
-  import { gsap } from "https://esm.sh/gsap@3.15.0";
-  import { ScrollTrigger } from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
-  import { SplitText } from "https://esm.sh/gsap@3.15.0/SplitText";
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  import { gsap }          from "https://esm.sh/gsap@3.15.0";
+  import ScrollTrigger     from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
+  import SplitText         from "https://esm.sh/gsap@3.15.0/SplitText";
+  import MorphSVGPlugin    from "https://esm.sh/gsap@3.15.0/MorphSVGPlugin";
+  import DrawSVGPlugin     from "https://esm.sh/gsap@3.15.0/DrawSVGPlugin";
+  import MotionPathPlugin  from "https://esm.sh/gsap@3.15.0/MotionPathPlugin";
+  import CustomEase        from "https://esm.sh/gsap@3.15.0/CustomEase";
+  import Draggable         from "https://esm.sh/gsap@3.15.0/Draggable";
+  import InertiaPlugin     from "https://esm.sh/gsap@3.15.0/InertiaPlugin";
+  import Flip              from "https://esm.sh/gsap@3.15.0/Flip";
+  import ScrambleTextPlugin from "https://esm.sh/gsap@3.15.0/ScrambleTextPlugin";
+
+  gsap.registerPlugin(
+    ScrollTrigger, SplitText, MorphSVGPlugin, DrawSVGPlugin, MotionPathPlugin,
+    CustomEase, Draggable, InertiaPlugin, Flip, ScrambleTextPlugin
+  );
 </script>
 ```
 
-When a bundler is present (Vite, Webpack, Next.js, etc.), import from the `gsap` npm package directly — do **not** use any CDN.
+Only `gsap` itself uses named import (`{ gsap }`), because the main package re-exports `gsap` explicitly and the named identifier is the canonical entry. Every plugin uses default import. See [motion-anti-slop](../motion-anti-slop/SKILL.md) Anti-Slop **G4** for the deterministic rule.
+
+When a bundler is present (Vite, Webpack, Next.js, etc.), import from the `gsap` npm package directly — do **not** use any CDN. Inside a bundler, `import { Draggable } from "gsap/Draggable"` works because the bundler resolves the package's `package.json` exports map.
 
 ## Registering Plugins
 
@@ -318,6 +338,8 @@ gsap.to("#diamond", {
 ### MotionPath (MotionPathPlugin)
 
 Animates an element along an SVG path. Use when moving an object along a path (e.g. a curve or custom route).
+
+**Path target requirement (mandatory):** `motionPath.path` must be a `<path>` element, a CSS selector that resolves to a `<path>`, or a path-data string starting with `M`. **Other SVG primitives (`<circle>`, `<rect>`, `<ellipse>`, `<polygon>`, `<polyline>`, `<line>`) are NOT accepted** — the plugin will warn `Expecting a <path> element or an SVG path data string` and the tween silently does nothing, often taking the rest of the timeline down with it. Convert primitives first via `MotionPathPlugin.convertToPath("#circle, #rect")` (in-place DOM swap), or author the SVG as `<path>` from the start. The same applies to **DrawSVG** — see [motion-anti-slop](../motion-anti-slop/SKILL.md) Anti-Slop **G5**.
 
 ```javascript
 gsap.registerPlugin(MotionPathPlugin);

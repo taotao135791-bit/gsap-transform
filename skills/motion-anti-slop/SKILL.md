@@ -376,12 +376,64 @@ gsap.fromTo(".reveal", { y: 14 }, { y: 0, duration: 0.5 });
 - **Fix:** use `https://esm.sh/gsap@<version>` and `https://esm.sh/gsap@<version>/<Plugin>` for browser-native ESM. See [gsap-plugins](../gsap-plugins/SKILL.md) "Browser-native ESM CDN".
 - **Severity:** `block` for static HTML demos.
 
+### G4. Named import on a GSAP plugin in browser-native ESM
+
+- **Detect:** static HTML demo (no bundler) imports a GSAP plugin via named import: `import { Draggable } from "https://esm.sh/gsap@<v>/Draggable"`. The identifier `Draggable` resolves to `undefined`, and any subsequent `Draggable.create(...)` throws a `TypeError` that is often swallowed by GSAP's own try/catch.
+- **Why it bites:** GSAP plugins ship as `export { Plugin as default }` in the npm source. The esm.sh facade *attempts* to re-export named identifiers via `export *`, but the result is **inconsistent across plugins**: `ScrollTrigger` / `SplitText` / `MorphSVGPlugin` happen to work; `Draggable` / `InertiaPlugin` consistently resolve to `undefined`. Class-style plugins (`Draggable.create`, `Flip.getState`, `SplitText.create`, `CustomEase.create`) silently break with no console error.
+- **Wrong:**
+
+```javascript
+import { Draggable }     from "https://esm.sh/gsap@3.15.0/Draggable";
+import { InertiaPlugin } from "https://esm.sh/gsap@3.15.0/InertiaPlugin";
+// Draggable === undefined; Draggable.create(...) throws silently.
+```
+
+- **Fix:** use **default import** for every GSAP plugin in browser-native ESM. This matches the npm source and works regardless of CDN normalisation:
+
+```javascript
+import Draggable     from "https://esm.sh/gsap@3.15.0/Draggable";
+import InertiaPlugin from "https://esm.sh/gsap@3.15.0/InertiaPlugin";
+import ScrollTrigger from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
+// ...etc.
+```
+
+Only `gsap` itself uses named import (`import { gsap } from "..."`); every plugin uses default. See [gsap-plugins](../gsap-plugins/SKILL.md) "Use `default` import for every plugin".
+- **Detect at smoke-test:** in the browser console, check `typeof window.__YourDebug.Draggable === "function"`. If it is `"undefined"`, the import resolution failed.
+- **Severity:** `block` for any browser-native ESM page that uses class-style plugins.
+
+### G5. MotionPath / DrawSVG given a non-`<path>` SVG primitive
+
+- **Detect:** the page authors `motionPath.path` or `drawSVG`-target as a `<circle>`, `<rect>`, `<ellipse>`, `<polygon>`, `<polyline>`, or `<line>` element. The plugin warns `Expecting a <path> element or an SVG path data string` and the tween silently does nothing — and worse, on a master timeline this often disables every subsequent tween in the timeline.
+- **Why it bites:** GSAP's path-following plugins (MotionPath, DrawSVG) compute stroke length / position from `<path>` `d` attribute exclusively. Other SVG primitives have geometry but no `d`. The warning is easy to miss in a busy console.
+- **Wrong:**
+
+```html
+<circle id="orbit" cx="0" cy="0" r="42" />
+```
+```javascript
+gsap.to("#sun", { motionPath: { path: "#orbit" } });
+// silently fails; warning in console
+```
+
+- **Fix:** author the SVG as `<path>` from the start, **or** convert primitives in place before tweens run:
+
+```html
+<path id="orbit" d="M 42 0 A 42 42 0 1 1 -41.999 0 A 42 42 0 1 1 42 0 Z" />
+```
+```javascript
+// or, with primitives already in DOM:
+MotionPathPlugin.convertToPath("#orbit");  // also: MorphSVGPlugin.convertToPath("#orbit")
+```
+
+- **Detect at smoke-test:** for any tween that uses `motionPath` or `drawSVG`, run `document.querySelector(target).tagName === "path"` and confirm. After the tween runs, check `el.getAttribute("transform")` (MotionPath) or `el.style.strokeDasharray` (DrawSVG) is non-empty.
+- **Severity:** `block`.
+
 ## How to Run This Skill
 
 1. Open the changed files. Walk Groups A → G in order.
 2. Mark each `block` failure as a Pre-Flight Failure; the work is not shippable until each is fixed.
 3. Mark each `warn` failure as a polish item; fix unless the brief explicitly justifies the choice.
-4. After fixes, re-walk Groups A and B (the most-defaulted areas) and Group G (the silent-failure tells).
+4. After fixes, re-walk Groups A and B (the most-defaulted areas) and Group G (the silent-failure tells — G1–G5).
 
 ## Best Practices
 
