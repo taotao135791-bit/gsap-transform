@@ -222,7 +222,8 @@ gsap.timeline({ scrollTrigger: { trigger: ".panel", scrub: true } }).to(".panel"
 
 ### D7. JS-gated initial state without a fallback gate
 
-- **Detect:** CSS hides entrance elements (`.reveal { opacity: 0 }`, `.hero h1 { opacity: 0 }`, etc.) at the document level, with no `.js` / `.no-js` discriminator and no `<noscript>` fallback. If GSAP fails to load (CDN outage, ad-blocker, network error), the page becomes a permanent blank surface for those elements.
+- **Detect:** the page has CSS rules that hide entrance elements at load time (`.reveal { opacity: 0 }`, `.hero h1 { opacity: 0 }`, `display: none`, etc.) **and** there is no `.js` / `.no-js` discriminator on `<html>` and no `<noscript>` fallback. If GSAP fails to load (CDN outage, ad-blocker, network error), the page becomes a permanent blank surface for those elements.
+- **Not applicable when:** the page never sets a CSS-level hidden start state — e.g. all entrances use `gsap.from(...)` whose start is provided by GSAP itself, with no `.reveal { opacity: 0 }` rule. In that case GSAP failure leaves elements at their natural state, which is still readable, so no `.js` gate is required.
 - **Fix:** gate the initial-hidden CSS behind a `.js` class on `<html>`, set in an inline `<script>` at the top of `<head>`:
 
 ```html
@@ -238,7 +239,7 @@ gsap.timeline({ scrollTrigger: { trigger: ".panel", scrub: true } }).to(".panel"
 .js .reveal { opacity: 0; }
 ```
 
-- **Severity:** `block` for any page that ships entrance reveals to public users.
+- **Severity:** `block` for any page that hides entrance elements via CSS at load time. Pages that let GSAP own the start state via `gsap.from` / `gsap.fromTo` (no CSS hidden rule) do not trigger this rule.
 
 ## Group E — Performance Tells
 
@@ -265,55 +266,6 @@ gsap.timeline({ scrollTrigger: { trigger: ".panel", scrub: true } }).to(".panel"
 - **Detect:** `ScrollTrigger.refresh()` called inside `onUpdate` or a scroll listener.
 - **Fix:** call only after layout actually changes (content load, font load, route change). Resize is auto-handled (debounced 200ms).
 - **Severity:** `warn`.
-
-### E5. `gsap.from(autoAlpha: 0)` on a CSS-hidden element (zero-amplitude animation)
-
-- **Detect:** the target element has a CSS rule that already sets `opacity: 0` / `visibility: hidden` (e.g. `.reveal { opacity: 0 }`), and the tween is `gsap.from(el, { autoAlpha: 0, ... })`.
-- **Wrong:**
-
-```css
-.reveal { opacity: 0; }
-```
-```javascript
-gsap.from(".reveal", { autoAlpha: 0, y: 14, duration: 0.5 });
-// end state is read from CSS as opacity:0 → animation runs 0 → 0, invisible.
-```
-
-- **Fix:** use `gsap.fromTo` so both ends are explicit, OR remove the CSS `opacity: 0` and let GSAP own visibility.
-
-```javascript
-gsap.fromTo(".reveal", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.5 });
-```
-
-- **Severity:** `block`.
-
-### E6. CSS `transform` used as the start state of a GSAP transform-alias tween
-
-- **Detect:** a CSS rule sets `transform: translateY(...)` / `translateX(...)` / `scale(...)` / `rotate(...)` on the target, and a GSAP tween uses the corresponding alias (`y`, `x`, `xPercent`, `scale`, `rotation`) expecting the CSS value as its start.
-- **Wrong:**
-
-```css
-.reveal { transform: translateY(14px); }
-```
-```javascript
-gsap.to(".reveal", { y: 0, duration: 0.5 });
-// GSAP's transform system is independent of CSS transform; current y is read as 0, target is 0 → no movement.
-```
-
-- **Fix:** drop the CSS transform on the start state and let GSAP own it via `gsap.set` or `gsap.fromTo`.
-
-```javascript
-gsap.fromTo(".reveal", { y: 14 }, { y: 0, duration: 0.5 });
-```
-
-- **Severity:** `block`.
-
-### E7. Single-file `cdn.jsdelivr.net/npm/gsap/<file>.js` for browser-native ESM
-
-- **Detect:** static HTML demo (no bundler) imports GSAP plugins via `https://cdn.jsdelivr.net/npm/gsap@<v>/<Plugin>.js`.
-- **Why it bites:** these single-file paths can fail intermittently in browsers (e.g. `ERR_CONNECTION_CLOSED` on `SplitText.js`) while `curl` succeeds. One failed plugin kills the whole ESM module graph and silently disables every GSAP tween in the page.
-- **Fix:** use `https://esm.sh/gsap@<version>` and `https://esm.sh/gsap@<version>/<Plugin>` for browser-native ESM. See [gsap-plugins](../gsap-plugins/SKILL.md) "Browser-native ESM CDN".
-- **Severity:** `block` for static HTML demos.
 
 ## Group F — Composition Tells
 
@@ -347,12 +299,65 @@ gsap.fromTo(".reveal", { y: 14 }, { y: 0, duration: 0.5 });
 - **Fix:** lock one accent for the whole page; use neutrals for differentiation, not new accents.
 - **Severity:** `block`.
 
+## Group G — Wiring & Loading Tells
+
+These rules catch behavioral and infrastructure bugs that silently disable animations even when the rest of the code is well-formed. They are not performance issues (Group E) and not composition issues (Group F).
+
+### G1. `gsap.from(autoAlpha: 0)` on a CSS-hidden element (zero-amplitude animation)
+
+- **Detect:** the target element has a CSS rule that already sets `opacity: 0` / `visibility: hidden` (e.g. `.reveal { opacity: 0 }`), and the tween is `gsap.from(el, { autoAlpha: 0, ... })`.
+- **Wrong:**
+
+```css
+.reveal { opacity: 0; }
+```
+```javascript
+gsap.from(".reveal", { autoAlpha: 0, y: 14, duration: 0.5 });
+// end state is read from CSS as opacity:0 → animation runs 0 → 0, invisible.
+```
+
+- **Fix:** use `gsap.fromTo` so both ends are explicit, OR remove the CSS `opacity: 0` and let GSAP own visibility.
+
+```javascript
+gsap.fromTo(".reveal", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.5 });
+```
+
+- **Severity:** `block`.
+
+### G2. CSS `transform` used as the start state of a GSAP transform-alias tween
+
+- **Detect:** a CSS rule sets `transform: translateY(...)` / `translateX(...)` / `scale(...)` / `rotate(...)` on the target, and a GSAP tween uses the corresponding alias (`y`, `x`, `xPercent`, `scale`, `rotation`) expecting the CSS value as its start.
+- **Wrong:**
+
+```css
+.reveal { transform: translateY(14px); }
+```
+```javascript
+gsap.to(".reveal", { y: 0, duration: 0.5 });
+// GSAP's transform system is independent of CSS transform; current y is read as 0, target is 0 → no movement.
+```
+
+- **Fix:** drop the CSS transform on the start state and let GSAP own it via `gsap.set` or `gsap.fromTo`.
+
+```javascript
+gsap.fromTo(".reveal", { y: 14 }, { y: 0, duration: 0.5 });
+```
+
+- **Severity:** `block`.
+
+### G3. Single-file `cdn.jsdelivr.net/npm/gsap/<file>.js` for browser-native ESM
+
+- **Detect:** static HTML demo (no bundler) imports GSAP plugins via `https://cdn.jsdelivr.net/npm/gsap@<v>/<Plugin>.js`.
+- **Why it bites:** these single-file paths can fail intermittently in browsers (e.g. `ERR_CONNECTION_CLOSED` on `SplitText.js`) while `curl` succeeds. One failed plugin kills the whole ESM module graph and silently disables every GSAP tween in the page.
+- **Fix:** use `https://esm.sh/gsap@<version>` and `https://esm.sh/gsap@<version>/<Plugin>` for browser-native ESM. See [gsap-plugins](../gsap-plugins/SKILL.md) "Browser-native ESM CDN".
+- **Severity:** `block` for static HTML demos.
+
 ## How to Run This Skill
 
-1. Open the changed files. Walk Groups A → F in order.
+1. Open the changed files. Walk Groups A → G in order.
 2. Mark each `block` failure as a Pre-Flight Failure; the work is not shippable until each is fixed.
 3. Mark each `warn` failure as a polish item; fix unless the brief explicitly justifies the choice.
-4. After fixes, re-walk Groups A and B (the most-defaulted areas).
+4. After fixes, re-walk Groups A and B (the most-defaulted areas) and Group G (the silent-failure tells).
 
 ## Best Practices
 

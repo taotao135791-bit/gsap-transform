@@ -28,7 +28,9 @@ When editing or adding skills, follow these rules.
 
 ## Cross-layer linking
 
-- Every API-layer SKILL.md must end its `description` with: `Pair with motion-design-taste for aesthetic direction before implementing.`
+- Every API-layer SKILL.md must end its `description` with a "Pair with motion-design-taste…" sentence so agents always reach for the design layer first. Two acceptable forms; pick one per skill and stay consistent inside that description:
+  - **Compact:** `Pair with motion-design-taste for aesthetic direction before implementing.`
+  - **Detailed (current convention for gsap-core):** `Pair with motion-design-taste, motion-recipes, motion-anti-slop, motion-craft for aesthetic direction.`
 - Every API-layer SKILL.md must extend its `Related skills` line with: `For aesthetic direction, recipes, and anti-slop checks use the design-layer skills: motion-design-taste, motion-recipes, motion-anti-slop, motion-craft.`
 - Design-layer SKILLs route to API-layer SKILLs through a decision table (see `motion-design-taste` Section 9). Do **not** restate API rules in the design layer.
 - Design-layer SKILLs reference each other by relative path (`../motion-design-taste/SKILL.md`).

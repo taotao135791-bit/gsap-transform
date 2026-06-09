@@ -123,7 +123,9 @@ tl.to(".a", { x: 100 })
   .to(".c", { opacity: 0 }, "-=0.1");
 
 // 4. ScrollTrigger — attach to timeline or top-level tween; call refresh after layout changes
+// scrubbed timelines MUST use ease: "none" so scroll position and progress map 1:1
 const tl2 = gsap.timeline({
+  defaults: { ease: "none" },
   scrollTrigger: {
     trigger: ".section",
     start: "top center",
@@ -132,7 +134,7 @@ const tl2 = gsap.timeline({
   }
 });
 tl2.to(".panel", { x: 100 })
-   .to(".panel", { rotation: 5, duration: 0.7 });
+   .to(".panel", { rotation: 5 });
 // After DOM/layout changes: ScrollTrigger.refresh();
 
 // 5. React: useGSAP + scope + cleanup (no selector without scope)
@@ -173,7 +175,10 @@ gsap-skills/
     gsap-performance/     SKILL.md
     gsap-frameworks/      SKILL.md
   examples/         # Minimal reference demos (vanilla, React, Vue, Nuxt) and end-to-end showcases
-    showcase/       # Aesthetic + motion showcases (editorial-kinetic, brutalist-scroll, liquid-glass-hover)
+    showcase/
+      editorial-kinetic/    # Editorial Kinetic recipe — SplitText line-mask reveal, single accent
+      brutalist-scroll/     # Brutalist Scroll recipe — pinned scrubbed scene, Flip density toggle
+      liquid-glass-hover/   # Liquid Glass Hover recipe — magnetic CTA via quickTo, glass spotlight
 ```
 
 ## GitHub Copilot

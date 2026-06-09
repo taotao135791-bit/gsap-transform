@@ -25,6 +25,13 @@ Apply after the Design Read in [motion-design-taste](../motion-design-taste/SKIL
 - **Plugins** — which GSAP plugins are required.
 - **Do not** — recipe-specific traps.
 
+## Skeleton Conventions (read before cloning)
+
+- **All skeletons assume the entire GSAP setup is wrapped in `gsap.matchMedia()`** with `(prefers-reduced-motion: reduce)` handled. The skeletons omit the wrapper for brevity; do **not** ship without it. See [motion-design-taste](../motion-design-taste/SKILL.md) Section 7 and [motion-anti-slop](../motion-anti-slop/SKILL.md) D1.
+- **All skeletons use bundler-style imports** (`import { gsap } from "gsap"`). For static HTML demos with no bundler, swap to `https://esm.sh/gsap@<version>` per [gsap-plugins](../gsap-plugins/SKILL.md) "Browser-native ESM CDN".
+- **No `back.*` / `elastic.*` defaults** appear in any skeleton; do not add them when adapting.
+- **Cleanup** is the caller's responsibility — use `useGSAP` ([gsap-react](../gsap-react/SKILL.md)) or `gsap.context()` + `ctx.revert()` ([gsap-frameworks](../gsap-frameworks/SKILL.md)) when the recipe is dropped into a component.
+
 ## Recipe 1 — Editorial Kinetic
 
 - **Best for:** premium consumer brand, agency landing, fashion / arts editorial, manifesto launch with a single hero quote that needs weight.

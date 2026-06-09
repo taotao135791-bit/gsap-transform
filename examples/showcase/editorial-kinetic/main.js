@@ -29,7 +29,8 @@ mm.add(
 
     if (!isMotionOK) {
       // Reduced-motion: jump to end state, no scroll-driven motion.
-      gsap.set([".eyebrow", ".meta", ".reveal", ".hero h1"], { autoAlpha: 1, y: 0 });
+      // Selectors mirror the .js CSS gates (.js .hero .eyebrow / .js .hero .meta / .js .reveal).
+      gsap.set([".hero .eyebrow", ".hero .meta", ".feature .reveal", ".hero h1"], { autoAlpha: 1, y: 0 });
       return;
     }
 
@@ -63,7 +64,7 @@ mm.add(
       );
     });
 
-    // Numbered marker subtle drift on scroll (the only parallax on the page).
+    // Numbered marker: subtle entrance reveal (toggleActions, not a scrub-driven parallax).
     gsap.utils.toArray(".feature .num").forEach((num) => {
       gsap.from(num, {
         yPercent: 30,

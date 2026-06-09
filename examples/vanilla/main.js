@@ -1,9 +1,13 @@
 /**
  * Minimal GSAP vanilla example — follows skills: transforms, autoAlpha, timeline, ScrollTrigger.
  * Run from repo root: npx serve examples/vanilla (or open index.html with a local server that supports ES modules).
+ *
+ * CDN choice: esm.sh (browser-native ESM, normalises default exports) per gsap-plugins
+ * "Browser-native ESM CDN" and motion-anti-slop E7. Do NOT use single-file `cdn.jsdelivr.net`
+ * `/<Plugin>.js` paths for browser-native ESM — they fail intermittently and break the whole graph.
  */
-import { gsap } from "https://cdn.jsdelivr.net/npm/gsap@3.15.0/index.js";
-import { ScrollTrigger } from "https://cdn.jsdelivr.net/npm/gsap@3.15.0/ScrollTrigger.js";
+import { gsap } from "https://esm.sh/gsap@3.15.0";
+import { ScrollTrigger } from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 

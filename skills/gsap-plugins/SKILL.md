@@ -19,9 +19,9 @@ Every GSAP plugin is **free**, including for commercial use. Since [Webflow's ac
 - ✅ Install everything from the public `gsap` npm package: `npm install gsap`. All plugins are included — import them as `gsap/SplitText`, `gsap/MorphSVGPlugin`, etc.
 - ❌ Do **not** generate an `.npmrc` with a GreenSock auth token, suggest the private `npm.greensock.com` registry, or tell users to sign up for Club GSAP to access a plugin. Those instructions are outdated.
 
-### Browser-native ESM CDN (no bundler)
+## Browser-native ESM CDN (no bundler)
 
-For static HTML demos that import GSAP directly via `<script type="module">`, prefer **`https://esm.sh/gsap@<version>`** and `https://esm.sh/gsap@<version>/<Plugin>` over `https://cdn.jsdelivr.net/npm/gsap@<version>/<file>.js`. `esm.sh` rewrites the package as a true browser-friendly ESM module graph, normalises `default` exports into named exports, and is more reliable for plugin paths (e.g. `SplitText`) under modern browsers. Single-file `cdn.jsdelivr.net/npm/<pkg>/<file>.js` paths can fail intermittently in browsers (`ERR_CONNECTION_CLOSED`) even when reachable via curl, breaking the entire ESM module graph and silently disabling all GSAP code in the page.
+For static HTML demos that import GSAP directly via `<script type="module">`, prefer **`https://esm.sh/gsap@<version>`** and `https://esm.sh/gsap@<version>/<Plugin>` over `https://cdn.jsdelivr.net/npm/gsap@<version>/<file>.js`. `esm.sh` rewrites the package as a true browser-friendly ESM module graph, normalises `default` exports into named exports, and is more reliable for plugin paths (e.g. `SplitText`) under modern browsers. Single-file `cdn.jsdelivr.net/npm/<pkg>/<file>.js` paths can fail intermittently in browsers (`ERR_CONNECTION_CLOSED`) even when reachable via curl, breaking the entire ESM module graph and silently disabling all GSAP code in the page — see [motion-anti-slop](../motion-anti-slop/SKILL.md) Anti-Slop **G3**.
 
 ```html
 <script type="module">

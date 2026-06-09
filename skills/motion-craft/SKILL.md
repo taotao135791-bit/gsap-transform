@@ -1,6 +1,6 @@
 ---
 name: motion-craft
-description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft, /animate, /polish-motion, /audit-motion, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills into a repeatable nine-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, and the gsap-* API skills.
+description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills into a repeatable nine-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, and the gsap-* API skills.
 license: MIT
 ---
 
@@ -112,7 +112,7 @@ Each command runs with a clear input contract, a sequence of skill calls, and an
    - mouse follower / many elements → [gsap-performance](../gsap-performance/SKILL.md) (`quickTo`, `batch`)
 4. Wire the `prefers-reduced-motion` branch via `gsap.matchMedia` from the start (do not retrofit later).
 5. Run `block`-severity rules from [motion-anti-slop](../motion-anti-slop/SKILL.md) once before returning the code.
-6. **Browser smoke-test before declaring done.** A static HTML demo, a Vite dev server, or a Storybook story — open the page in a real browser, watch the console for errors, and verify at least one tween actually moves. Common silent failures to check for: a hidden CSS state (`.reveal { opacity: 0 }`) blocking a `gsap.from(autoAlpha: 0)` (Anti-Slop E5), a CSS `transform` not being read as a GSAP start state (Anti-Slop E6), a CDN module path that 404s and breaks the whole ESM graph (Anti-Slop E7). Returning code without this smoke-test is a Pre-Flight Failure.
+6. **Browser smoke-test before declaring done.** Open the page in a real browser, watch the console for errors, and verify at least one tween actually moves. Common silent failures to check for: a hidden CSS state (`.reveal { opacity: 0 }`) blocking a `gsap.from(autoAlpha: 0)` (Anti-Slop G1), a CSS `transform` not being read as a GSAP start state (Anti-Slop G2), a CDN module path that 404s and breaks the whole ESM graph (Anti-Slop G3). **If browser tooling is unavailable** in the agent's environment, do not skip this step — instead, output an explicit verification checklist (URL, expected DOM mutations, expected `transform` / `opacity` values) and ask the user to run `npx serve <dir>` and report back what they see. Returning code without either path is a Pre-Flight Failure.
 
 **Output contract:** runnable GSAP code that imports only what it uses, registers plugins, scopes selectors, and cleans up on unmount. No `back.*` / `elastic.*` defaults. No selector strings without scope inside a component.
 
@@ -253,7 +253,7 @@ Common chains:
 
 - **Greenfield:** `init` → `shape` → `animate` → `audit` → `polish` → `adapt`.
 - **Inherited code:** `audit` → `critique` → (`quieter` | `bolder`) → `polish` → `adapt`.
-- **Bug-fix scope:** `audit` only.
+- **Bug-fix scope:** `audit` → `polish` (or `adapt` / `quieter` based on what audit flags). `audit` alone never modifies code; pair it with the matching fix command.
 - **Quick tone change:** (`quieter` | `bolder`) → `audit`.
 
 Do not skip `adapt` before declaring done — accessibility is a Pre-Flight Failure if missing.
