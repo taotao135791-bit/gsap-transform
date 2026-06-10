@@ -6,7 +6,7 @@ license: MIT
 
 # Motion Craft (Command Workflow)
 
-A nine-command workflow that orchestrates the rest of the motion-design layer. Use when the user wants a structured pass — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt` — instead of a single ad-hoc generation.
+A nine-command workflow that orchestrates the rest of the motion-design layer, plus a tenth utility command (`/export`) for rendering animations to transparent video. Use when the user wants a structured pass — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt` — instead of a single ad-hoc generation, or when the user asks to export motion as a video file.
 
 ## When to Use This Skill
 
@@ -27,6 +27,7 @@ Apply when the user invokes a `/motion-craft <command>` style call, when the use
 | **quieter** | "tone this down", "too much motion", "calm this" | One-step reduction along Restrained → Expressive → Cinematic |
 | **bolder** | "make it bolder", "amplify", "boring" | One-step amplification along the same scale, with discipline |
 | **adapt** | "make it accessible", "mobile responsive", "reduced motion" | Add prefers-reduced-motion + breakpoint-aware motion via `gsap.matchMedia` |
+| **export** | "export as transparent video", "render to webm", "png sequence", "/motion-craft export" | A `capture.js` script (Puppeteer) + FFmpeg commands for WebM VP9 alpha or ProRes 4444 |
 
 Each command runs with a clear input contract, a sequence of skill calls, and an output contract. Commands are **invokable directly** (`/motion-craft polish the hero`) or **composable** (`init` → `shape` → `animate` → `polish` → `audit`).
 
@@ -246,6 +247,45 @@ mm.add({
 4. Update `MOTION.md`'s "Reduced-motion fallback" paragraph to match.
 
 **Output contract:** the same code, wrapped in a single `matchMedia` block, with three branches.
+
+## /motion-craft export
+
+**Trigger:** "export this animation as a transparent video", "render to webm with alpha", "give me a png sequence", "/motion-craft export".
+
+**Sequence:**
+1. Confirm the target: which timeline / action / page section to record, and duration in seconds.
+2. Generate a `capture.js` script (Node.js + Puppeteer) at the project root with these settings:
+   - **Viewport:** match the animation's aspect ratio (default 1080×1080 for logo; 1920×1080 for full-page hero).
+   - **Transparent background:** `omitBackground: true` + CDP `Emulation.setDefaultBackgroundColorOverride({ r:0, g:0, b:0, a:0 })`.
+   - **Frame control:** pause GSAP's auto-ticker (`gsap.ticker.remove(gsap.updateRoot)`), then loop `gsap.updateRoot(frame / fps)` to seek the global timeline frame-by-frame.
+   - **Output:** PNG sequence in `./frames/` (lossless, with alpha).
+3. Output the FFmpeg commands for two target formats:
+   - **WebM VP9 alpha** (for web `<video>` overlay):
+     ```bash
+     ffmpeg -framerate 60 -i frames/frame_%05d.png -c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0 output.webm
+     ```
+   - **ProRes 4444 alpha** (for After Effects / Premiere / FCPX):
+     ```bash
+     ffmpeg -framerate 60 -i frames/frame_%05d.png -c:v prores_ks -profile:v 4444 -pix_fmt yuva444p10le output.mov
+     ```
+4. If a specific action (e.g. `morph-circle`) needs to be triggered before recording, inject `await page.evaluate(() => play("morph-circle"))` before the frame loop.
+5. If the animation uses `repeat: -1` (infinite), specify the exact start/end time to record.
+
+**Output contract:** a runnable `capture.js` + two FFmpeg one-liners. The user runs:
+```bash
+npx serve <demo-dir> -l 4700        # start the demo
+node capture.js                      # render PNG sequence
+ffmpeg ...                           # encode to webm or mov
+```
+
+**Requirements:**
+- The page must expose GSAP to `window` (e.g. `window.__svghero = { gsap }`) so `capture.js` can control the ticker.
+- Puppeteer renders real Chromium — SVG filters (liquid, gooey), `backdrop-filter`, `clip-path` all render correctly in the PNG output.
+- Mouse-driven effects (parallax, magnetic) cannot be auto-captured; only timeline-driven motion is seek-able.
+
+**Limitations to state in the response:**
+- Interactive / pointer-driven tweens (`quickTo`, `Draggable`) are not recordable via seek; suggest a scripted pointer path if needed.
+- `gsap.matchMedia` conditions (e.g. viewport width) are locked to the Puppeteer viewport set in `capture.js`.
 
 ## Composing Commands
 

@@ -460,6 +460,114 @@ gsap.to(sprite, { pixi: { x: 200, y: 100, scale: 1.5 }, duration: 1 });
 - ✅ Use **Flip.getState()** → DOM change → **Flip.from()** for layout transitions; use **Draggable** + **InertiaPlugin** for drag with momentum.
 - ✅ Revert plugin instances (e.g. `SplitTextInstance.revert()`) when components unmount or elements are removed.
 
+## Exporting GSAP SVG motion as video
+
+When the user asks to export a GSAP animation (especially SVG) as a transparent-background video file, this is the proven workflow. Dependencies are minimal and do not require system-level installs (no `brew install ffmpeg`).
+
+### Dependencies
+
+```bash
+npm install puppeteer-core @ffmpeg-installer/ffmpeg fluent-ffmpeg
+```
+
+| Package | Purpose | Size |
+|---|---|---|
+| `puppeteer-core` | Controls headless Chrome for frame-by-frame screenshot (uses system Chrome, no bundled Chromium) | ~3 MB |
+| `@ffmpeg-installer/ffmpeg` | Portable ffmpeg binary inside node_modules (no brew/apt needed) | ~70 MB |
+| `fluent-ffmpeg` | Node.js wrapper for ffmpeg (chainable API) | ~200 KB |
+
+### Core principle: GSAP ticker hijack
+
+```javascript
+// Pause GSAP’s auto-tick so we control time manually
+gsap.ticker.remove(gsap.updateRoot);
+
+// Seek the global timeline to an exact time (in seconds)
+gsap.updateRoot(timeInSeconds);
+```
+
+This lets Puppeteer screenshot each frame at a precise time without real-time playback. The page must expose `gsap` to `window` (e.g. `window.__gsap = gsap`) so Puppeteer’s `page.evaluate` can reach it.
+
+### Transparent background (3 layers, all required)
+
+| Layer | How | Why |
+|---|---|---|
+| Chrome default white canvas | CDP: `Emulation.setDefaultBackgroundColorOverride { r:0, g:0, b:0, a:0 }` | Remove the browser’s own white backdrop |
+| Page CSS | `body, html { background: transparent !important }` + hide `body::before` / decorative layers | Remove your CSS backgrounds |
+| Screenshot call | `page.screenshot({ omitBackground: true })` | Tell Puppeteer to output RGBA PNG |
+
+**All three must be set.** Missing any one produces opaque output.
+
+### 3D compositing artifact (must disable for transparent export)
+
+```css
+.stage { perspective: none !important; }
+.container { transform-style: flat !important; }
+```
+
+`preserve-3d` + `perspective` causes Chromium’s GPU compositor to render a semi-transparent "placeholder box" for each 3D compositing layer when the background is transparent. This appears as a grey ghost rectangle in the output. Disabling 3D during capture eliminates it. **Trade-off:** `rotationY` / `rotationX` actions cannot be correctly captured in transparent mode; record those separately with an opaque background.
+
+### MorphSVG state reset (critical for sequences)
+
+```javascript
+// ❌ clearProps does NOT restore SVG path `d` attribute
+gsap.set(el, { clearProps: "all" });
+
+// ✅ Manually restore the original path data
+element.setAttribute("d", ORIGINAL_PATH_DATA);
+```
+
+MorphSVG writes to the SVG `<path>` element’s `d` attribute, not to CSS inline style. `clearProps` only clears inline CSS. Always capture the original `d` at load time and restore it in your reset function.
+
+### Screenshot scope (tight crop vs. breathing room)
+
+| Method | Result |
+|---|---|
+| `element.screenshot()` | Tight crop: logo fills the entire frame, no margin |
+| `page.screenshot()` | Full viewport: logo centered with natural transparent margin around it |
+
+Choose based on the user’s need. For compositing in video editors, `page.screenshot()` with a generous viewport (e.g. 1200×1200) is usually preferred.
+
+### Sequence choreography
+
+```javascript
+const SEQUENCE = [
+  { time: 0.0, action: "assemble" },
+  { time: 2.2, action: "morph-circle" },
+  { time: 5.0, action: "morph-K" },
+  { time: 7.0, action: "pulse" },
+];
+
+for (let frame = 0; frame < totalFrames; frame++) {
+  const t = frame / FPS;
+  while (nextIdx < SEQUENCE.length && t >= SEQUENCE[nextIdx].time) {
+    play(SEQUENCE[nextIdx++].action);
+  }
+  gsap.updateRoot(t);
+  await page.screenshot(...);
+}
+```
+
+Leave ≥ 1.5× each action’s duration between triggers so the previous action completes before being killed.
+
+### Output formats
+
+| Format | FFmpeg flags | Use case |
+|---|---|---|
+| ProRes 4444 `.mov` | `-c:v prores_ks -profile:v 4444 -pix_fmt yuva444p10le` | After Effects / Premiere / FCPX (alpha supported) |
+| VP9 `.webm` | `-c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0` | Web `<video>` transparent overlay |
+| H.264 `.mp4` | `-c:v libx264 -pix_fmt yuv420p -crf 18` | Quick preview (no alpha) |
+
+### SVG element shape accuracy
+
+Never guess the shape of an SVG element from its visual appearance in the composed logo. Always read the actual `<path d="...">` data from the source SVG. A blue element that *looks* like a circle may actually be a teardrop-shaped path that is partially occluded by a container layer.
+
+### Limitations
+
+- **Pointer-driven tweens** (`quickTo`, `Draggable`) are not recordable via timeline seek. Suggest scripting a synthetic pointer path if needed.
+- **`gsap.matchMedia`** conditions (e.g. viewport width) are locked to the Puppeteer viewport set in the capture script.
+- **`repeat: -1`** infinite tweens: specify exact start/end time to record; the ticker hijack does not auto-stop.
+
 ## Do Not
 
 - ❌ Use a plugin in a tween or API without registering it first (**gsap.registerPlugin()**).
