@@ -1,0 +1,160 @@
+<!--
+  Showcase: Editorial Kinetic
+  Recipe: motion-recipes — Editorial Kinetic
+  Design Read: solo brand manifesto, design-conscious audience, premium-editorial vibe, Expressive motion
+  Dials: MOTION_INTENSITY 7 / DESIGN_VARIANCE 7 / VISUAL_DENSITY 3
+  Plugins: ScrollTrigger, SplitText
+-->
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editorial Kinetic — GSAP Showcase</title>
+    <script>document.documentElement.className = "js";</script>
+    <style>
+      :root {
+        --paper: #f3efe7;
+        --ink: #15140f;
+        --accent: #c2410c; /* burnt orange — single locked accent */
+        --rule: rgba(21, 20, 15, 0.18);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+      body {
+        font-family: "PP Neue Montreal", "GT Walsheim", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.4;
+      }
+      .stage { max-width: 1320px; margin: 0 auto; padding: 48px 40px; }
+      .nav {
+        display: flex; align-items: center; justify-content: space-between;
+        padding-bottom: 64px; border-bottom: 1px solid var(--rule);
+      }
+      .mark { font-weight: 600; letter-spacing: -0.01em; font-size: 18px; }
+      .nav-meta { font-size: 13px; opacity: 0.7; letter-spacing: 0.04em; text-transform: uppercase; }
+
+      .hero { padding: 96px 0 120px; }
+      .hero .eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; }
+      .js .hero .eyebrow { opacity: 0; }
+      .hero h1 {
+        font-family: "PP Neue Montreal", "Cabinet Grotesk Display", sans-serif;
+        font-weight: 500;
+        font-size: clamp(56px, 9vw, 148px);
+        letter-spacing: -0.025em;
+        line-height: 0.96;
+      }
+      .hero h1 em { font-style: italic; padding-bottom: 0.08em; display: inline-block; }
+      .hero .meta {
+        margin-top: 56px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+        max-width: 760px;
+        font-size: 14px;
+      }
+      .js .hero .meta { opacity: 0; }
+      .meta div { border-top: 1px solid var(--rule); padding-top: 12px; }
+      .meta dt { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55; margin-bottom: 6px; }
+
+      .feature {
+        padding: 96px 0;
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 80px;
+        border-top: 1px solid var(--rule);
+      }
+      .feature .num {
+        font-family: "GT Sectra", "Reckless Neue", "PP Editorial New", serif;
+        font-style: italic;
+        font-size: 96px;
+        color: var(--accent);
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .feature .copy h2 {
+        font-size: clamp(32px, 4.2vw, 56px);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin-bottom: 24px;
+      }
+      .feature .copy p { font-size: 18px; max-width: 60ch; opacity: 0.78; }
+
+      .quote {
+        padding: 120px 0;
+        text-align: center;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+      .quote blockquote {
+        font-family: "GT Sectra", "Reckless Neue", "PP Editorial New", serif;
+        font-style: italic;
+        font-size: clamp(36px, 5vw, 72px);
+        line-height: 1.08;
+        letter-spacing: -0.015em;
+        max-width: 22ch;
+        margin: 0 auto;
+      }
+      .quote cite { display: block; margin-top: 32px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.5; font-style: normal; }
+
+      .footer { padding: 64px 0 48px; display: flex; justify-content: space-between; font-size: 13px; opacity: 0.65; }
+
+      /* SplitText line mask */
+      .line { overflow: hidden; padding-bottom: 0.05em; }
+
+      /* Reveal helper — only hide when JS / GSAP is active */
+      .js .reveal { opacity: 0; }
+
+      @media (max-width: 768px) {
+        .hero .meta { grid-template-columns: 1fr; }
+        .feature { grid-template-columns: 1fr; gap: 32px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <header class="nav">
+        <div class="mark">Atelier &mdash; 02</div>
+        <div class="nav-meta">2026 / Manifesto</div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">A note on craft</p>
+        <h1 class="display">Slow work, <em>made</em> visible — <em>line</em> by line.</h1>
+        <dl class="meta">
+          <div><dt>Studio</dt><dd>Atelier No. 2</dd></div>
+          <div><dt>Discipline</dt><dd>Editorial &amp; Identity</dd></div>
+          <div><dt>Edition</dt><dd>Spring / Vol. 4</dd></div>
+        </dl>
+      </section>
+
+      <section class="feature">
+        <div class="num">01</div>
+        <div class="copy">
+          <h2 class="reveal">Type sets the tempo before motion arrives.</h2>
+          <p class="reveal">A page that hands the headline its weight up front needs less choreography to be felt. Letterforms carry the rhythm; motion only confirms it.</p>
+        </div>
+      </section>
+
+      <section class="feature">
+        <div class="num">02</div>
+        <div class="copy">
+          <h2 class="reveal">One accent. Held all the way through.</h2>
+          <p class="reveal">Burnt orange in the eyebrow, in the section number, in the cite mark. No drift, no surprise teal in the footer. The page reads as a single thought.</p>
+        </div>
+      </section>
+
+      <section class="quote">
+        <blockquote class="display">Restraint is the most expensive material in the room.</blockquote>
+        <cite>&mdash; House motto, since 2014</cite>
+      </section>
+
+      <footer class="footer">
+        <span>&copy; 2026 Atelier &mdash; 02</span>
+        <span>GSAP &middot; Editorial Kinetic</span>
+      </footer>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

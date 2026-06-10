@@ -1,0 +1,26 @@
+{
+  "name": "gsap-skills",
+  "version": "2.0.0",
+  "description": "Motion Design Skills for Cursor, Claude and other AI agents — a Design Layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-craft) sitting on top of the GSAP API skills (core, timelines, ScrollTrigger, plugins, utilities, React, frameworks, performance)",
+  "author": {
+    "name": "GreenSock",
+    "email": "info@greensock.com",
+    "url": "https://gsap.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "gsap",
+    "greensock",
+    "motion design",
+    "anti-slop",
+    "javascript animation",
+    "scrolltrigger",
+    "timeline",
+    "react animation",
+    "web animation",
+    "design taste",
+    "kinetic typography"
+  ],
+  "logo": "./assets/gsap-icon-inverted.svg",
+  "skills": ["skills"]
+}

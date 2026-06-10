@@ -1,0 +1,178 @@
+<!--
+  Showcase: Liquid Glass Hover
+  Recipe: motion-recipes — Liquid Glass Hover
+  Design Read: dark-tech / hardware product surface, design-conscious audience, premium consumer vibe, Expressive motion
+  Dials: MOTION_INTENSITY 7 / DESIGN_VARIANCE 6 / VISUAL_DENSITY 4
+  Plugins: ScrollTrigger (entrance only), gsap-core (quickTo) — no Inertia required
+-->
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Liquid Glass Hover — GSAP Showcase</title>
+    <script>document.documentElement.className = "js";</script>
+    <style>
+      :root {
+        --bg-0: #0b0d12;
+        --bg-1: #131722;
+        --ink: #eef0f4;
+        --ink-mute: rgba(238, 240, 244, 0.65);
+        --rule: rgba(238, 240, 244, 0.08);
+        --accent: #4cc9ff; /* electric blue, single locked accent */
+        --glass-bg: rgba(255, 255, 255, 0.04);
+        --glass-bd: rgba(255, 255, 255, 0.08);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body {
+        background:
+          radial-gradient(1100px 700px at 80% -10%, rgba(76, 201, 255, 0.18), transparent 60%),
+          radial-gradient(900px 600px at -10% 30%, rgba(76, 201, 255, 0.07), transparent 70%),
+          var(--bg-0);
+        color: var(--ink);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: "Geist", "Söhne", "Inter Display", -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.4;
+      }
+      .stage { max-width: 1280px; margin: 0 auto; padding: 40px 32px 96px; }
+
+      .nav {
+        display: flex; align-items: center; justify-content: space-between;
+        padding-bottom: 56px;
+      }
+      .mark { font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+      .nav a { color: var(--ink-mute); font-size: 14px; text-decoration: none; }
+
+      .hero { padding: 96px 0 80px; max-width: 880px; }
+      .hero h1 {
+        font-size: clamp(48px, 7vw, 96px);
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 0.96;
+      }
+      .hero h1 .a { color: var(--accent); }
+      .hero p {
+        margin-top: 28px;
+        font-size: 18px;
+        max-width: 60ch;
+        color: var(--ink-mute);
+      }
+      .hero .ctas { margin-top: 40px; display: flex; gap: 16px; }
+
+      .magnetic-cta {
+        position: relative;
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 14px 22px;
+        font-size: 14px; font-weight: 500;
+        color: var(--bg-0);
+        background: var(--accent);
+        border: 0; border-radius: 999px;
+        cursor: pointer;
+        will-change: transform;
+        transition: background 0.2s ease;
+      }
+      .magnetic-cta.ghost { color: var(--ink); background: transparent; border: 1px solid var(--rule); }
+      .magnetic-cta:active { transform: translateY(1px); }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .glass-card {
+        position: relative;
+        padding: 28px;
+        border-radius: 16px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-bd);
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+        overflow: hidden;
+        will-change: transform;
+        transition: border-color 0.3s ease;
+      }
+      .glass-card::before {
+        /* spotlight that tracks the cursor */
+        content: "";
+        position: absolute; inset: -1px;
+        background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(76, 201, 255, 0.18), transparent 60%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .glass-card:hover { border-color: rgba(76, 201, 255, 0.35); }
+      .glass-card:hover::before { opacity: 1; }
+      .glass-card .ico {
+        width: 36px; height: 36px; border-radius: 10px;
+        background: rgba(76, 201, 255, 0.16);
+        display: grid; place-items: center;
+        color: var(--accent); font-weight: 600; font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .glass-card h3 {
+        font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 8px;
+      }
+      .glass-card p { font-size: 14px; color: var(--ink-mute); max-width: 38ch; }
+
+      .footer {
+        margin-top: 80px;
+        padding-top: 28px;
+        border-top: 1px solid var(--rule);
+        display: flex; justify-content: space-between;
+        font-size: 13px; color: var(--ink-mute);
+      }
+
+      /* Reveal helper — only hide when JS / GSAP is active. gsap.from owns the y offset. */
+      .js .reveal { opacity: 0; }
+
+      @media (max-width: 900px) {
+        .card-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <header class="nav">
+        <div class="mark">Halo / Surface</div>
+        <nav><a href="#">Docs</a></nav>
+      </header>
+
+      <section class="hero">
+        <h1 class="reveal">A surface that <span class="a">listens</span> to your cursor.</h1>
+        <p class="reveal">Touch-feel motion built on transforms only. One accent, locked. No bounce, no glow, no scroll-jacking — every interaction is a single signal.</p>
+        <div class="ctas reveal">
+          <button class="magnetic-cta">Get the build &rarr;</button>
+          <button class="magnetic-cta ghost">Read the changelog</button>
+        </div>
+      </section>
+
+      <section class="card-grid">
+        <article class="glass-card reveal">
+          <div class="ico">01</div>
+          <h3>Quick-tunable cursor</h3>
+          <p>One <code>gsap.quickTo</code> per axis, reused on every pointermove. No new tween per event, no stack of stale animations.</p>
+        </article>
+        <article class="glass-card reveal">
+          <div class="ico">02</div>
+          <h3>One signal per hover</h3>
+          <p>The card lifts via the spotlight gradient, not a lift+scale+shadow combo. Restraint scales better than amplification.</p>
+        </article>
+        <article class="glass-card reveal">
+          <div class="ico">03</div>
+          <h3>Reduced motion respected</h3>
+          <p><code>gsap.matchMedia</code> branches the experience: under <code>prefers-reduced-motion: reduce</code>, the magnetic offset and the entrance fade collapse to instant state.</p>
+        </article>
+      </section>
+
+      <footer class="footer">
+        <span>Halo / Surface &mdash; 2026</span>
+        <span>GSAP &middot; Liquid Glass Hover</span>
+      </footer>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "gsap-skills",
+  "owner": {
+    "name": "GreenSock"
+  },
+  "plugins": [
+    {
+      "name": "gsap-skills",
+      "source": "./",
+      "description": "Motion Design Skills for Cursor, Claude and other AI agents — a Design Layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-craft) sitting on top of the GSAP API skills (core, timelines, ScrollTrigger, plugins, utilities, React, frameworks, performance)."
+    }
+  ]
+}

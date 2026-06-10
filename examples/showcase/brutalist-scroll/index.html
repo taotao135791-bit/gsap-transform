@@ -1,0 +1,194 @@
+<!--
+  Showcase: Brutalist Scroll
+  Recipe: motion-recipes — Brutalist Scroll
+  Design Read: indie studio launch, design-conscious audience, brutalist anti-template vibe, Cinematic motion
+  Dials: MOTION_INTENSITY 8 / DESIGN_VARIANCE 9 / VISUAL_DENSITY 4
+  Plugins: ScrollTrigger, Flip
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brutalist Scroll — GSAP Showcase</title>
+    <style>
+      :root {
+        --paper: #f4f1ea;
+        --ink: #0c0c0c;
+        --accent: #f2ea48; /* neon yellow */
+        --rule: #0c0c0c;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { background: var(--paper); color: var(--ink); }
+      body {
+        font-family: "Söhne Breit", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-feature-settings: "ss01" on, "ss02" on;
+        line-height: 1.05;
+        text-transform: uppercase;
+        letter-spacing: -0.01em;
+      }
+      .mono { font-family: "JetBrains Mono", "Geist Mono", "IBM Plex Mono", ui-monospace, monospace; text-transform: none; letter-spacing: 0; }
+
+      .topbar {
+        position: fixed; inset: 0 0 auto 0; height: 56px;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 24px; background: var(--paper); border-bottom: 1.5px solid var(--rule);
+        z-index: 50; font-size: 12px;
+      }
+
+      main { padding-top: 56px; }
+
+      /* Pinned scene */
+      .scene {
+        position: relative;
+        height: 100dvh;
+        overflow: hidden;
+        background: var(--paper);
+        border-bottom: 1.5px solid var(--rule);
+      }
+      .panel-bg {
+        position: absolute; inset: 0;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 47px, rgba(0,0,0,0.08) 47px 48px),
+          repeating-linear-gradient(90deg, transparent 0 47px, rgba(0,0,0,0.08) 47px 48px);
+        pointer-events: none;
+      }
+      .big-number {
+        position: absolute; left: -2vw; bottom: -3vw;
+        font-size: 58vw; line-height: 0.78;
+        font-weight: 900; letter-spacing: -0.05em;
+        color: var(--ink);
+        will-change: transform;
+      }
+      .scene-title {
+        position: absolute; top: 80px; left: 32px;
+        font-size: clamp(40px, 5.5vw, 96px);
+        font-weight: 800;
+        max-width: 16ch;
+        line-height: 0.95;
+      }
+      .scene-title em { background: var(--accent); padding: 0 0.18em; font-style: normal; }
+      .scene-meta {
+        position: absolute; right: 32px; top: 80px; text-align: right;
+        font-size: 11px; letter-spacing: 0.08em;
+      }
+      .scene-meta div { display: flex; gap: 12px; justify-content: flex-end; padding: 6px 0; border-bottom: 1px solid var(--rule); min-width: 220px; }
+      .scene-meta strong { font-weight: 700; }
+
+      /* Manifesto */
+      .manifesto {
+        padding: 120px 32px;
+        border-bottom: 1.5px solid var(--rule);
+        display: grid; grid-template-columns: 1fr 2fr; gap: 64px;
+      }
+      .manifesto h2 {
+        font-size: clamp(64px, 8vw, 144px);
+        font-weight: 900; letter-spacing: -0.04em; line-height: 0.9;
+      }
+      .manifesto h2 .y { background: var(--accent); padding: 0 0.04em; }
+      .manifesto p {
+        font-size: 16px; max-width: 50ch; line-height: 1.45;
+        text-transform: none; letter-spacing: 0;
+        margin-top: 12px; opacity: 0.85;
+      }
+
+      /* Grid (Flip target) */
+      .grid-section { padding: 96px 32px; }
+      .grid-section header {
+        display: flex; justify-content: space-between; align-items: flex-end;
+        margin-bottom: 32px;
+      }
+      .grid-section h3 { font-size: clamp(36px, 4vw, 64px); font-weight: 900; letter-spacing: -0.025em; }
+      .grid-toggle {
+        font-family: "JetBrains Mono", monospace;
+        text-transform: none; letter-spacing: 0;
+        background: var(--ink); color: var(--paper);
+        border: 0; padding: 14px 22px; cursor: pointer; font-size: 13px;
+      }
+      .grid-toggle:active { transform: translateY(1px); }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5px;
+        background: var(--rule);
+        border: 1.5px solid var(--rule);
+      }
+      .grid.dense { grid-template-columns: repeat(2, 1fr); }
+      .tile {
+        background: var(--paper);
+        padding: 32px 28px;
+        min-height: 200px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .tile .num {
+        font-family: "JetBrains Mono", monospace;
+        text-transform: none; letter-spacing: 0; font-size: 12px; opacity: 0.6;
+      }
+      .tile h4 { font-size: clamp(24px, 2.4vw, 36px); font-weight: 800; letter-spacing: -0.02em; line-height: 0.95; }
+
+      .footer {
+        padding: 48px 32px; border-top: 1.5px solid var(--rule);
+        display: flex; justify-content: space-between; font-size: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .scene-title { font-size: 36px; max-width: 12ch; }
+        .scene-meta { right: 16px; min-width: auto; font-size: 10px; }
+        .manifesto { grid-template-columns: 1fr; gap: 24px; }
+        .grid { grid-template-columns: 1fr; }
+        .grid.dense { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <span class="mono">studio &mdash; null/no-7</span>
+      <span class="mono">scroll &darr; to begin</span>
+    </div>
+
+    <main>
+      <section class="scene" id="scene">
+        <div class="panel-bg"></div>
+        <h1 class="scene-title">Hard <em>edges</em>. No apologies.</h1>
+        <div class="scene-meta mono">
+          <div><span>release</span><strong>2026.06</strong></div>
+          <div><span>format</span><strong>web / print</strong></div>
+          <div><span>build</span><strong>raw html</strong></div>
+        </div>
+        <div class="big-number">07</div>
+      </section>
+
+      <section class="manifesto">
+        <h2>We <span class="y">make</span> systems, not styles.</h2>
+        <div>
+          <p>A grid you can argue with. Type that does the heavy lifting. One accent color, applied without sentiment. The rest is air.</p>
+          <p>This page is built without easing curves on the scroll-driven scene because scroll position is not a feeling — it is a map. Hard wired, 1:1, no scrub-lag, no parallax garnish.</p>
+        </div>
+      </section>
+
+      <section class="grid-section">
+        <header>
+          <h3>Selected output / 12</h3>
+          <button class="grid-toggle" id="toggle">switch density &rarr;</button>
+        </header>
+        <div class="grid" id="grid">
+          <div class="tile"><span class="num">001</span><h4>Identity for a small foundry</h4></div>
+          <div class="tile"><span class="num">002</span><h4>Editorial system, four issues</h4></div>
+          <div class="tile"><span class="num">003</span><h4>A signage program</h4></div>
+          <div class="tile"><span class="num">004</span><h4>Long-form report, 84 pages</h4></div>
+          <div class="tile"><span class="num">005</span><h4>Web archive of bookmarks</h4></div>
+          <div class="tile"><span class="num">006</span><h4>Type specimen, mono</h4></div>
+          <div class="tile"><span class="num">007</span><h4>Studio annual, riso</h4></div>
+          <div class="tile"><span class="num">008</span><h4>Conference identity</h4></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span class="mono">studio &mdash; null/no-7</span>
+        <span class="mono">gsap &middot; brutalist scroll</span>
+      </footer>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
