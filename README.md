@@ -82,7 +82,22 @@ No step is optional. Skipping step 1 is how slop happens.
 npx skills add https://github.com/greensock/gsap-skills
 ```
 
-Works with Cursor, Claude Code, Codex, Windsurf, Copilot, Google Antigravity, and [40+ agents](https://github.com/vercel-labs/skills#supported-agents).
+Works with any agent that supports the [Agent Skills format](https://agentskills.io). Deep adapters are shipped for the following agents (see table below).
+
+### Adapter coverage
+
+This repo ships dedicated configuration for each of these agents, in addition to the universal `skills/<name>/SKILL.md` format:
+
+| Agent | Adapter file(s) | What you get |
+|-------|----------------|--------------|
+| **Claude Code** | `CLAUDE.md` (→ `AGENTS.md`), `.claude-plugin/{plugin,marketplace}.json` | Hard rules at session start + plugin marketplace install |
+| **OpenAI Codex** | `AGENTS.md` | Hard rules at session start (Codex official standard) |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (12 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (12 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
+| **Google Gemini / Antigravity** | `GEMINI.md` (→ `AGENTS.md`) | Hard rules at session start |
+| **Windsurf** | `.windsurfrules` | Project-wide hard rules |
+
+Any agent supporting the `skills/<name>/SKILL.md` format (OpenCode, Pi, Qoder, and most other Agent Skills clients) works via the universal Manual copy below.
 
 ### Claude Code
 
@@ -92,9 +107,19 @@ Works with Cursor, Claude Code, Codex, Windsurf, Copilot, Google Antigravity, an
 
 ### Cursor
 
-**Settings → Rules → Add Rule → Remote Rule (Github)** → `greensock/gsap-skills`.
+Two install paths:
+- **Remote rules market** — Settings → Rules → Add Rule → Remote Rule (Github) → `greensock/gsap-skills`.
+- **Project-level** — copy `.cursor/rules/` into your project; Cursor auto-attaches each skill when files matching its `globs` open.
 
-### Manual copy
+### GitHub Copilot
+
+Copy `.github/copilot-instructions.md` and the entire `.github/instructions/` directory into your project's `.github/`. Copilot reads them automatically.
+
+### Windsurf
+
+Copy `.windsurfrules` to your project root.
+
+### Manual copy (any Agent Skills-compatible agent)
 
 | Agent | Skill Directory |
 |-------|-----------------|

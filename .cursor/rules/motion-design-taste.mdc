@@ -1,0 +1,18 @@
+---
+description: Aesthetic and motion-language direction for GSAP-based interfaces. Use FIRST, before any GSAP code, when the user asks to build a landing page, portfolio, hero, scroll-driven story, or any animated frontend, or mentions a vibe (minimalist, brutalist, editorial, premium, playful, kinetic, cinematic).
+globs:
+alwaysApply: false
+---
+
+# motion-design-taste
+
+The aesthetic and motion-language layer that sits **above** the GSAP API skills. Apply at the START of any task that produces an animated frontend interface, before writing GSAP code.
+
+Output a one-line **Design Read** before any code:
+> "Reading this as: \<page kind\> for \<audience\>, with a \<vibe\> language, leaning toward \<aesthetic family\> and \<motion language\>."
+
+Then set three dials (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY` — each 1-10), pick a motion mode (Restrained / Expressive / Cinematic), and route to the right API skill.
+
+Avoid LLM defaults: `Inter` everywhere, AI-purple gradients on dark mesh, centered hero with H1 over a glowing radial blur, `back.out` / `elastic.*` as default ease, parallax on every section.
+
+For full guidance, three dials, motion modes, decision table, and Lila Rule: see `skills/motion-design-taste/SKILL.md`.

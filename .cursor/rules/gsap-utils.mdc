@@ -1,0 +1,21 @@
+---
+description: gsap.utils — clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe, distribute. Use when you need numeric mapping, array utilities, randomness, or to chain transformations.
+globs: ["**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro}"]
+alwaysApply: false
+---
+
+# gsap-utils
+
+`gsap.utils` provides composable helpers — prefer them over hand-rolled equivalents:
+
+- `gsap.utils.clamp(min, max, value)` — clamp into range.
+- `gsap.utils.mapRange(inMin, inMax, outMin, outMax, value)` — remap one range to another.
+- `gsap.utils.interpolate(start, end, t)` — works on numbers, colors, arrays, objects.
+- `gsap.utils.random(min, max, [increment], [returnFunction])` — uniform random; pass `true` to return a function (perfect for stagger property values).
+- `gsap.utils.snap(increment, value)` or `snap([1, 2, 5, 10], value)` — snap to grid or list.
+- `gsap.utils.toArray(selector | NodeList | array)` — universal array coercion.
+- `gsap.utils.wrap([a, b, c])` — cyclic wrap, perfect for distributing values.
+- `gsap.utils.pipe(fn1, fn2, fn3)` — left-to-right function composition.
+- `gsap.utils.distribute({ base, amount, from: "center" })` — spatial distribution for stagger.
+
+For full reference: `skills/gsap-utils/SKILL.md`.

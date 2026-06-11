@@ -1,0 +1,26 @@
+---
+description: Eight clone-able pairings of an aesthetic direction with a motion language. Use after motion-design-taste sets the dials, when you want a ready-made starting point. Recipes include Editorial Kinetic, Brutalist Scroll, Liquid Glass Hover, Bento Flip, Minimal Fade, Cinematic Pinned Scrub, Kinetic Type Stagger, Grid Break Overlap.
+globs:
+alwaysApply: false
+---
+
+# motion-recipes
+
+Eight clone-able **aesthetic × motion** combos. Each ships:
+- recommended dial values (`MOTION_INTENSITY` / `DESIGN_VARIANCE` / `VISUAL_DENSITY`)
+- typography pool and color rule
+- layout pattern
+- motion language (durations, eases, stagger band)
+- a GSAP code skeleton
+
+Recipes:
+1. **Editorial Kinetic** — kinetic typography + SplitText + restrained parallax
+2. **Brutalist Scroll** — heavy type + pinned scrub + Flip grid
+3. **Liquid Glass Hover** — dark + glass cards + magnetic CTA
+4. **Bento Flip** — non-uniform tiles + ScrollTrigger.batch + Flip
+5. **Minimal Fade** — autoAlpha + small y, no scrub/pin
+6. **Cinematic Pinned Scrub** — full-screen pin + multi-layer parallax + SplitText + MorphSVG
+7. **Kinetic Type Stagger** — type fills viewport + char stagger + expo.out
+8. **Grid Break Overlap** — asymmetric grid + element overlap + differential y
+
+For all eight skeletons, see `skills/motion-recipes/SKILL.md`.

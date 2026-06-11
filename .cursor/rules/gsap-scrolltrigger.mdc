@@ -1,0 +1,18 @@
+---
+description: GSAP ScrollTrigger — scroll-linked animations, pinning, scrub, batch, refresh, cleanup. Use when the user requests scroll-based animation, parallax, pin sections, or scroll-driven story.
+globs: ["**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro}"]
+alwaysApply: false
+---
+
+# gsap-scrolltrigger
+
+- Register once: `gsap.registerPlugin(ScrollTrigger)`.
+- Pick **scrub** OR **toggleActions**, not both.
+- Never put a `ScrollTrigger` on a tween that is a **child** of a timeline — put it on the timeline or a top-level tween.
+- Call `ScrollTrigger.refresh()` after DOM/layout changes that affect trigger positions.
+- Create ScrollTriggers in top-to-bottom page order, or set `refreshPriority`.
+- Under `prefers-reduced-motion: reduce`: do NOT use `scrub` or `pin`. Use `toggleActions` or skip motion.
+- Batch lists with `ScrollTrigger.batch(".item", { onEnter, start })` for stagger reveals.
+- Cleanup on SPA route change / component unmount: `st.kill()` or use `gsap.context()` / `useGSAP()`.
+
+For full reference: `skills/gsap-scrolltrigger/SKILL.md`.

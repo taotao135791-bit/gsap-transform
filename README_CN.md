@@ -82,7 +82,22 @@
 npx skills add https://github.com/greensock/gsap-skills
 ```
 
-支持 Cursor、Claude Code、Codex、Windsurf、Copilot、Google Antigravity 等 [40+ 个 agent](https://github.com/vercel-labs/skills#supported-agents)。
+支持任何兼容 [Agent Skills 格式](https://agentskills.io) 的 agent。以下 agent 额外提供了**专用适配文件**（见下表）。
+
+### 适配覆盖
+
+除了通用的 `skills/<name>/SKILL.md` 格式，本仓库为以下 agent 提供了专用配置文件：
+
+| Agent | 适配文件 | 你得到什么 |
+|-------|---------|---------|
+| **Claude Code** | `CLAUDE.md`（→`AGENTS.md`）、`.claude-plugin/{plugin,marketplace}.json` | 会话启动时加载硬规则 + 插件市场安装 |
+| **OpenAI Codex** | `AGENTS.md` | 会话启动时加载硬规则（Codex 官方标准） |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（12 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（12 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
+| **Google Gemini / Antigravity** | `GEMINI.md`（→`AGENTS.md`） | 会话启动时加载硬规则 |
+| **Windsurf** | `.windsurfrules` | 项目级硬规则 |
+
+任何支持 `skills/<name>/SKILL.md` 格式的 agent（OpenCode、Pi、Qoder 及其他多数 Agent Skills 客户端）可通过下面的“手动拷贝”使用。
 
 ### Claude Code
 
@@ -92,9 +107,19 @@ npx skills add https://github.com/greensock/gsap-skills
 
 ### Cursor
 
-**Settings → Rules → Add Rule → Remote Rule (Github)** → `greensock/gsap-skills`。
+两种安装方式：
+- **远程规则市场** — Settings → Rules → Add Rule → Remote Rule (Github) → `greensock/gsap-skills`。
+- **项目级** — 拷贝 `.cursor/rules/` 到你的项目，打开匹配 `globs` 的文件时 Cursor 会自动附加对应 skill。
 
-### 手动拷贝
+### GitHub Copilot
+
+拷贝 `.github/copilot-instructions.md` 和整个 `.github/instructions/` 目录到你项目的 `.github/` 下。Copilot 会自动读取。
+
+### Windsurf
+
+拷贝 `.windsurfrules` 到项目根目录。
+
+### 手动拷贝（任何兼容 Agent Skills 的 agent）
 
 | Agent | Skill 目录 |
 |-------|-----------|

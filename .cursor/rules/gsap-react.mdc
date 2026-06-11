@@ -1,0 +1,18 @@
+---
+description: GSAP in React — useGSAP hook, refs, scope, contextSafe, gsap.context, SSR safety, cleanup on unmount. Use in any .jsx/.tsx file or when user asks for animation in React or Next.js.
+globs: ["**/*.{jsx,tsx}"]
+alwaysApply: false
+---
+
+# gsap-react
+
+- Prefer **`useGSAP()`** from `@gsap/react` over raw `useEffect` for GSAP setup. Register once: `gsap.registerPlugin(useGSAP)`.
+- Pass a **scope** ref so selectors are scoped: `useGSAP(() => { ... }, { scope: containerRef })`. Avoids animating elements outside the component.
+- Targeting by ref: pass `ref.current`, not the ref object. Wrong: `gsap.to(myRef, ...)`. Right: `gsap.to(myRef.current, ...)`. Or rely on the scope ref + selector strings.
+- `useGSAP` cleans up automatically on unmount (reverts animations, kills ScrollTriggers).
+- Use **`contextSafe`** (returned from `useGSAP`) to wrap callbacks like `onComplete` so they no-op after unmount and avoid React state-update warnings.
+- Default: runs once (empty deps). Re-run on dep change: `{ dependencies: [dep1] }` or `{ revertOnUpdate: true }`.
+- If not using `useGSAP`: use `gsap.context()` in `useEffect` and return a cleanup that calls `ctx.revert()`.
+- SSR (Next.js / Remix): GSAP code in `useEffect` / `useGSAP` only — they run client-only. Never call `gsap.to` at module scope.
+
+For full reference: `skills/gsap-react/SKILL.md`.

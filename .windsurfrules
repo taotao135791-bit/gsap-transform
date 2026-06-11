@@ -1,0 +1,81 @@
+# GSAP — Windsurf rules
+
+When generating GSAP (GreenSock Animation Platform) code in this project, follow these hard rules.
+
+## Two-layer skill system
+
+This project has **gsap-skills** installed (under `skills/`). Always traverse it in order:
+
+1. **Design Layer first** — read `skills/motion-design-taste/SKILL.md` before any GSAP code, declare a one-line **Design Read** ("Reading this as: \<page kind\> for \<audience\>, with a \<vibe\> language…"), pick a motion mode (Restrained / Expressive / Cinematic). Use `skills/motion-recipes/SKILL.md` for clone-able starting skeletons.
+2. **API Layer after** — `skills/gsap-core/`, `skills/gsap-timeline/`, `skills/gsap-scrolltrigger/`, `skills/gsap-plugins/`, `skills/gsap-utils/`, `skills/gsap-react/`, `skills/gsap-frameworks/`, `skills/gsap-performance/`.
+
+The cross-skill index is `skills/llms.txt`. Read it first if you do not know which skill to load.
+
+## Hard rules
+
+### Imports & registration
+- `import { gsap } from "gsap"` (npm install `gsap` — all plugins free since Webflow acquisition; no `.npmrc` / auth token / Club membership).
+- For browser-native ESM (no bundler): `https://esm.sh/gsap@3.15.0` + **default imports** for plugins. Named imports may resolve to `undefined`. Never use `cdn.jsdelivr.net/npm/gsap/<Plugin>.js` (module graph breaks).
+- Register every plugin once: `gsap.registerPlugin(ScrollTrigger, ...)`.
+
+### Sequencing
+- `gsap.timeline()` with the position parameter (`"+=0.5"`, `"<"`, labels). Avoid chained `delay`.
+- Multiple `from()` / `fromTo()` on the same property: `immediateRender: false` on the later ones.
+
+### Transforms & opacity
+- Prefer GSAP aliases (`x`, `y`, `scale`, `rotation`, `xPercent`, `yPercent`) over raw CSS `transform` or layout (`top`, `left`, `width`).
+- Prefer `autoAlpha` over `opacity` (also sets `visibility`).
+- Don't write CSS `transform` on elements you plan to animate — GSAP doesn't parse pre-existing CSS transforms as the start state.
+- `gsap.from(autoAlpha:0)` on a CSS-hidden element animates 0 → 0. Use `gsap.fromTo()`.
+
+### Accessibility (mandatory)
+Every project wraps GSAP work in `gsap.matchMedia()`:
+```js
+gsap.matchMedia().add({
+  isMotionOK: "(prefers-reduced-motion: no-preference)",
+  isReduced:  "(prefers-reduced-motion: reduce)"
+}, (ctx) => {
+  if (!ctx.conditions.isMotionOK) { /* paint end state, return */ }
+  // motion code
+});
+```
+Shipping without this is a Pre-Flight Failure.
+
+### ScrollTrigger
+- Pick **scrub** OR **toggleActions**, not both.
+- Never put a ScrollTrigger on a tween that is a **child** of a timeline.
+- `ScrollTrigger.refresh()` after DOM/layout changes.
+- Under `prefers-reduced-motion: reduce`: do NOT use scrub or pin.
+
+### SVG plugins
+- `MotionPath` and `DrawSVG` accept `<path>` only — not `<circle>`, `<rect>`, `<ellipse>`.
+- `MorphSVG` writes to the `<path>` `d` attribute, not inline CSS. `clearProps` does NOT restore it. Capture original `d` at load time and restore manually.
+
+### React / framework lifecycle
+- React: prefer `useGSAP()` from `@gsap/react` with a `scope` ref. Use `contextSafe` to wrap callbacks.
+- Vue / Nuxt / Svelte: create in `onMounted` / `onMount`; revert / kill in `onUnmounted` / cleanup.
+
+### Avoid LLM-default slop
+Without explicit brief direction, do NOT reach for:
+- `Inter` for everything
+- AI-purple gradients on dark mesh
+- Centered hero with H1 over a glowing radial blur
+- `back.out(1.7)` / `elastic.*` / `bounce.*` as default ease (only ONE branded character moment per page)
+- Parallax on every section
+- Hover stack of `y:-8 + scale:1.05 + heavier shadow` — pick ONE signal
+
+### Single accent lock
+The brief produces one accent color. Lock it. Verify at smoke-test that all uses (CTA bg, eyebrow color, focus ring) `getComputedStyle` return the same `rgb(...)`.
+
+## Slash commands
+
+When the user invokes `/motion-craft <subcommand>` (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export), load `skills/motion-craft/SKILL.md` and follow that command's exact Sequence and Output contract.
+
+## Smoke-test before shipping
+
+1. Open in browser, no console error / warn.
+2. Single accent verified: `getComputedStyle(cta).bg === getComputedStyle(eyebrow).color`.
+3. OS Reduce Motion → animation skips, end state painted.
+4. Walk the `motion-anti-slop` Group A–G checklist; no `block` items.
+
+For full guidance: see `AGENTS.md` and `skills/<name>/SKILL.md`.

@@ -1,0 +1,26 @@
+---
+description: Command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand> (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export) or asks for a structured pass on an animated interface. Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills.
+globs:
+alwaysApply: false
+---
+
+# motion-craft
+
+Ten commands. Each runs with a clear input contract, a sequence of skill calls, and an output contract.
+
+| Command | Trigger | Output |
+|---|---|---|
+| **init** | "set up motion for this project" | `MOTION.md` + Design Read |
+| **shape** | "plan motion before coding" | storyboard of beats + recipe + dial values |
+| **animate** | "implement the animations" | GSAP code matching recipe + motion mode |
+| **polish** | "polish this", "final pass" | tightened durations / eases / staggers + reduced-motion branch |
+| **audit** | "audit", "lint", "remove the slop" | structured report from motion-anti-slop |
+| **critique** | "design review" | qualitative review (does motion serve content?) |
+| **quieter** | "tone this down" | one-step reduction along Restrained → Expressive → Cinematic |
+| **bolder** | "amplify", "boring" | one-step amplification with discipline |
+| **adapt** | "make it accessible", "responsive" | `gsap.matchMedia` + breakpoint-aware motion |
+| **export** | "export as transparent video", "render to webm" | `capture.js` (Puppeteer) + FFmpeg commands |
+
+Composable: `init` → `shape` → `animate` → `polish` → `audit`.
+
+For each command's exact Sequence and Output contract: see `skills/motion-craft/SKILL.md`.

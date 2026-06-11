@@ -1,0 +1,16 @@
+---
+description: GSAP performance — quickTo, transform-only, will-change, batch vs loop, ScrollTrigger optimization. Use when frame rate matters (60fps target) or for high-frequency events (mousemove, scroll, drag).
+globs: ["**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro}"]
+alwaysApply: false
+---
+
+# gsap-performance
+
+- **High-frequency updates** (mousemove, scroll, drag): use `gsap.quickTo(target, "x", { duration: 0.5, ease: "power3" })` and call the returned function with new values. One reused tween instance, no GC churn.
+- **Transform-only** for moving / scaling / rotating. Do NOT animate `top`, `left`, `width`, `height`, `margin` — these trigger layout, not just composite.
+- `will-change: transform` on actively animated elements; remove it after the animation ends (reset inline style or remove class).
+- ScrollTrigger lists: prefer **`ScrollTrigger.batch`** over a forEach + per-item ScrollTrigger.
+- Avoid `getProperty()` inside `onUpdate` callbacks of high-frequency tweens — cache once.
+- For thousands of objects (particles, dots): `gsap.to(arrayOfTargets, { ... stagger })` instead of one tween per element.
+
+For full reference: `skills/gsap-performance/SKILL.md`.

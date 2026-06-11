@@ -1,0 +1,19 @@
+---
+description: GSAP in Vue, Nuxt, Svelte, SvelteKit and other component frameworks — lifecycle hooks, scoping selectors, when to create / kill tweens and ScrollTriggers, cleanup on unmount.
+globs: ["**/*.{vue,svelte}", "**/nuxt.config.{ts,js}", "**/svelte.config.{ts,js}"]
+alwaysApply: false
+---
+
+# gsap-frameworks
+
+**Vue / Nuxt:**
+- Create tweens and ScrollTriggers in `onMounted`. Save references on the component or in a ref.
+- Revert / kill in `onUnmounted` (`tween.kill()`, `st.kill()`, `splitInstance.revert()`).
+- Scope selectors to the component's root element (use a `ref` and pass it as `scope` analog: `gsap.context(() => { ... }, root)`).
+- Nuxt: keep GSAP code inside `<script setup>` with `onMounted` so it runs client-only, or use `<ClientOnly>` wrapper.
+
+**Svelte / SvelteKit:**
+- `onMount(() => { ... return cleanup; })` — Svelte calls the returned function on destroy. Put `tween.kill()` / `st.kill()` in cleanup.
+- For SvelteKit SSR: GSAP must not run at module scope. Use `onMount` exclusively.
+
+For full reference: `skills/gsap-frameworks/SKILL.md`.

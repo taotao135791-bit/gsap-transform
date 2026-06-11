@@ -1,0 +1,21 @@
+---
+description: Deterministic anti-slop checks for GSAP motion. Use before shipping or whenever the user asks "audit this", "lint this animation", "review this", "this feels generic", "this feels AI-built". Catches default ease abuse (back.out, elastic, bounce), choreography problems (parallax everywhere, hover lift+scale+shadow combo), accessibility breakage (missing prefers-reduced-motion), and silent-failure pitfalls (fromTo on CSS-hidden, MorphSVG on non-path, named imports from esm.sh).
+globs:
+alwaysApply: false
+---
+
+# motion-anti-slop
+
+32+ deterministic **block** / **warn** rules in seven groups:
+
+- **A. Duration tells** — too short / too long defaults
+- **B. Ease abuse** — `back.out(1.7)` / `elastic.*` / `bounce.*` as defaults (only one branded character moment per page)
+- **C. Choreography** — hover lift+scale+shadow combo, parallax on every section
+- **D. Accessibility** — missing `prefers-reduced-motion` (Pre-Flight Failure), scrub/pin under reduced-motion
+- **E. Performance** — animating layout properties, will-change abuse
+- **F. Composition** — single accent leak, AI-purple default, type pool drift
+- **G. Wiring & loading silent failures** — `gsap.from(autoAlpha:0)` on CSS-hidden element, CSS transform pre-existing, jsdelivr ESM, esm.sh named imports for plugins, MotionPath/DrawSVG on non-path
+
+Each rule has detect signature, wrong snippet, fix snippet, severity (`block` / `warn`).
+
+For the full A–G checklist with all detect/fix snippets: see `skills/motion-anti-slop/SKILL.md`.

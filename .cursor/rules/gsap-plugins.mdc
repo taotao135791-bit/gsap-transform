@@ -1,0 +1,26 @@
+---
+description: GSAP plugins — SplitText, MorphSVG, DrawSVG, MotionPath, Flip, Draggable, Inertia, Observer, CustomEase, CustomWiggle, ScrambleText, ScrollSmoother, Physics2D. Includes browser-native ESM CDN (esm.sh) rules. Use when user requests text splitting, shape morphing, SVG drawing, drag interactions, layout transitions, or specific plugin features. Also covers exporting GSAP SVG motion as transparent video (Puppeteer + FFmpeg).
+globs: ["**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro,html}"]
+alwaysApply: false
+---
+
+# gsap-plugins
+
+- Register every plugin used: `gsap.registerPlugin(SplitText, MorphSVGPlugin, ...)`.
+- All plugins are **free** since Webflow acquisition. Install from public `gsap` npm package; no `.npmrc` / auth token / Club membership.
+
+Browser-native ESM CDN (no bundler):
+- Use `https://esm.sh/gsap@3.15.0` for the core and `https://esm.sh/gsap@3.15.0/<PluginName>` for plugins.
+- **Always use default imports** for plugins — named imports from `esm.sh` may resolve to `undefined`.
+- Never use `cdn.jsdelivr.net/npm/gsap/<Plugin>.js` — module graph breaks.
+
+Plugin-specific:
+- **MotionPath** and **DrawSVG**: accept `<path>` elements only — not `<circle>`, `<rect>`, `<ellipse>`. Convert other shapes to `<path>` first.
+- **MorphSVG**: writes to the `<path>` `d` attribute, not inline CSS. `clearProps` does not restore `d` — capture original `d` at load time and restore manually in any reset function.
+- **SplitText**: revert before re-running on the same element (`splitInstance.revert()`); otherwise nested splits accumulate.
+- **Flip**: use `Flip.getState()` → DOM change → `Flip.from(state)` for layout transitions.
+- **Draggable** + **InertiaPlugin**: pass an array of axes (`type: "x,y"`) and `inertia: true` for momentum.
+
+Exporting motion as transparent video: `skills/gsap-plugins/SKILL.md` "Exporting GSAP SVG motion as video" section — Puppeteer + FFmpeg, ProRes 4444 alpha or VP9 alpha WebM.
+
+For full reference: `skills/gsap-plugins/SKILL.md`.

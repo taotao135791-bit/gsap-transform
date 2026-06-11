@@ -1,0 +1,15 @@
+---
+description: GSAP timelines — gsap.timeline(), position parameter, labels, nesting, playback control. Use for any multi-step or sequenced animation.
+globs: ["**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro}"]
+alwaysApply: false
+---
+
+# gsap-timeline
+
+- `gsap.timeline()` for any multi-step animation. Avoid chained `delay`.
+- Position parameter: numeric (`0.5`), absolute label (`"start"`), relative (`"+=0.3"`, `"-=0.2"`), previous-tween-relative (`"<"`, `"<0.1"`, `">"`).
+- Labels via `.addLabel("name", time)`; reference with `"name+=0.2"`.
+- Nest timelines: `parent.add(childTimeline, "label")` — child plays in parent's coordinate space.
+- `defaults: { ease: "expo.out", duration: 0.4 }` on the master timeline so every child inherits unless overridden.
+
+For full reference: `skills/gsap-timeline/SKILL.md`.
