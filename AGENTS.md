@@ -1,6 +1,6 @@
 # GSAP — Hard Rules for AI Coding Agents
 
-This file is read by **Claude Code** (`CLAUDE.md` symlink), **Google Gemini / Antigravity** (`GEMINI.md` symlink), and **OpenAI Codex** (`AGENTS.md`) when they work on a project that has installed these GSAP skills. It tells you the rules to follow when generating GSAP-based motion.
+This file is the **single source of truth** for hard rules. It is read directly by **OpenAI Codex** (`AGENTS.md`), and via `@AGENTS.md` import pointers by **Claude Code** (`CLAUDE.md`) and **Google Gemini / Antigravity** (`GEMINI.md`). It tells you the rules to follow when generating GSAP-based motion.
 
 > Editing or contributing new SKILLs to this repo? → see [CONTRIBUTING.md](./CONTRIBUTING.md). This file is for **using** the skills, not for editing them.
 

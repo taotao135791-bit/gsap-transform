@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*{scroll,Scroll}*"
+applyTo: "**/*.{js,jsx,ts,tsx,mjs,vue,svelte,astro,html}"
 ---
 
 # ScrollTrigger — path-specific instructions

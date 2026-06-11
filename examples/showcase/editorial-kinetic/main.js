@@ -12,8 +12,9 @@
  *   - prefers-reduced-motion respected via gsap.matchMedia
  */
 import { gsap } from "https://esm.sh/gsap@3.15.0";
-import { ScrollTrigger } from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
-import { SplitText } from "https://esm.sh/gsap@3.15.0/SplitText";
+// Plugins use DEFAULT imports from esm.sh (Anti-Slop G4) — named plugin imports may resolve to undefined.
+import ScrollTrigger from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
+import SplitText from "https://esm.sh/gsap@3.15.0/SplitText";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 

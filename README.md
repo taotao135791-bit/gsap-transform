@@ -1,12 +1,18 @@
 ```text
-   ██████╗ ███████╗ █████╗ ██████╗
-  ██╔════╝ ██╔════╝██╔══██╗██╔══██╗
-  ██║  ███╗███████╗███████║██████╔╝
-  ██║   ██║╚════██║██╔══██║██╔═══╝
-  ╚██████╔╝███████║██║  ██║██║
-   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝
+  ███╗   ███╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗
+  ████╗ ████║██╔═══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║
+  ██╔████╔██║██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║
+  ██║╚██╔╝██║██║   ██║   ██║   ██║██║   ██║██║╚██╗██║
+  ██║ ╚═╝ ██║╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║
+  ╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+  ██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗
+  ██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║
+  ██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║
+  ██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║
+  ██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║
+  ╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
-  Motion Design Skills
+  GSAP Skills
   ──●────●────●────●────●────●──
   不是文档搬运。是让 agent 做出来的东西，不像 AI 做的。
 ```
@@ -44,8 +50,8 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 │                                                                 │
 │  motion-design-taste   → brief inference, 3 dials, motion mode  │
 │  motion-recipes        → 8 clone-able aesthetic × motion combos │
-│  motion-anti-slop      → 32 deterministic block/warn checks     │
-│  motion-craft          → 9 commands (/init /shape /animate ...)  │
+│  motion-anti-slop      → 32+ deterministic block/warn checks    │
+│  motion-craft          → 10 commands (/init /shape /animate ...) │
 └─────────────────────────────────────────────────────────────────┘
                           ↓ routes to
 ┌─────────────────────────────────────────────────────────────────┐
@@ -95,7 +101,7 @@ This repo ships dedicated configuration for each of these agents, in addition to
 | **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (12 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
 | **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (12 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
 | **Google Gemini / Antigravity** | `GEMINI.md` (→ `AGENTS.md`) | Hard rules at session start |
-| **Windsurf** | `.windsurfrules` | Project-wide hard rules |
+| **Windsurf** | `.windsurf/rules/gsap.md` (current format) + `.windsurfrules` (legacy fallback) | Project-wide hard rules |
 
 Any agent supporting the `skills/<name>/SKILL.md` format (OpenCode, Pi, Qoder, and most other Agent Skills clients) works via the universal Manual copy below.
 
@@ -117,7 +123,7 @@ Copy `.github/copilot-instructions.md` and the entire `.github/instructions/` di
 
 ### Windsurf
 
-Copy `.windsurfrules` to your project root.
+Copy `.windsurf/rules/gsap.md` into your project (current format). For older Windsurf versions, copy `.windsurfrules` to your project root instead.
 
 ### Manual copy (any Agent Skills-compatible agent)
 
@@ -142,7 +148,7 @@ Copy `.windsurfrules` to your project root.
 | **motion-design-taste** | Brief inference → Design Read → 3 dials → motion mode → routes to API skills |
 | **motion-recipes** | 8 ready-to-clone pairings: Editorial Kinetic / Brutalist Scroll / Liquid Glass Hover / Bento Flip / Minimal Fade / Cinematic Pinned Scrub / Kinetic Type Stagger / Grid Break Overlap |
 | **motion-anti-slop** | 32+ deterministic anti-slop rules in 7 groups (A→G). Each has a detect signature, wrong snippet, fix snippet, and block/warn severity |
-| **motion-craft** | 9 commands: `/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` |
+| **motion-craft** | 10 commands: `/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/export` |
 
 ### "I need correct GSAP implementation"
 

@@ -1,6 +1,9 @@
-# GSAP — Windsurf rules
+---
+trigger: always_on
+description: GSAP hard rules — two-layer skill system (design taste first, API depth after), accessibility, anti-slop.
+---
 
-> Legacy single-file format, kept for older Windsurf versions. Current Windsurf reads `.windsurf/rules/gsap.md` (same content, with `trigger` frontmatter). Edit both together — `scripts/verify-consistency.mjs` checks they stay in sync.
+# GSAP — Windsurf rules
 
 When generating GSAP (GreenSock Animation Platform) code in this project, follow these hard rules.
 

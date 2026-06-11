@@ -1,12 +1,12 @@
 ---
 name: motion-craft
-description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills into a repeatable nine-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, and the gsap-* API skills.
+description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills into a repeatable ten-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, and the gsap-* API skills.
 license: MIT
 ---
 
 # Motion Craft (Command Workflow)
 
-A nine-command workflow that orchestrates the rest of the motion-design layer, plus a tenth utility command (`/export`) for rendering animations to transparent video. Use when the user wants a structured pass — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt` — instead of a single ad-hoc generation, or when the user asks to export motion as a video file.
+A ten-command workflow that orchestrates the rest of the motion-design layer: nine build/refine commands — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt` — plus the `/export` utility for rendering animations to transparent video. Use when the user wants a structured pass instead of a single ad-hoc generation, or when the user asks to export motion as a video file.
 
 ## When to Use This Skill
 

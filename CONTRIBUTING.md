@@ -56,7 +56,16 @@ When a new SKILL is added or an existing SKILL's API surface changes, update the
 | `.github/instructions/<skill>.instructions.md` | GitHub Copilot path-scoped instruction | Frontmatter: `applyTo` (glob array). Body: 6-12 short bullet rules |
 | `.claude-plugin/marketplace.json` | Claude Code marketplace listing | Update `description` if the skill scope changes |
 | `.cursor-plugin/marketplace.json` | Cursor remote-rule marketplace listing | Update `description` if the skill scope changes |
-| `.windsurfrules` | Windsurf single-file rule | Append a short rule for the new skill if it changes hard rules |
+| `.windsurf/rules/gsap.md` | Windsurf rule (current format) | Append a short rule for the new skill if it changes hard rules |
+| `.windsurfrules` | Windsurf single-file rule (legacy fallback) | Keep the rule body identical to `.windsurf/rules/gsap.md` — CI compares them |
+
+After editing any adapter, run the consistency gate locally before opening a PR:
+
+```bash
+node scripts/verify-consistency.mjs
+```
+
+It enforces: a single pinned gsap version across all files, Anti-Slop G4 compliance in `examples/`, an identical motion-craft command list everywhere, valid SKILL.md frontmatter, real (non-symlink) `CLAUDE.md` / `GEMINI.md` pointer files, full per-skill adapter coverage, and Windsurf legacy/current parity. The same script runs in CI (`.github/workflows/verify-consistency.yml`) on every push and PR.
 
 ## References
 

@@ -21,7 +21,7 @@ motion-anti-slop
   Triggers: audit, lint, review, AI tell, AI slop, anti-slop, this feels generic, this feels AI-built, motion quality pass, ship checklist, pre-flight.
 
 motion-craft
-  Command-style workflow that orchestrates the design layer and the API skills. Nine commands: init, shape, animate, polish, audit, critique, quieter, bolder, adapt. Sequences brief inference, recipe selection, code generation, and accessibility wiring.
+  Command-style workflow that orchestrates the design layer and the API skills. Ten commands: init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export. Sequences brief inference, recipe selection, code generation, and accessibility wiring.
   Triggers: /motion-craft, /animate, /polish, /audit-motion, structured pass, plan motion, storyboard motion, tone down motion, make motion bolder, add reduced motion, responsive motion.
 
 ## API Layer (load AFTER the Design Layer)

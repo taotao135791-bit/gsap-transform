@@ -7,7 +7,8 @@
  * `/<Plugin>.js` paths for browser-native ESM — they fail intermittently and break the whole graph.
  */
 import { gsap } from "https://esm.sh/gsap@3.15.0";
-import { ScrollTrigger } from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
+// Plugins use DEFAULT imports from esm.sh (Anti-Slop G4) — named plugin imports may resolve to undefined.
+import ScrollTrigger from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 

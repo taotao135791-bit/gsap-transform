@@ -11,8 +11,9 @@
  *   - prefers-reduced-motion respected via gsap.matchMedia
  */
 import { gsap } from "https://esm.sh/gsap@3.15.0";
-import { ScrollTrigger } from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
-import { Flip } from "https://esm.sh/gsap@3.15.0/Flip";
+// Plugins use DEFAULT imports from esm.sh (Anti-Slop G4) — named plugin imports may resolve to undefined.
+import ScrollTrigger from "https://esm.sh/gsap@3.15.0/ScrollTrigger";
+import Flip from "https://esm.sh/gsap@3.15.0/Flip";
 
 gsap.registerPlugin(ScrollTrigger, Flip);
 
