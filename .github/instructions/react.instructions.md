@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.tsx,**/*.jsx,**/components/**"
+applyTo: "**/*.[tj]sx"
 ---
 
 # GSAP in React — path-specific instructions

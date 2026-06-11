@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.{vue,svelte},**/nuxt.config.{ts,js},**/svelte.config.{ts,js}"
+applyTo: "**/*.{vue,svelte}"
 ---
 
 # GSAP in Vue / Nuxt / Svelte — path-specific instructions
