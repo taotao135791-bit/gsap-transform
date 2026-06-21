@@ -52,6 +52,7 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 │  motion-recipes        → 8 clone-able aesthetic × motion combos │
 │  motion-anti-slop      → 32+ deterministic block/warn checks    │
 │  motion-craft          → 10 commands (/init /shape /animate ...) │
+│  motion-graphics       → ad films / MG: chooser + film dials     │
 └─────────────────────────────────────────────────────────────────┘
                           ↓ routes to
 ┌─────────────────────────────────────────────────────────────────┐
@@ -62,7 +63,7 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-The Design Layer reads the user's brief, outputs a one-line **Design Read**, sets three dials (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`), picks a motion mode (Restrained / Expressive / Cinematic), and routes the agent to the right API skills. It also runs 32+ anti-slop checks before shipping.
+The Design Layer reads the user's brief, outputs a one-line **Design Read**, sets three dials (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`), picks a motion mode (Restrained / Expressive / Cinematic), and routes the agent to the right API skills. It also runs 32+ anti-slop checks before shipping. For **film / ad / MG output** (广告片 / 动效宣传片), the Design Layer swaps to **motion-graphics**, which runs a guided chooser and film-scoped dials instead of the web dials.
 
 ---
 
@@ -149,6 +150,7 @@ Copy `.windsurf/rules/gsap.md` into your project (current format). For older Win
 | **motion-recipes** | 8 ready-to-clone pairings: Editorial Kinetic / Brutalist Scroll / Liquid Glass Hover / Bento Flip / Minimal Fade / Cinematic Pinned Scrub / Kinetic Type Stagger / Grid Break Overlap |
 | **motion-anti-slop** | 32+ deterministic anti-slop rules in 7 groups (A→G). Each has a detect signature, wrong snippet, fix snippet, and block/warn severity |
 | **motion-craft** | 10 commands: `/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/export` |
+| **motion-graphics** | Film / ad / MG design layer: guided chooser (4 archetypes), film dials, PPT→Cinematic playbook, GSAP-vs-AE honesty map, web↔video export bridge |
 
 ### "I need correct GSAP implementation"
 
@@ -191,6 +193,7 @@ gsap-skills/
     motion-recipes/       SKILL.md
     motion-anti-slop/     SKILL.md
     motion-craft/         SKILL.md
+    motion-graphics/      SKILL.md + references/
     # API Layer
     gsap-core/            SKILL.md
     gsap-timeline/        SKILL.md

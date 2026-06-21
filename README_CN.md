@@ -52,6 +52,7 @@
 │  motion-recipes        → 8 个「审美 × 动效」配方可直接克隆     │
 │  motion-anti-slop      → 7 组 32+ 条确定性检测规则             │
 │  motion-craft          → 10 个命令（/init /shape /animate ...） │
+│  motion-graphics       → 广告片 / MG：引导选择器 + 影片调节杆  │
 └────────────────────────────────────────────────────────────────┘
                           ↓ 路由到
 ┌────────────────────────────────────────────────────────────────┐
@@ -62,7 +63,7 @@
 └────────────────────────────────────────────────────────────────┘
 ```
 
-设计层读 brief → 输出一行 **Design Read** → 设三调节杆（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→ 选动效模式（克制 / 表现 / 电影感）→ 路由到对应 API skill。并在上线前跑 32+ 条 anti-slop 规则。
+设计层读 brief → 输出一行 **Design Read** → 设三调节杆（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→ 选动效模式（克制 / 表现 / 电影感）→ 路由到对应 API skill。并在上线前跑 32+ 条 anti-slop 规则。若是**影片 / 广告片 / MG** 产出（广告片 / 动效宣传片），设计层改走 **motion-graphics**，跑引导式选择器和影片专用调节杆，不再用网页三杆。
 
 ---
 
@@ -149,6 +150,7 @@ npx skills add https://github.com/greensock/gsap-skills
 | **motion-recipes** | 8 个配方：Editorial Kinetic / Brutalist Scroll / Liquid Glass Hover / Bento Flip / Minimal Fade / Cinematic Pinned Scrub / Kinetic Type Stagger / Grid Break Overlap |
 | **motion-anti-slop** | 7 组 32+ 条规则，每条有检测特征、错误示例、修复方法、严重度（block / warn） |
 | **motion-craft** | 10 命令：`/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/export` |
+| **motion-graphics** | 影片 / 广告片 / MG 设计层：引导选择器（4 原型）、影片调节杆、PPT→电影感手册、GSAP-vs-AE 诚实边界、网页↔视频导出桥 |
 
 ### "写代码时需要正确的 GSAP 用法"
 
@@ -219,6 +221,7 @@ gsap-skills/
     motion-recipes/       SKILL.md
     motion-anti-slop/     SKILL.md
     motion-craft/         SKILL.md
+    motion-graphics/      SKILL.md + references/
     # API 层
     gsap-core/            SKILL.md
     gsap-timeline/        SKILL.md

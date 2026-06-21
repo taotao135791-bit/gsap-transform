@@ -1,0 +1,35 @@
+---
+description: Design layer for GSAP-driven ad films and motion graphics that read as After-Effects-grade (大厂风广告片 / MG / 动效宣传片). Runs a guided chooser resolving archetype (Kinetic Typography / Flat-Vector Morph / UI-Product Reveal / Hybrid CGI-Composite), delivery (web-live vs video-render), and reachability tier. Sets film dials (SCENE_INTENSITY, CAMERA_LANGUAGE, TEXTURE_GRADE, SOUND_DESIGN, DELIVERY) and the PPT-to-Cinematic craft playbook. Use instead of motion-design-taste when the deliverable is a linear film/video/ad, not a web page.
+globs:
+alwaysApply: false
+---
+
+# motion-graphics
+
+Design layer for **linear film / motion-graphics / ad output** (大厂风广告片) — use INSTEAD of `motion-design-taste` when the deliverable is a film, not a web page.
+
+## On entry — run the Guided Chooser
+1. Confirm film intent (广告片 / MG / 宣传片 / ad film / brand film / promo / logo sting / cinematic ad). If it's a web page → use `motion-design-taste` instead.
+2. Pick archetype: **Kinetic Typography** / **Flat-Vector Morph** / **UI-Product Reveal** / **Hybrid CGI-Composite** (last one needs WebGL/AE — GSAP choreographs only).
+3. Infer delivery: `web-live` vs `video-render` (default video-render).
+4. Output one-line **Film Read**: archetype + delivery + tier + dials.
+
+## Film dials (film-scoped — never pass to web skills)
+- `SCENE_INTENSITY` 1–10 → scene duration band 2–6s + ease strength
+- `CAMERA_LANGUAGE` none | subtle | cinematic → cinematic forces a `.stage` camera move (without it, the film reads as a slideshow)
+- `TEXTURE_GRADE` flat | filmic | graded → grain (`feTurbulence`) + CSS `filter` grade
+- `SOUND_DESIGN` none | diegetic | full-score → silent film = Pre-Flight warning
+- `DELIVERY` web-live | video-render → video uses the gsap-plugins ticker-hijack pipeline, NOT screen recording
+
+## De-slideshow top 3 (fix these first)
+1. **Sound** — ~40% of perceived quality; tie to `onComplete`/beat markers.
+2. **Camera motion** — `gsap.to(".stage", { scale: 1.08, duration: 4, ease: "none" })`.
+3. **Motion blur** — `gsap.fromTo(el, { filter: "blur(8px)" }, { filter: "blur(0px)" })`.
+
+## Honesty
+GSAP reaches pro look for kinetic type / flat morph / UI reveal / logo sting. It CANNOT do particles / real 3D / compositing / VFX / grading / audio — for those GSAP choreographs while WebGL/Canvas or AE/Blender renders. See `skills/motion-graphics/references/hybrid-stack.md`.
+
+## Film anti-slop
+Web rules A2 (>1.4s), B1 (back.out), C4 (parallax everywhere), A4 (grain) are overridden-with-discipline for film. See `skills/motion-graphics/references/film-anti-slop.md`.
+
+For full guidance: `skills/motion-graphics/SKILL.md`.

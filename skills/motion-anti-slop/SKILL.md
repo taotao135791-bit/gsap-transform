@@ -12,6 +12,8 @@ A deterministic checklist of motion-specific AI tells. Run before declaring any 
 
 Apply during a final pass on any GSAP-animated interface, or whenever the user says "this feels AI-built", "audit the motion", "remove the slop". Designed to be runnable mechanically — every rule has an explicit detection cue.
 
+**Film / ad / MG output:** these rules are tuned for web page UX. For a linear film / motion-graphics piece, several rules (A2 duration cap, B1 `back.out`, C4 parallax-everywhere, A4 forever-decorative) are correct for web and **wrong for film** — they flip to "allowed-with-discipline" in film mode. See [motion-graphics/references/film-anti-slop.md](../motion-graphics/references/film-anti-slop.md) for the override table. The web severities in this file are unchanged.
+
 **Related skills:** [motion-design-taste](../motion-design-taste/SKILL.md) for the rationale; [motion-craft](../motion-craft/SKILL.md) for the `/audit` and `/critique` commands; [gsap-core](../gsap-core/SKILL.md), [gsap-scrolltrigger](../gsap-scrolltrigger/SKILL.md), [gsap-performance](../gsap-performance/SKILL.md) for API context.
 
 ## How to Read Each Rule

@@ -45,7 +45,7 @@ Each command runs with a clear input contract, a sequence of skill calls, and an
 **Input contract:** the user's brief in natural language.
 
 **Sequence:**
-1. Load [motion-design-taste](../motion-design-taste/SKILL.md). Read Sections 1 (Brief Inference) and 2 (Three Dials).
+1. Detect intent and route. If the brief is a **film / motion-graphics / ad** (signals: 广告片 / MG / 动效宣传片 / 宣传片 / ad film / brand film / promo / logo sting / bumper / cinematic ad / AE replacement), load [motion-graphics](../motion-graphics/SKILL.md) and run its **Guided Chooser** (Section 1) to produce a one-line **Film Read** and the five film dials — then skip to step 6 and write `MOTION.md` from that. Otherwise (web page / landing / portfolio / scroll story) load [motion-design-taste](../motion-design-taste/SKILL.md) and continue with steps 2–5 below.
 2. Output a one-line **Design Read**.
 3. Set the three dials (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`) based on the brief.
 4. Pick one **motion mode** from Section 6 (Restrained / Expressive / Cinematic).

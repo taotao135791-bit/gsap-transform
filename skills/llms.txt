@@ -24,6 +24,10 @@ motion-craft
   Command-style workflow that orchestrates the design layer and the API skills. Ten commands: init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export. Sequences brief inference, recipe selection, code generation, and accessibility wiring.
   Triggers: /motion-craft, /animate, /polish, /audit-motion, structured pass, plan motion, storyboard motion, tone down motion, make motion bolder, add reduced motion, responsive motion.
 
+motion-graphics
+  Design layer for GSAP-driven ad films and motion graphics (广告片 / MG / 动效宣传片) that read as After-Effects-grade. Runs a guided chooser resolving archetype (Kinetic Typography / Flat-Vector Morph / UI-Product Reveal / Hybrid CGI-Composite), delivery (web-live vs video-render), and reachability tier (pure-GSAP vs hybrid). Sets film-scoped dials (SCENE_INTENSITY, CAMERA_LANGUAGE, TEXTURE_GRADE, SOUND_DESIGN, DELIVERY) and provides the PPT-to-Cinematic craft playbook and an honest GSAP-vs-AE capability map. Mutually exclusive with motion-design-taste: a page brief loads motion-design-taste; a film brief loads motion-graphics.
+  Triggers: 广告片, MG, 动效宣传片, 宣传片, 动画宣传片, ad film, brand film, promo, bumper, logo sting, motion graphics, cinematic ad, AE replacement, After Effects replacement, indistinguishable from AE, looks like a real ad, not a slideshow, looks like a PPT.
+
 ## API Layer (load AFTER the Design Layer)
 
 gsap-core
@@ -65,3 +69,5 @@ gsap-frameworks
 3. **gsap-* API skills** — one or more, based on the recipe's plugin list and the brief's framework.
 4. **motion-anti-slop** — final pass before shipping.
 5. **motion-craft** — when the user explicitly invokes a command (`/animate`, `/polish`, `/audit`, `/adapt`, etc.).
+
+For **film / ad / MG output** (广告片 / 动效宣传片), swap step 1 for motion-graphics: **motion-graphics** (Guided Chooser → Film Read + film dials) → **gsap-timeline** + **gsap-plugins** (export pipeline) → **motion-anti-slop** (web rules) **+ motion-graphics/references/film-anti-slop.md** (the film-mode overrides for A2/B1/C4/A4).

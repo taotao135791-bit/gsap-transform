@@ -72,6 +72,10 @@ Without explicit brief direction, do NOT reach for:
 ### Single accent lock
 The brief produces one accent color. Lock it. Verify at smoke-test that all uses (CTA bg, eyebrow color, focus ring) `getComputedStyle` return the same `rgb(...)`.
 
+## Film / ad / MG output
+
+When the deliverable is a **film / motion-graphics / ad** (广告片 / MG / 动效宣传片 / ad film / brand film / promo / logo sting / cinematic ad), the Design Layer entry point swaps: load `skills/motion-graphics/SKILL.md` INSTEAD of `motion-design-taste`, run its Guided Chooser, and set the film dials (`SCENE_INTENSITY`, `CAMERA_LANGUAGE`, `TEXTURE_GRADE`, `SOUND_DESIGN`, `DELIVERY`). Web anti-slop rules A2 (>1.4s), B1 (`back.out`), C4 (parallax everywhere), A4 (grain) are overridden-with-discipline in film mode — see `skills/motion-graphics/references/film-anti-slop.md`.
+
 ## Slash commands
 
 When the user invokes `/motion-craft <subcommand>` (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export), load `skills/motion-craft/SKILL.md` and follow that command's exact Sequence and Output contract.
