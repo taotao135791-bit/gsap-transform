@@ -428,6 +428,46 @@ MotionPathPlugin.convertToPath("#orbit");  // also: MorphSVGPlugin.convertToPath
 - **Detect at smoke-test:** for any tween that uses `motionPath` or `drawSVG`, run `document.querySelector(target).tagName === "path"` and confirm. After the tween runs, check `el.getAttribute("transform")` (MotionPath) or `el.style.strokeDasharray` (DrawSVG) is non-empty.
 - **Severity:** `block`.
 
+## Group G6 — Studio seek-contract tells
+
+These rules apply to **motion-studio preview projects** — artifacts produced by [`/studio`](../motion-craft/SKILL.md) that `render.mjs` must seek frame-by-frame. Each one is a real failure observed in testing; see the Rendering gotchas in [motion-studio](../motion-studio/SKILL.md) §3.
+
+### G6.1 Missing `window.__studio` contract
+
+- **Detect:** the project's `scene.js` runs but never sets `window.__studio = { gsap, tl, duration }` / never dispatches `__studio:ready`. `render.mjs` times out at `waitForFunction("window.__studio.tl")`.
+- **Fix:** collect every tween into one master `gsap.timeline()`, then `window.__studio = { gsap, tl, duration: () => tl.duration() }; window.dispatchEvent(new Event("__studio:ready"));`.
+- **Severity:** `block`.
+
+### G6.2 `GSDevTools.create()` not gated on `!window.__RENDERING`
+
+- **Detect:** `GSDevTools.create(...)` is called unconditionally, so it mounts during render and corrupts every frame.
+- **Fix:** `if (window.__RENDERING) return;` before `GSDevTools.create(...)`. `render.mjs` also injects CSS hiding `#devtools,#export-btn,#export-status`.
+- **Severity:** `block`.
+
+### G6.3 GSDevTools (or any plugin) imported as named from esm.sh
+
+- **Detect:** `import { GSDevTools } from "https://esm.sh/gsap@3.15.0/GSDevTools"`. GSDevTools *feels* like tooling, but it is a plugin — named imports may resolve to `undefined` (extends G4).
+- **Fix:** default import — `import GSDevTools from "https://esm.sh/gsap@3.15.0/GSDevTools"`.
+- **Severity:** `block`.
+
+### G6.4 Pointer-driven tween in a render-target scene
+
+- **Detect:** `quickTo` / `Draggable` / `pointermove`-driven tween in a scene meant to be rendered. These never advance under `tl.time(t)` seek (no DOM pointer events fire in headless capture).
+- **Fix:** Phase 1 — refuse the recipe (e.g. Liquid Glass Hover). Phase 2 — script a synthetic `--pointer-path`.
+- **Severity:** `warn`.
+
+### G6.5 `SplitText.create` before `document.fonts.ready`
+
+- **Detect:** `SplitText.create(...)` runs synchronously at module top level, not inside `document.fonts.ready.then(...)`. A late webfont swap reflows the measured lines and breaks the mask reveal.
+- **Fix:** gate SplitText on `document.fonts.ready`.
+- **Severity:** `block`.
+
+### G6.6 Scene reachable only via `ScrollTrigger scrub`
+
+- **Detect:** the master timeline's visible progression depends on `scrollTrigger: { scrub }` rather than absolute time. Under `tl.time(t)` seek, scroll never happens, so the scene never advances (the middle of the video freezes).
+- **Fix:** reframe scroll beats as time beats (`tl.to(el, {...}, "<0.4")`); or defer to Phase 2's scroll→time mapping.
+- **Severity:** `block` for a render target.
+
 ## How to Run This Skill
 
 1. Open the changed files. Walk Groups A → G in order.

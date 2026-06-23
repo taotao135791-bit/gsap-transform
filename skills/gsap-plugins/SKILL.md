@@ -568,6 +568,8 @@ Never guess the shape of an SVG element from its visual appearance in the compos
 - **`gsap.matchMedia`** conditions (e.g. viewport width) are locked to the Puppeteer viewport set in the capture script.
 - **`repeat: -1`** infinite tweens: specify exact start/end time to record; the ticker hijack does not auto-stop.
 
+> **See also:** the ticker-hijack above assumes the tween is on `gsap.globalTimeline`. For a **master timeline built inside `gsap.matchMedia()`** (the common case for a full scene), `gsap.updateRoot()` cannot drive it — the tl lives in the matchMedia context, not on the root. Use the [`motion-studio`](../motion-studio/SKILL.md) seek contract (`tl.time(t)` per frame) instead, which also handles the `file://` CORS, dev-UI hiding, and multi-resolution encoding.
+
 ## Do Not
 
 - ❌ Use a plugin in a tween or API without registering it first (**gsap.registerPlugin()**).

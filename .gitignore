@@ -28,3 +28,11 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Motion studio — render artifacts (never commit frames or rendered video)
+frames/
+output.mp4
+output.webm
+output.mov
+projects/*/frames/
+projects/*/output.*

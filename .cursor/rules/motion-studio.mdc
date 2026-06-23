@@ -1,0 +1,20 @@
+---
+description: The delivery shell that turns a GSAP scene into a previewable, tunable, multi-resolution video artifact (mp4/webm/mov). Use when the user wants a preview project they can scrub on a timeline and render to video (/studio), or asks to export motion as an mp4/webm/mov. Produces a self-contained folder (index.html + scene.js + render.mjs + serve.mjs). Loaded by /motion-craft studio.
+globs:
+alwaysApply: false
+---
+
+# motion-studio
+
+Produces a self-contained **preview project** (`projects/<slug>/`): `index.html` + `scene.js` + `render.mjs` + `serve.mjs` + `package.json`. Preview with `node serve.mjs` (timeline UI via GSDevTools), render with `node render.mjs --preset <1080p|4k|vertical|square>`.
+
+**Seek contract** (enforced by motion-anti-slop Group G6):
+- expose `window.__studio = { gsap, tl, duration }` and dispatch `__studio:ready`;
+- gate `GSDevTools.create()` on `!window.__RENDERING`;
+- default-import every plugin from esm.sh — **including GSDevTools** (G4/G6.3);
+- gate `SplitText` on `document.fonts.ready` (G6.5);
+- keep the scene **time-driven** (no `ScrollTrigger scrub`, no `quickTo`/pointer tweens).
+
+**Seek method:** `tl.time(t)` per frame — NOT `gsap.updateRoot()`. A timeline built inside `gsap.matchMedia()` is NOT on `gsap.globalTimeline`, so `updateRoot` cannot drive it. Four gotchas are baked into `render.mjs`: `file://` CORS (→ local http server), matchMedia seek (→ `tl.time`), tl-object serialization timeout (→ block-body evaluate that returns `undefined`), headless rAF (→ host-side `setTimeout`).
+
+For the full contract, gotchas, recipe allowlist, and tuning loop: see `skills/motion-studio/SKILL.md`.

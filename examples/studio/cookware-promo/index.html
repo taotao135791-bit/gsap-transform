@@ -1,0 +1,129 @@
+<!doctype html>
+<!--
+  Example /studio artifact — "HEARTH cookware" 15s vertical promo.
+  Recipe: motion-recipes — Editorial Kinetic. Design Read: premium heritage cookware,
+  design-conscious consumer audience, Expressive→Cinematic motion, burnt-orange accent on bone.
+  Render:  node render.mjs --preset vertical     (also try: 1080p | square)
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HEARTH — Cookware Promo</title>
+    <script>document.documentElement.className = "js";</script>
+    <style>
+      :root {
+        --paper: #f3efe7;
+        --ink:   #15140f;
+        --accent:#c2410c;            /* single locked accent (F5/F6) */
+        --rule:  rgba(21,20,15,0.16);
+        --ar: 9/16;                  /* default to vertical; ?ar= overrides */
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+      body {
+        font-family: "PP Neue Montreal", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        display: flex; align-items: center; justify-content: center; overflow: hidden;
+      }
+      .stage {
+        position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      }
+      .preview-ar .stage { width: auto; height: auto; aspect-ratio: var(--ar); max-width: 100vw; max-height: 100vh; border: 1px solid var(--rule); }
+
+      .beat {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 26px; padding: 9vmin; text-align: center;
+      }
+      .eyebrow { font-size: clamp(11px, 1.3vw, 15px); letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); }
+      .headline {
+        font-family: "PP Neue Montreal", "Cabinet Grotesk Display", sans-serif;
+        font-weight: 500; font-size: clamp(54px, 13vw, 220px);
+        line-height: 0.95; letter-spacing: -0.025em;
+      }
+      .headline .line { overflow: hidden; padding-bottom: 0.06em; }   /* SplitText mask */
+
+      .fnum {
+        font-family: "GT Sectra", "PP Editorial New", Georgia, serif; font-style: italic;
+        font-size: clamp(80px, 16vw, 240px); color: var(--accent); line-height: 1; letter-spacing: -0.02em;
+      }
+      .ftext {
+        font-family: "PP Neue Montreal", "Cabinet Grotesk Display", sans-serif; font-weight: 500;
+        font-size: clamp(40px, 9vw, 150px); line-height: 1.0; letter-spacing: -0.022em; max-width: 14ch;
+      }
+
+      .mark {
+        font-family: "PP Neue Montreal", sans-serif; font-weight: 600;
+        font-size: clamp(48px, 11vw, 180px); letter-spacing: 0.04em;
+      }
+      .tagline { font-size: clamp(13px, 1.5vw, 18px); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.6; }
+
+      /* All beats hidden until JS reveals them (D7: fall back to visible if GSAP never runs). */
+      .js .beat { opacity: 0; }
+
+      #devtools { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; }
+      #export-btn { position: fixed; right: 16px; top: 16px; z-index: 10; font: inherit; padding: 8px 14px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; border-radius: 999px; }
+      #export-status { position: fixed; right: 16px; top: 58px; z-index: 10; max-width: 360px; margin: 0; padding: 10px 12px; background: var(--ink); color: var(--paper); font: 12px/1.5 ui-monospace, "SF Mono", Menlo, monospace; border-radius: 8px; white-space: pre-wrap; }
+      @media (prefers-reduced-motion: reduce) { #export-btn, #export-status { display: none; } }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <section class="beat beat--intro">
+        <p class="eyebrow">Cast iron · since 1962</p>
+        <h1 class="headline">Cookware that<br />outlives the recipe.</h1>
+      </section>
+      <section class="beat beat--f1">
+        <span class="fnum">01</span>
+        <h2 class="ftext">Hand-cast in<br />single molds.</h2>
+      </section>
+      <section class="beat beat--f2">
+        <span class="fnum">02</span>
+        <h2 class="ftext">Seasoned,<br />never coated.</h2>
+      </section>
+      <section class="beat beat--f3">
+        <span class="fnum">03</span>
+        <h2 class="ftext">One pan.<br />Forty years.</h2>
+      </section>
+      <section class="beat beat--logo">
+        <div class="mark">HEARTH</div>
+        <div class="tagline">Made to be inherited.</div>
+      </section>
+    </main>
+
+    <div id="devtools"></div>
+    <button id="export-btn" type="button">Export video</button>
+    <pre id="export-status" hidden></pre>
+
+    <script>
+      (() => {
+        const m = /(?:[?&]ar=)([^&]+)/.exec(location.search);
+        if (m) { document.documentElement.style.setProperty("--ar", decodeURIComponent(m[1])); document.documentElement.classList.add("preview-ar"); }
+      })();
+    </script>
+
+    <script type="module" src="./scene.js?v=1"></script>
+
+    <script type="module">
+      import { gsap } from "https://esm.sh/gsap@3.15.0";
+      import GSDevTools from "https://esm.sh/gsap@3.15.0/GSDevTools";   // G4: default import
+
+      const mount = () => {
+        if (window.__RENDERING || !window.__studio || !window.__studio.tl) return;
+        gsap.registerPlugin(GSDevTools);
+        GSDevTools.create({ animation: window.__studio.tl, container: "#devtools" });
+      };
+      if (window.__studio && window.__studio.tl) mount();
+      else window.addEventListener("__studio:ready", mount, { once: true });
+
+      const btn = document.getElementById("export-btn");
+      const status = document.getElementById("export-status");
+      if (btn && !window.__RENDERING) {
+        btn.addEventListener("click", () => {
+          status.hidden = false;
+          status.textContent = "In terminal:\n  npm install\n  node render.mjs --preset vertical\n  # presets: 1080p | 4k | vertical | square";
+        });
+      }
+    </script>
+  </body>
+</html>

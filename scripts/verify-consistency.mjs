@@ -81,10 +81,10 @@ const ok = (msg) => console.log(`  ok  ${msg}`);
 
 // --------------------------------------------------- 3. motion-craft command list
 {
-  const CANONICAL = ["init", "shape", "animate", "polish", "audit", "critique", "quieter", "bolder", "adapt", "export"];
+  const CANONICAL = ["init", "shape", "animate", "polish", "audit", "critique", "quieter", "bolder", "adapt", "studio", "export"];
   const expectCount = String(CANONICAL.length);
   const checks = [
-    ["skills/llms.txt", /Ten commands: ([a-z, ]+)\./],
+    ["skills/llms.txt", /Eleven commands: ([a-z, ]+)\./],
     ["skills/motion-craft/SKILL.md", /\(init[^)]*\)/],
     [".cursor/rules/motion-craft.mdc", /\(init[^)]*\)/],
   ];

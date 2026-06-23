@@ -94,11 +94,21 @@ Shipping without this is a Pre-Flight Failure (Anti-Slop D1).
 ### 10. Single accent lock
 The brief produces one accent color. Lock it. Verify at smoke-test that all uses (CTA bg, eyebrow color, focus ring, link color, etc.) `getComputedStyle()` return the same `rgb(...)` (Anti-Slop F6).
 
+### 11. Motion Studio seek contract
+Every preview project produced by `/studio` (`skills/motion-studio/`) must:
+- expose `window.__studio = { gsap, tl, duration }` and dispatch `__studio:ready`;
+- gate `GSDevTools.create()` on `!window.__RENDERING`;
+- import every plugin — **including GSDevTools** — as a **default** import from esm.sh (Anti-Slop G4 / G6.3);
+- gate `SplitText` on `document.fonts.ready` (G6.5);
+- keep the scene **time-driven** (no `ScrollTrigger scrub`, no `quickTo`/pointer tweens) so `render.mjs`'s `tl.time(t)` seek captures every frame.
+
+Render with `node render.mjs --preset <1080p|4k|vertical|square>`; preview with `node serve.mjs` (NOT `file://` — ES modules are CORS-blocked at origin null). A timeline built inside `gsap.matchMedia()` is NOT on `gsap.globalTimeline`, so `gsap.updateRoot()` cannot drive it — seek the tl directly.
+
 ---
 
 ## When the user invokes a slash command
 
-`/motion-craft init`, `/motion-craft shape`, `/motion-craft animate`, `/motion-craft polish`, `/motion-craft audit`, `/motion-craft critique`, `/motion-craft quieter`, `/motion-craft bolder`, `/motion-craft adapt`, `/motion-craft export` — load `skills/motion-craft/SKILL.md` and follow that command's exact Sequence and Output contract.
+`/motion-craft init`, `/motion-craft shape`, `/motion-craft animate`, `/motion-craft polish`, `/motion-craft audit`, `/motion-craft critique`, `/motion-craft quieter`, `/motion-craft bolder`, `/motion-craft adapt`, `/motion-craft export`, `/motion-craft studio` — load `skills/motion-craft/SKILL.md` and follow that command's exact Sequence and Output contract.
 
 ---
 

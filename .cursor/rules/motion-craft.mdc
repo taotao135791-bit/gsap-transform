@@ -1,5 +1,5 @@
 ---
-description: Command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand> (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export) or asks for a structured pass on an animated interface. Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills.
+description: Command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand> (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export) or asks for a structured pass on an animated interface, or wants a preview project rendered to video (/studio). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-studio) and the GSAP API skills.
 globs:
 alwaysApply: false
 ---

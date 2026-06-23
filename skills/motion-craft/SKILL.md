@@ -1,12 +1,12 @@
 ---
 name: motion-craft
-description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop) and the GSAP API skills into a repeatable ten-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, and the gsap-* API skills.
+description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-studio) and the GSAP API skills into a repeatable eleven-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, motion-studio, and the gsap-* API skills.
 license: MIT
 ---
 
 # Motion Craft (Command Workflow)
 
-A ten-command workflow that orchestrates the rest of the motion-design layer: nine build/refine commands — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt` — plus the `/export` utility for rendering animations to transparent video. Use when the user wants a structured pass instead of a single ad-hoc generation, or when the user asks to export motion as a video file.
+An eleven-command workflow that orchestrates the rest of the motion-design layer: ten build/refine commands — `init`, `shape`, `animate`, `polish`, `audit`, `critique`, `quieter`, `bolder`, `adapt`, `studio` — plus the `/export` utility for rendering animations to transparent video. Use when the user wants a structured pass instead of a single ad-hoc generation, when the user asks to export motion as a video file, or when the user wants a self-contained **preview project** they can scrub on a timeline and render to mp4 (`/studio`).
 
 ## When to Use This Skill
 
@@ -28,6 +28,7 @@ Apply when the user invokes a `/motion-craft <command>` style call, when the use
 | **bolder** | "make it bolder", "amplify", "boring" | One-step amplification along the same scale, with discipline |
 | **adapt** | "make it accessible", "mobile responsive", "reduced motion" | Add prefers-reduced-motion + breakpoint-aware motion via `gsap.matchMedia` |
 | **export** | "export as transparent video", "render to webm", "png sequence", "/motion-craft export" | A `capture.js` script (Puppeteer) + FFmpeg commands for WebM VP9 alpha or ProRes 4444 |
+| **studio** | "make me a promo video", "build a preview project", "render this as a video", "/motion-craft studio" | A self-contained `projects/<slug>/` folder (index.html + scene.js + render.mjs + serve.mjs); run `node render.mjs --preset vertical` for mp4 |
 
 Each command runs with a clear input contract, a sequence of skill calls, and an output contract. Commands are **invokable directly** (`/motion-craft polish the hero`) or **composable** (`init` → `shape` → `animate` → `polish` → `audit`).
 
@@ -287,11 +288,30 @@ ffmpeg ...                           # encode to webm or mov
 - Interactive / pointer-driven tweens (`quickTo`, `Draggable`) are not recordable via seek; suggest a scripted pointer path if needed.
 - `gsap.matchMedia` conditions (e.g. viewport width) are locked to the Puppeteer viewport set in `capture.js`.
 
+## /motion-craft studio
+
+**Trigger:** "make me a 15s promo", "build me a preview project", "render this as a video", "/motion-craft studio". Optional: aspect ratio (`vertical` / `1080p` / `square` / `4k`), duration.
+
+**Sequence:**
+1. Run `/init` internally — Design Read, three dials, recipe selection, `MOTION.md`.
+2. Run `/shape` internally, but **reframe each beat from scroll-driven to time-driven** (a scroll `scrub` beat becomes `tl.to(el, {...}, "<0.4")` on the master timeline). If the recipe is `Brutalist Scroll` or `Cinematic Pinned Scrub` (scroll-bound), warn and fall back to a time-driven recipe — see [motion-studio](../motion-studio/SKILL.md) §5.
+3. **Scaffold** the project by copying [motion-studio](../motion-studio/SKILL.md) `templates/{index.html,scene.js,render.mjs,serve.mjs,package.json}` → `projects/<slug>/`, then fill `scene.js` with the time-driven beats.
+4. Wire the seek contract: `window.__studio = { gsap, tl, duration }`, dispatch `__studio:ready`, gate `GSDevTools.create()` on `!window.__RENDERING`. Run [motion-anti-slop](../motion-anti-slop/SKILL.md) Group G6.
+5. **Smoke-test**: `npm install && npm run preview` → open the URL → confirm GSDevTools scrubs the timeline, the Export button is present, console is clean, single-accent `getComputedStyle` passes (F6). Bump `scene.js?v=N` on every edit.
+6. **Output the run instructions**: `node render.mjs --preset <vertical|1080p|4k|square>` → `projects/<slug>/output.mp4`.
+
+**Output contract:** the `projects/<slug>/` folder + a 3-line "how to run" message. The artifact is the deliverable.
+
+**Tuning:** chat-driven — edit **only** `scene.js`, bump `?v=N`, the user refreshes the preview tab ([motion-studio](../motion-studio/SKILL.md) §7).
+
+**Phase-1 recipe allowlist (time-driven only):** Editorial Kinetic, Minimal Fade, Kinetic Type Stagger, Bento Flip (entrance only), Grid Break Overlap (entrance only). Refuse Liquid Glass Hover (G6.4 — `quickTo`), Brutalist Scroll / Cinematic Pinned Scrub (§5 — scroll-bound).
+
 ## Composing Commands
 
 Common chains:
 
 - **Greenfield:** `init` → `shape` → `animate` → `audit` → `polish` → `adapt`.
+- **Video artifact:** `studio` (runs `init` → `shape` → scaffold-preview internally — one command to a renderable `projects/<slug>/` folder).
 - **Inherited code:** `audit` → `critique` → (`quieter` | `bolder`) → `polish` → `adapt`.
 - **Bug-fix scope:** `audit` → `polish` (or `adapt` / `quieter` based on what audit flags). `audit` alone never modifies code; pair it with the matching fix command.
 - **Quick tone change:** (`quieter` | `bolder`) → `audit`.
