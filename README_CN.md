@@ -53,6 +53,7 @@
 │  motion-anti-slop      → 7 组 32+ 条确定性检测规则             │
 │  motion-craft          → 11 个命令（/init … /studio /export）  │
 │  motion-studio         → 预览工程 + 渲染 mp4/webm/mov          │
+│  video-grammar         → 镜头/运镜/转场/BPM 节奏               │
 └────────────────────────────────────────────────────────────────┘
                           ↓ 路由到
 ┌────────────────────────────────────────────────────────────────┐
@@ -99,8 +100,8 @@ npx skills add https://github.com/greensock/gsap-skills
 |-------|---------|---------|
 | **Claude Code** | `CLAUDE.md`（→`AGENTS.md`）、`.claude-plugin/{plugin,marketplace}.json` | 会话启动时加载硬规则 + 插件市场安装 |
 | **OpenAI Codex** | `AGENTS.md` | 会话启动时加载硬规则（Codex 官方标准） |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（13 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（13 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（14 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（14 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
 | **Google Gemini / Antigravity** | `GEMINI.md`（→`AGENTS.md`） | 会话启动时加载硬规则 |
 | **Windsurf** | `.windsurf/rules/gsap.md`（新版格式）+ `.windsurfrules`（旧版回退） | 项目级硬规则 |
 
@@ -151,6 +152,7 @@ npx skills add https://github.com/greensock/gsap-skills
 | **motion-anti-slop** | 7 组 32+ 条规则，每条有检测特征、错误示例、修复方法、严重度（block / warn） |
 | **motion-craft** | 11 命令：`/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/studio` `/export` |
 | **motion-studio** | 预览工程模板 + `render.mjs`（mp4/webm/mov · 1080p/4k/vertical/square）+ `serve.mjs` 时间轴预览。`/studio` 产出可拖动 + 可渲染的独立文件夹 |
+| **video-grammar** | 景别 / 虚拟摄像机（`.camera` 推/拉/摇）/ 转场 / BPM 节奏同步 / 画幅安全区。产出是视频时与 motion-design-taste 一起加载 |
 
 ### "写代码时需要正确的 GSAP 用法"
 

@@ -1,0 +1,29 @@
+---
+description: The video-native aesthetic layer. Load ALONGSIDE motion-design-taste when the artifact is a rendered video (mp4/webm/mov) — /studio scenes, promos, title sequences, reels. Adds shot types, virtual camera moves via a single .camera wrapper (push/pull/pan/tilt), the one-hero-transition rule, BPM beat-synced pacing, and aspect-ratio safe areas. Pair with motion-studio and motion-recipes.
+globs:
+alwaysApply: false
+---
+
+# video-grammar
+
+The aesthetic layer for **video**, beside motion-design-taste. motion-design-taste owns the page (dials, modes, type, color, layout); video-grammar owns what a page never has — **shot framing, virtual camera movement, transitions, beat-synced pacing, aspect-ratio composition**.
+
+## The `.camera` wrapper (the one idea)
+All shot content lives inside one `.camera` wrapper; the master timeline animates the *camera* (`scale`/`xPercent`/`yPercent`), the shot's content animates *inside* it. Two layers, never mixed (mixing = the "everything moves at once" AI tell).
+
+## Shot types = camera scale
+EWS 0.7–0.85 · WS 1.0 · MS 1.3 · MCU 1.6 · CU 2.2 · ECU 3.0–4.0. Offset with `xPercent`/`yPercent` to rule-of-thirds, not dead center every time.
+
+## Camera moves (one per shot — V1)
+push (scale up) · pull (scale down) · pan (xPercent) · tilt (yPercent) · pedestal (y) · truck (x) · parallax-as-dolly (differential layer x) · orbit (rotationY — **opaque bg only**, V5). Ease `power2.inOut`/`power3.inOut`; `none` only for hard cuts; never `back.*`/`elastic.*` on a camera.
+
+## Transitions (one hero per video — V2)
+hard cut (unlimited, default) · match cut (composition stays, content swaps) · crossfade · whip pan · morph · wipe · glitch. At most ONE signature transition per video; the rest are hard cuts.
+
+## BPM → beat-sync (V3)
+`beat = 60/bpm`. Snap shot boundaries + hero reveals to beat boundaries. Bands: Restrained 60–80, Expressive 90–110, Cinematic 120–140 BPM.
+
+## Aspect safe areas (V4)
+16:9 middle 80% h, avoid bottom 8%. 9:16 middle 60% v, top 12% + bottom 15% reserved. 1:1 centered 70%. Same scene must survive all three presets via `.camera` offset, not per-preset rewrites.
+
+For full rules (V1–V5) and code patterns: see `skills/video-grammar/SKILL.md`.

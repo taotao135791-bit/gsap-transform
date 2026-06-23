@@ -53,6 +53,7 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 │  motion-anti-slop      → 32+ deterministic block/warn checks    │
 │  motion-craft          → 11 commands (/init … /studio /export)   │
 │  motion-studio         → preview project + render mp4/webm/mov   │
+│  video-grammar         → shots, camera, transitions, beat-sync   │
 └─────────────────────────────────────────────────────────────────┘
                           ↓ routes to
 ┌─────────────────────────────────────────────────────────────────┐
@@ -99,8 +100,8 @@ This repo ships dedicated configuration for each of these agents, in addition to
 |-------|----------------|--------------|
 | **Claude Code** | `CLAUDE.md` (→ `AGENTS.md`), `.claude-plugin/{plugin,marketplace}.json` | Hard rules at session start + plugin marketplace install |
 | **OpenAI Codex** | `AGENTS.md` | Hard rules at session start (Codex official standard) |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (13 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (13 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (14 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (14 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
 | **Google Gemini / Antigravity** | `GEMINI.md` (→ `AGENTS.md`) | Hard rules at session start |
 | **Windsurf** | `.windsurf/rules/gsap.md` (current format) + `.windsurfrules` (legacy fallback) | Project-wide hard rules |
 
@@ -151,6 +152,7 @@ Copy `.windsurf/rules/gsap.md` into your project (current format). For older Win
 | **motion-anti-slop** | 32+ deterministic anti-slop rules in 7 groups (A→G). Each has a detect signature, wrong snippet, fix snippet, and block/warn severity |
 | **motion-craft** | 11 commands: `/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/studio` `/export` |
 | **motion-studio** | preview-project template + `render.mjs` (mp4/webm/mov · 1080p/4k/vertical/square) + `serve.mjs` timeline preview. `/studio` produces a self-contained folder you scrub + render |
+| **video-grammar** | shots / virtual camera (`.camera` push/pull/pan) / transitions / BPM beat-sync / aspect safe areas. Loads with motion-design-taste when the output is a rendered video |
 
 ### "I need correct GSAP implementation"
 
