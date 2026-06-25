@@ -2,7 +2,7 @@
 
 Use this file to discover which skill to load. Each skill lives in a directory of the same name under skills/ and contains SKILL.md.
 
-This repository is organised as **two layers**. Always load the **Design Layer** first to set direction and dials, then load the **API Layer** skills the brief actually needs.
+This repository is organised as **three layers**. Always load the **Design Layer** first to set direction and dials, then the **State Layer** to declare the timeline as data, then the **API Layer** skills the brief actually needs.
 
 Note: GSAP is fully free (including every plugin) since Webflow's acquisition. Club GSAP is no longer a paid tier — formerly Club-only plugins (SplitText, MorphSVG, etc.) are free for commercial use. Install everything from the public `gsap` npm package (`npm install gsap`); no `.npmrc` / auth token or private registry required. See gsap-plugins for details.
 
@@ -31,6 +31,16 @@ motion-studio
 video-grammar
   The video-native aesthetic layer — load ALONGSIDE motion-design-taste when the artifact is a rendered video (mp4/webm/mov), not a scrollable page. Adds shot types (WS/MS/CU/macro), virtual camera moves via a single .camera wrapper (push/pull/pan/tilt as GSAP transforms), the one-hero-transition rule, BPM→frame beat-synced pacing, and aspect-ratio safe areas (16:9 / 9:16 / 1:1). Feeds scene.js for /studio. Pairs with motion-studio (render + seek) and motion-recipes (Kinetic Type Stagger / Minimal Fade as bases).
   Triggers: shot, close-up, macro, push in, dolly, pull back, pan, tilt, match cut, whip pan, morph, transition, beat-sync, BPM, title sequence, lower third, 9:16 safe area, effect video, promo, reel, sting.
+
+## State Layer (load AFTER the Design Layer, BEFORE the API Layer)
+
+motion-state
+  The state layer that turns a motion project's timeline into **data the agent can read and edit** (`state.json`). Pure-JS runtime (`skills/motion-state/runtime.mjs`) with `validate`, `at(t)`, `add(beat)`, `remove(id)`, `update(id, patch)`, `summary()`. Schema is JSON Schema draft-07. Browser surface is `window.__studio.state`. Enforces Anti-Slop Group S (S1 `at` range, S2 layer overlap, S4 schemaVersion, S5 beats cap). The **source of truth** — scene.js is generated from state.json by `node scripts/state-to-scene.mjs`. This is what makes the agent a chatcut editor instead of a source-code editor.
+  Triggers: state.json, timeline state, edit timeline, add beat, remove beat, query timeline, at(t), window.__studio.state, chatcut.
+
+motion-primitives
+  16 high-level animation verbs (fadeUp, splitReveal, morphTo, staggerIn, shake, cameraPush, ...) that wrap GSAP calls behind a uniform contract. Every beat in state.json names a primitive; the scene.js generator turns state into tl.from/to calls via these verbs. Anti-slop rules are baked into each primitive's metadata. Use these INSTEAD of writing raw `tl.from / tl.to` in agent output.
+  Triggers: fadeUp, slideIn, splitReveal, primitive, animation verb, animation primitive.
 
 ## API Layer (load AFTER the Design Layer)
 

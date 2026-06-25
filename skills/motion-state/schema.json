@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gsap-transform/state.schema.json",
+  "title": "MotionStudio State",
+  "description": "Canonical state model for an agent-driven motion project. Source of truth — scene.js is generated from this.",
+  "type": "object",
+  "required": ["schemaVersion", "duration", "fps", "width", "height", "layers", "beats"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Bumped on breaking changes."
+    },
+    "duration": { "type": "number", "exclusiveMinimum": 0 },
+    "fps":       { "type": "integer", "enum": [24, 30, 60] },
+    "width":     { "type": "integer", "minimum": 1 },
+    "height":    { "type": "integer", "minimum": 1 },
+    "accent":    { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "fonts": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "selector", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id":       { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$" },
+          "selector": { "type": "string" },
+          "type":     { "enum": ["any", "text", "svg-path", "container", "group", "image"] },
+          "content":  { "type": "string" }
+        }
+      }
+    },
+    "beats": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": ["id", "layerId", "primitive", "at"],
+        "additionalProperties": false,
+        "properties": {
+          "id":       { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$" },
+          "layerId":  { "type": "string" },
+          "primitive":{ "type": "string" },
+          "at":       { "type": "number", "minimum": 0 },
+          "duration": { "type": "number", "exclusiveMinimum": 0 },
+          "args":     { "type": "object" },
+          "allowOverlap": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "url"],
+        "properties": {
+          "id":  { "type": "string" },
+          "url": { "type": "string" }
+        }
+      }
+    }
+  }
+}

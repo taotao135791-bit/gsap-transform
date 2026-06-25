@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <rect width="320" height="180" fill="#0B0B0F"/>
+  <rect x="20" y="20" width="40" height="40" rx="10" fill="#FFD60A"/>
+  <text x="20" y="100" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#fff">Color Shift Logo</text>
+  <text x="20" y="124" font-family="system-ui, sans-serif" font-size="12" fill="#888">logo · 4s · 1080×1080</text>
+  <text x="20" y="160" font-family="system-ui, sans-serif" font-size="11" fill="#FFD60A">2 beats</text>
+</svg>

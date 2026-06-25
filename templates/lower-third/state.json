@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "slug": "lower-third",
+  "title": "Lower Third",
+  "industry": "cinematic",
+  "duration": 5,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "accent": "#FFFFFF",
+  "layers": [
+    {
+      "id": "name",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Dr. Mei Chen"
+    },
+    {
+      "id": "role",
+      "selector": ".subhead",
+      "type": "text",
+      "content": "Lead Researcher"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "name",
+      "primitive": "slideInLeft",
+      "at": 0.3,
+      "duration": 0.6
+    },
+    {
+      "id": "b2",
+      "layerId": "role",
+      "primitive": "fadeUp",
+      "at": 1,
+      "duration": 0.5
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "slug": "quote-card",
+  "title": "Quote Card",
+  "industry": "social",
+  "duration": 5,
+  "fps": 30,
+  "width": 1080,
+  "height": 1350,
+  "accent": "#FFFFFF",
+  "layers": [
+    {
+      "id": "quote",
+      "selector": ".headline",
+      "type": "text",
+      "content": "\"Move fast.\""
+    },
+    {
+      "id": "author",
+      "selector": ".subhead",
+      "type": "text",
+      "content": "— Mark Zuckerberg"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "quote",
+      "primitive": "splitReveal",
+      "at": 0.3,
+      "duration": 0.9
+    },
+    {
+      "id": "b2",
+      "layerId": "author",
+      "primitive": "fadeUp",
+      "at": 1.6,
+      "duration": 0.5
+    }
+  ]
+}

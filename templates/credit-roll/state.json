@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "slug": "credit-roll",
+  "title": "Credit Roll",
+  "industry": "cinematic",
+  "duration": 6,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "accent": "#FFFFFF",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Directed by\nProduced by\nEdited by\nSound by"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "parallaxY",
+      "at": 0,
+      "duration": 5,
+      "args": {
+        "distance": -400,
+        "ease": "none"
+      }
+    }
+  ]
+}

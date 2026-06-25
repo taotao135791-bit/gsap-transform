@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "slug": "logo-particles",
+  "title": "Particle Logo",
+  "industry": "logo",
+  "duration": 4,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#A78BFA",
+  "layers": [
+    {
+      "id": "logo",
+      "selector": ".logo",
+      "type": "text",
+      "content": "△"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "logo",
+      "primitive": "scaleIn",
+      "at": 0,
+      "duration": 0.6,
+      "args": {
+        "from": 0.3
+      }
+    },
+    {
+      "id": "b2",
+      "layerId": "logo",
+      "primitive": "shake",
+      "at": 1.2,
+      "duration": 0.4,
+      "args": {
+        "magnitude": 6
+      }
+    }
+  ]
+}

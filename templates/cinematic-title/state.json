@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "slug": "cinematic-title",
+  "title": "Cinematic Title",
+  "industry": "cinematic",
+  "duration": 8,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "accent": "#E63946",
+  "layers": [
+    {
+      "id": "bg",
+      "selector": ".bg-shape",
+      "type": "any",
+      "content": ""
+    },
+    {
+      "id": "eyebrow",
+      "selector": ".eyebrow",
+      "type": "text",
+      "content": "A FILM BY"
+    },
+    {
+      "id": "title",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Quiet Thunder"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "bg",
+      "primitive": "fadeIn",
+      "at": 0,
+      "duration": 1
+    },
+    {
+      "id": "b2",
+      "layerId": "eyebrow",
+      "primitive": "fadeUp",
+      "at": 1.2,
+      "duration": 0.6
+    },
+    {
+      "id": "b3",
+      "layerId": "title",
+      "primitive": "splitReveal",
+      "at": 2,
+      "duration": 1.4,
+      "args": {
+        "direction": "up",
+        "stagger": 0.12
+      }
+    }
+  ]
+}

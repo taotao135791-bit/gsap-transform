@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "slug": "kpi-counter",
+  "title": "KPI Counter",
+  "industry": "data",
+  "duration": 4,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#FFD60A",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "1.4M users"
+    },
+    {
+      "id": "sub",
+      "selector": ".subhead",
+      "type": "text",
+      "content": "+18% MoM"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "splitReveal",
+      "at": 0.2,
+      "duration": 0.8
+    },
+    {
+      "id": "b2",
+      "layerId": "sub",
+      "primitive": "fadeUp",
+      "at": 1.4,
+      "duration": 0.5
+    }
+  ]
+}

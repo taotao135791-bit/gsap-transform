@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "slug": "product-pricing-tier",
+  "title": "Pricing Tier",
+  "industry": "product",
+  "duration": 7,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#06D6A0",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Pick a plan"
+    },
+    {
+      "id": "tier1",
+      "selector": ".tier1",
+      "type": "text",
+      "content": "Starter — $0"
+    },
+    {
+      "id": "tier2",
+      "selector": ".tier2",
+      "type": "text",
+      "content": "Pro — $19"
+    },
+    {
+      "id": "tier3",
+      "selector": ".tier3",
+      "type": "text",
+      "content": "Team — $49"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "splitReveal",
+      "at": 0.2,
+      "duration": 0.7
+    },
+    {
+      "id": "b2",
+      "layerId": "tier1",
+      "primitive": "fadeUp",
+      "at": 1.2,
+      "duration": 0.5
+    },
+    {
+      "id": "b3",
+      "layerId": "tier2",
+      "primitive": "fadeUp",
+      "at": 1.6,
+      "duration": 0.5
+    },
+    {
+      "id": "b4",
+      "layerId": "tier3",
+      "primitive": "fadeUp",
+      "at": 2,
+      "duration": 0.5
+    }
+  ]
+}

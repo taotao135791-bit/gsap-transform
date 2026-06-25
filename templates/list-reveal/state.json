@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "slug": "list-reveal",
+  "title": "List Reveal",
+  "industry": "social",
+  "duration": 6,
+  "fps": 30,
+  "width": 1080,
+  "height": 1350,
+  "accent": "#7DF9FF",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "3 things"
+    },
+    {
+      "id": "row1",
+      "selector": ".row1",
+      "type": "text",
+      "content": "First"
+    },
+    {
+      "id": "row2",
+      "selector": ".row2",
+      "type": "text",
+      "content": "Second"
+    },
+    {
+      "id": "row3",
+      "selector": ".row3",
+      "type": "text",
+      "content": "Third"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "fadeUp",
+      "at": 0.2,
+      "duration": 0.5
+    },
+    {
+      "id": "b2",
+      "layerId": "row1",
+      "primitive": "slideInLeft",
+      "at": 1,
+      "duration": 0.5
+    },
+    {
+      "id": "b3",
+      "layerId": "row2",
+      "primitive": "slideInLeft",
+      "at": 1.5,
+      "duration": 0.5
+    },
+    {
+      "id": "b4",
+      "layerId": "row3",
+      "primitive": "slideInLeft",
+      "at": 2,
+      "duration": 0.5
+    }
+  ]
+}

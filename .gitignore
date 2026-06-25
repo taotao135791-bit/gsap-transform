@@ -36,3 +36,10 @@ output.webm
 output.mov
 projects/*/frames/
 projects/*/output.*
+
+# Local working projects picked from templates (not committed; user can recreate)
+projects/
+
+# Node test artifacts
+.nyc_output/
+coverage/

@@ -1,0 +1,13 @@
+{
+  "name": "motion-studio-project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "node serve.mjs",
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "puppeteer-core": "^25.1.0"
+  }
+}

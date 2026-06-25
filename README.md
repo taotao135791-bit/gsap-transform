@@ -22,8 +22,51 @@
 # GSAP Motion Design Skills
 
 > 用一套规则让 AI agent 停止产出千篇一律的 `Inter` + 紫色渐变 + `back.out(1.7)` + 居中 hero。
+> **Three layers**: Design (taste) · State (timeline as data) · API (GSAP correctness).
+> Plus 16 animation primitives and 20 templates — the agent-native **ChatCut**.
 
 Two layers: a **Design Layer** that teaches agents *taste* (brief inference, dials, recipes, anti-slop rules), and an **API Layer** that teaches agents *correct GSAP implementation*. The first layer fires before any code is written; the second fires when code is written.
+
+---
+
+## 30-second quickstart
+
+```bash
+git clone <this-repo> && cd gsap-skills
+npm test                                    # 73 tests, ~5s
+npm run pick product-hero-reveal            # clone template → projects/product-hero-reveal/
+node scripts/state-to-scene.mjs projects/product-hero-reveal   # regenerate scene.js
+cd projects/product-hero-reveal
+node serve.mjs                              # browser preview w/ GSDevTools
+node render.mjs --preset vertical --dry-run # 1080×1920 seek-loop smoke test
+node render.mjs --preset vertical           # → output.mp4
+```
+
+The chatcut edit loop:
+
+```bash
+# edit projects/<slug>/state.json
+# e.g. move a beat, change a duration, add a layer
+node scripts/state-to-scene.mjs projects/<slug>
+# refresh the browser tab — done
+```
+
+The agent does **not** edit `scene.js` by hand. It edits `state.json`. See [docs/SPEC.md](./docs/SPEC.md) for the full contract.
+
+---
+
+## Template gallery
+
+20 ship in v1. Each is a folder under `templates/<slug>/` with `state.json` + `thumbnail.svg` + `README.md`. Pick one with `npm run pick <slug>`.
+
+| | | | | |
+|---|---|---|---|---|
+| ![phr](assets/motion-templates/product-hero-reveal.svg) **Product Hero Reveal** — `product-hero-reveal` | ![pfg](assets/motion-templates/product-feature-grid.svg) **Feature Grid** — `product-feature-grid` | ![pss](assets/motion-templates/product-specs-stack.svg) **Specs Stack** — `product-specs-stack` | ![p360](assets/motion-templates/product-360-spin.svg) **360 Spin** — `product-360-spin` | ![pcc](assets/motion-templates/product-cta-card.svg) **CTA Card** — `product-cta-card` |
+| ![ppt](assets/motion-templates/product-pricing-tier.svg) **Pricing Tier** — `product-pricing-tier` | ![lw](assets/motion-templates/logo-wordmark.svg) **Wordmark Logo** — `logo-wordmark` | ![lm](assets/motion-templates/logo-morph.svg) **Logo Morph** — `logo-morph` | ![lp](assets/motion-templates/logo-particles.svg) **Particle Logo** — `logo-particles` | ![lcs](assets/motion-templates/logo-color-shift.svg) **Color Shift** — `logo-color-shift` |
+| ![ct](assets/motion-templates/cinematic-title.svg) **Cinematic Title** — `cinematic-title` | ![kts](assets/motion-templates/kinetic-type-stagger.svg) **Kinetic Type** — `kinetic-type-stagger` | ![lt](assets/motion-templates/lower-third.svg) **Lower Third** — `lower-third` | ![cr](assets/motion-templates/credit-roll.svg) **Credit Roll** — `credit-roll` | ![bcg](assets/motion-templates/bar-chart-grow.svg) **Bar Chart** — `bar-chart-grow` |
+| ![kc](assets/motion-templates/kpi-counter.svg) **KPI Counter** — `kpi-counter` | ![ld](assets/motion-templates/line-draw.svg) **Line Draw** — `line-draw` | ![qc](assets/motion-templates/quote-card.svg) **Quote Card** — `quote-card` | ![ba](assets/motion-templates/before-after.svg) **Before/After** — `before-after` | ![lr](assets/motion-templates/list-reveal.svg) **List Reveal** — `list-reveal` |
+
+Want a template that's not here? Open an issue — or write a `state.json` and contribute. Adding a template takes one file: see [`docs/SPEC.md` §4](./docs/SPEC.md).
 
 ---
 
@@ -42,7 +85,7 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 
 ---
 
-## The two-layer architecture
+## The three-layer architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -51,9 +94,19 @@ This is the slop pool. The GSAP API is powerful; the design direction given to t
 │  motion-design-taste   → brief inference, 3 dials, motion mode  │
 │  motion-recipes        → 8 clone-able aesthetic × motion combos │
 │  motion-anti-slop      → 32+ deterministic block/warn checks    │
-│  motion-craft          → 11 commands (/init … /studio /export)   │
-│  motion-studio         → preview project + render mp4/webm/mov   │
-│  video-grammar         → shots, camera, transitions, beat-sync   │
+│  motion-craft          → 11 commands (/init … /studio /export)  │
+│  motion-studio         → preview project + render mp4/webm/mov  │
+│  video-grammar         → shots, camera, transitions, beat-sync  │
+└─────────────────────────────────────────────────────────────────┘
+                          ↓ declares
+┌─────────────────────────────────────────────────────────────────┐
+│  STATE LAYER (NEW in v0.3) — the chatcut core                   │
+│                                                                 │
+│  motion-state          → state.json schema + runtime + window.  │
+│                            __studio.state (query / add / remove)│
+│  motion-primitives     → 16 verbs (fadeUp, splitReveal, ...)    │
+│                                                                 │
+│  20 templates/         → clone-able state.json + thumbnail.svg  │
 └─────────────────────────────────────────────────────────────────┘
                           ↓ routes to
 ┌─────────────────────────────────────────────────────────────────┐
@@ -189,12 +242,16 @@ Copy `.windsurf/rules/gsap.md` into your project (current format). For older Win
 gsap-skills/
   README.md / README_CN.md
   AGENTS.md
+  docs/SPEC.md                # binding dev spec + acceptance criteria
   skills/
     # Design Layer
     motion-design-taste/  SKILL.md
     motion-recipes/       SKILL.md
     motion-anti-slop/     SKILL.md
     motion-craft/         SKILL.md
+    # State Layer (v0.3)
+    motion-state/         SKILL.md  schema.json  runtime.mjs
+    motion-primitives/    SKILL.md  *.js × 16
     # API Layer
     gsap-core/            SKILL.md
     gsap-timeline/        SKILL.md
@@ -204,12 +261,20 @@ gsap-skills/
     gsap-react/           SKILL.md
     gsap-performance/     SKILL.md
     gsap-frameworks/      SKILL.md
+    # Delivery
+    motion-studio/        SKILL.md  templates/{index.html,scene.js,render.mjs,…}
+    video-grammar/        SKILL.md
+  templates/                # 20 clone-able state.json + README + thumbnail
+  assets/motion-templates/  # SVG thumbnails
   examples/
     vanilla/ react/ vue/ nuxt/
-    showcase/
-      editorial-kinetic/
-      brutalist-scroll/
-      liquid-glass-hover/
+    showcase/{editorial-kinetic,brutalist-scroll,liquid-glass-hover}
+    studio/{cinematic-title,cookware-promo,helix-launch}      # hand-written
+    studio-state/product-hero-reveal/                        # state-driven
+  tests/                    # node:test, 73 assertions
+    motion-primitives/  motion-state/  templates/  render/
+  scripts/                  # verify-consistency / gen-templates / state-to-scene / pick-template
+  projects/                 # local working dirs (gitignored)
 ```
 
 ---

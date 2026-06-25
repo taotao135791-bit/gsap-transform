@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "slug": "logo-color-shift",
+  "title": "Color Shift Logo",
+  "industry": "logo",
+  "duration": 4,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#FFD60A",
+  "layers": [
+    {
+      "id": "logo",
+      "selector": ".logo",
+      "type": "any",
+      "content": ""
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "logo",
+      "primitive": "fadeIn",
+      "at": 0,
+      "duration": 0.6
+    },
+    {
+      "id": "b2",
+      "layerId": "logo",
+      "primitive": "loopPulse",
+      "at": 0.8,
+      "duration": 2,
+      "args": {
+        "scale": 1.06
+      }
+    }
+  ]
+}

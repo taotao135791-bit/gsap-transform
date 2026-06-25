@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "slug": "bar-chart-grow",
+  "title": "Bar Chart Grow",
+  "industry": "data",
+  "duration": 6,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#06D6A0",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Q3 Growth"
+    },
+    {
+      "id": "grid",
+      "selector": ".grid",
+      "type": "group",
+      "content": ""
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "fadeUp",
+      "at": 0.2,
+      "duration": 0.5
+    },
+    {
+      "id": "b2",
+      "layerId": "grid",
+      "primitive": "staggerIn",
+      "at": 0.9,
+      "duration": 0.6,
+      "args": {
+        "stagger": 0.18,
+        "y": 80
+      }
+    }
+  ]
+}

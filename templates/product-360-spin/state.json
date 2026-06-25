@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "slug": "product-360-spin",
+  "title": "Product 360 Spin",
+  "industry": "product",
+  "duration": 5,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#FF5A1F",
+  "layers": [
+    {
+      "id": "bg",
+      "selector": ".bg-shape",
+      "type": "any",
+      "content": ""
+    },
+    {
+      "id": "logo",
+      "selector": ".logo",
+      "type": "any",
+      "content": ""
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "logo",
+      "primitive": "cameraPush",
+      "at": 0,
+      "duration": 4.5,
+      "args": {
+        "scale": 1.2,
+        "x": 0,
+        "y": -20
+      }
+    }
+  ]
+}

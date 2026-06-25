@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "slug": "logo-wordmark",
+  "title": "Wordmark Logo",
+  "industry": "logo",
+  "duration": 3.5,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#FF5A1F",
+  "layers": [
+    {
+      "id": "logo",
+      "selector": ".logo",
+      "type": "text",
+      "content": "ACME"
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "logo",
+      "primitive": "scaleIn",
+      "at": 0,
+      "duration": 0.8,
+      "args": {
+        "from": 0.4
+      }
+    },
+    {
+      "id": "b2",
+      "layerId": "logo",
+      "primitive": "loopPulse",
+      "at": 1.2,
+      "duration": 1.5,
+      "args": {
+        "scale": 1.05
+      }
+    }
+  ]
+}

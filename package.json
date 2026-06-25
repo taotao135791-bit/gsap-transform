@@ -1,0 +1,17 @@
+{
+  "name": "gsap-skills",
+  "version": "0.3.0",
+  "description": "Agent-native motion skills — chatcut-style timeline editing via primitives + state.json.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test 'tests/**/*.test.mjs'",
+    "verify": "node scripts/verify-consistency.mjs",
+    "gen:templates": "node scripts/gen-templates.mjs",
+    "pick": "node scripts/pick-template.mjs",
+    "studio:gen": "node scripts/state-to-scene.mjs"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,30 @@
+---
+description: The state layer that lets an agent observe and edit a motion project's timeline as data (state.json) instead of as GSAP source. Use whenever an agent needs to query what is happening at a given moment (state.at(t)), add or remove beats, or render from a declarative state.json. Pairs with motion-studio and motion-primitives. The runtime is pure JS in skills/motion-state/runtime.mjs and runs in both Node and the browser.
+globs:
+alwaysApply: false
+---
+
+# motion-state
+
+Every `/studio` project carries a `state.json` that is the **source of truth**. `scene.js` is generated from it (`node scripts/state-to-scene.mjs`).
+
+Schema lives in `skills/motion-state/schema.json` (JSON Schema draft-07). Runtime lives in `skills/motion-state/runtime.mjs`:
+
+```
+validate(state);         // throws on schema or anti-slop violation
+at(state, t);            // → beats overlapping t
+add(state, beat);        // returns new state with beat appended
+remove(state, beatId);   // returns new state with beat removed
+update(state, id, patch) // returns new state with patched beat
+summary(state);          // → { beatCount, layerCount, duration, primitives }
+```
+
+Browser surface: `window.__studio.state` mirrors the same API. Mutations trigger `rebuild()` so GSDevTools reflects the change live.
+
+**Anti-slop Group S** (enforced at every mutation):
+- S1: `at` in `[0, duration]`
+- S2: layer overlap without `allowOverlap: true`
+- S4: missing `schemaVersion`
+- S5: `beats.length > 200` (LLM runaway guard)
+
+For the full contract, schema, and limitations: see `skills/motion-state/SKILL.md`.

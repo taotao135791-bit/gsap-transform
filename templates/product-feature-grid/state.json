@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "slug": "product-feature-grid",
+  "title": "Feature Grid",
+  "industry": "product",
+  "duration": 8,
+  "fps": 30,
+  "width": 1080,
+  "height": 1080,
+  "accent": "#7DF9FF",
+  "layers": [
+    {
+      "id": "headline",
+      "selector": ".headline",
+      "type": "text",
+      "content": "Why it's different"
+    },
+    {
+      "id": "grid",
+      "selector": ".grid",
+      "type": "group",
+      "content": ""
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "layerId": "headline",
+      "primitive": "splitReveal",
+      "at": 0.2,
+      "duration": 0.8
+    },
+    {
+      "id": "b2",
+      "layerId": "grid",
+      "primitive": "staggerIn",
+      "at": 1.2,
+      "duration": 0.6,
+      "args": {
+        "stagger": 0.12
+      }
+    }
+  ]
+}
