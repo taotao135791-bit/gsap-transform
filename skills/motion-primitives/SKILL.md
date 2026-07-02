@@ -13,7 +13,7 @@ Without primitives, the agent has to write `tl.fromTo(el, {y: 24, autoAlpha: 0},
 ## The contract
 
 ```js
-// primitives/fadeUp.js
+// motion-primitives/fadeUp.js
 export default {
   name: "fadeUp",
   layerTypes: ["any"],
@@ -66,11 +66,11 @@ export default {
 
 ## How to add a new primitive
 
-1. Create `skills/primitives/<name>.js`. Follow the contract above.
-2. Export it from `skills/primitives/index.js`.
-3. Add it to `PRIMITIVE_NAMES` in `skills/state/runtime.mjs`.
-4. Add a test in `tests/primitives/<name>.test.mjs`.
-5. Run `node --test tests/primitives/`.
+1. Create `skills/motion-primitives/<name>.js`. Follow the contract above.
+2. Export it from `skills/motion-primitives/index.js`.
+3. Add it to `PRIMITIVE_NAMES` and `PRIMITIVE_LAYER_TYPES` in `skills/motion-state/runtime.mjs`.
+4. Add the primitive to the catalog table above.
+5. Run `node scripts/verify-consistency.mjs` to confirm the new primitive is exported and all templates still validate.
 
 ## Limitations
 

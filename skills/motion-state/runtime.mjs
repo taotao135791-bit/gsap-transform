@@ -3,7 +3,7 @@
 //
 // Public API:
 //   validate(state)         → throws on schema/anti-slop violation
-//   at(state, t)            → beats overlapping t (open interval)
+//   at(state, t)            → beats active at time t (half-open interval; instantaneous beats match at exact start)
 //   add(state, beat)        → returns new state with beat appended (validates)
 //   remove(state, beatId)   → returns new state with beat removed
 //   summary(state)          → { beatCount, layerCount, duration, ... }
@@ -18,6 +18,19 @@ export const PRIMITIVE_NAMES = [
   "parallaxY", "staggerIn",
   "loopPulse", "shake", "cameraPush", "hold"
 ];
+
+// Layer-type requirements per primitive (mirrors each primitive's `layerTypes`).
+// Used by validate() to enforce Anti-Slop G5 (svg-path for morphTo/drawOn) and
+// general type safety. "any" matches every layer type. Keep in sync with the
+// `layerTypes` field declared on each primitive in skills/motion-primitives/.
+export const PRIMITIVE_LAYER_TYPES = {
+  fadeUp: ["any"], fadeIn: ["any"], scaleIn: ["any"],
+  slideInLeft: ["any"], slideInRight: ["any"],
+  splitReveal: ["text"], typewriter: ["text"], scrambleText: ["text"],
+  morphTo: ["svg-path"], drawOn: ["svg-path"],
+  parallaxY: ["any"], staggerIn: ["group", "container"],
+  loopPulse: ["any"], shake: ["any"], cameraPush: ["container"], hold: ["any"]
+};
 
 // ---------- validation ----------
 
@@ -34,6 +47,56 @@ export function validate(state) {
   if (![24, 30, 60].includes(state.fps)) throw new Error(`fps must be 24|30|60`);
   if (!Array.isArray(state.layers)) throw new Error("layers must be an array");
   if (!Array.isArray(state.beats)) throw new Error("beats must be an array");
+  if (state.motionIntensity !== undefined &&
+      (typeof state.motionIntensity !== "number" || state.motionIntensity < 1 || state.motionIntensity > 10)) {
+    throw new Error(`motionIntensity must be a number in [1,10], got ${state.motionIntensity}`);
+  }
+  // Optional string fields (mirror schema.json type constraints).
+  for (const k of ["slug", "title", "industry"]) {
+    if (state[k] !== undefined && typeof state[k] !== "string") {
+      throw new Error(`${k} must be a string`);
+    }
+  }
+  // Accent color format (mirror schema.json pattern).
+  if (state.accent !== undefined) {
+    if (typeof state.accent !== "string" || !/^#[0-9A-Fa-f]{6}$/.test(state.accent)) {
+      throw new Error(`accent must be a hex color like "#FF5A1F", got ${JSON.stringify(state.accent)}`);
+    }
+  }
+  // Fonts: optional object whose values are string URLs.
+  if (state.fonts !== undefined) {
+    if (typeof state.fonts !== "object" || Array.isArray(state.fonts)) {
+      throw new Error("fonts must be an object");
+    }
+    for (const [k, v] of Object.entries(state.fonts)) {
+      if (typeof v !== "string") {
+        throw new Error(`fonts.${k} must be a string (URL)`);
+      }
+    }
+  }
+  // Assets: optional array of { id, url } (mirror schema.json).
+  if (state.assets !== undefined) {
+    if (!Array.isArray(state.assets)) {
+      throw new Error("assets must be an array");
+    }
+    if (state.assets.length > 50) {
+      throw new Error(`assets count ${state.assets.length} > 50`);
+    }
+    const assetIds = new Set();
+    for (const asset of state.assets) {
+      if (!asset || typeof asset !== "object") {
+        throw new Error("each asset must be an object");
+      }
+      if (typeof asset.id !== "string" || !/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(asset.id)) {
+        throw new Error(`bad asset id: ${asset?.id}`);
+      }
+      if (assetIds.has(asset.id)) throw new Error(`duplicate asset id: ${asset.id}`);
+      assetIds.add(asset.id);
+      if (typeof asset.url !== "string" || !asset.url) {
+        throw new Error(`asset ${asset.id}: url must be a non-empty string`);
+      }
+    }
+  }
 
   const ids = new Set();
   for (const layer of state.layers) {
@@ -44,6 +107,7 @@ export function validate(state) {
     }
   }
   const layerIds = new Set(state.layers.map(l => l.id));
+  const layerTypeById = new Map(state.layers.map(l => [l.id, l.type]));
 
   if (state.beats.length > MAX_BEATS) {
     throw new Error(`Anti-slop S5: beats count ${state.beats.length} > ${MAX_BEATS}`);
@@ -60,6 +124,15 @@ export function validate(state) {
     }
     if (!PRIMITIVE_NAMES.includes(beat.primitive)) {
       throw new Error(`beat ${beat.id}: unknown primitive ${beat.primitive}`);
+    }
+    // Anti-Slop G5 / type safety: primitive must be applied to a compatible layer.
+    const allowedTypes = PRIMITIVE_LAYER_TYPES[beat.primitive];
+    const beatLayerType = layerTypeById.get(beat.layerId);
+    if (allowedTypes && !allowedTypes.includes("any") && !allowedTypes.includes(beatLayerType)) {
+      throw new Error(
+        `beat ${beat.id}: primitive "${beat.primitive}" requires layer type [${allowedTypes.join("|")}] ` +
+        `but layer "${beat.layerId}" is "${beatLayerType}"`
+      );
     }
     if (typeof beat.at !== "number" || beat.at < 0 || beat.at > state.duration) {
       throw new Error(`beat ${beat.id}: at=${beat.at} out of [0, ${state.duration}]`);
@@ -97,8 +170,11 @@ export function at(state, t) {
   if (typeof t !== "number") throw new Error("t must be a number");
   return state.beats.filter(b => {
     const start = b.at;
-    const end = b.at + (b.duration ?? 0);
-    return t >= start && t < end;
+    const dur = b.duration ?? 0;
+    // Instantaneous beats (no duration) match only at their exact start time.
+    // Beats with duration match on a half-open interval [start, start+dur).
+    if (dur === 0) return t === start;
+    return t >= start && t < start + dur;
   });
 }
 
@@ -113,10 +189,12 @@ export function getLayer(state, id) {
 // ---------- mutations (return new state, never mutate) ----------
 
 export function add(state, beat) {
+  // Shallow-copy the beat so the caller cannot mutate state by reference.
+  // For deep args immutability, callers should pass structuredClone(beat).
   const next = {
     ...state,
     layers: [...state.layers],
-    beats: [...state.beats, beat]
+    beats: [...state.beats, { ...beat }]
   };
   validate(next);
   return next;
@@ -134,7 +212,15 @@ export function remove(state, beatId) {
 export function update(state, beatId, patch) {
   const next = {
     ...state,
-    beats: state.beats.map(b => b.id === beatId ? { ...b, ...patch } : b)
+    beats: state.beats.map(b => {
+      if (b.id !== beatId) return b;
+      const merged = { ...b, ...patch };
+      // Deep-merge args so partial arg updates don't clobber existing args.
+      if (b.args && patch.args) {
+        merged.args = { ...b.args, ...patch.args };
+      }
+      return merged;
+    })
   };
   validate(next);
   return next;

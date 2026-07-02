@@ -6,6 +6,7 @@ export default {
   defaultArgs: { y: 24, duration: 0.5, ease: "expo.out" },
   antiSlop: ["G1"],
   apply(target, args, ctx) {
+    args = mergeArgs(args, this.defaultArgs);
     const tl = ctx.tl.fromTo(target,
       { autoAlpha: 0, y: args.y },
       {

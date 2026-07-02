@@ -40,6 +40,9 @@ projects/*/output.*
 # Local working projects picked from templates (not committed; user can recreate)
 projects/
 
+# Generated scene.js (output of scripts/state-to-scene.mjs, not source)
+templates/*/scene.js
+
 # Node test artifacts
 .nyc_output/
 coverage/
