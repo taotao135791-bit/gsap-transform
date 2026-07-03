@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notion — The AI workspace</title>
+    <script>document.documentElement.className = "js";</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        /* Notion brand palette — extracted from notion.com */
+        --n-bg: #FFFFFF;
+        --n-bg-warm: #F8F8F8;
+        --n-bg-sidebar: #F7F7F5;
+        --n-bg-hover: #F1F1EF;
+        --n-ink: #111111;
+        --n-ink-secondary: rgba(17,17,17,0.55);
+        --n-ink-tertiary: rgba(17,17,17,0.35);
+        --n-ink-quaternary: rgba(17,17,17,0.15);
+        --n-border: #E3E3E3;
+        --n-border-light: #F0F0F0;
+        --n-accent: #2537B1;
+        --n-accent-hover: #1E2E94;
+        --n-accent-soft: rgba(37,55,177,0.08);
+        --n-coral: #F64932;
+        --n-yellow: #FFB110;
+        --n-green: #1AAE39;
+        --n-teal: #2A9D99;
+        --n-purple: #AD6DED;
+        --n-pink: #FF83DD;
+        --n-orange: #FF8A33;
+        --n-blue: #097FE8;
+        --n-shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+        --n-shadow-md: 0 4px 24px rgba(0,0,0,0.06);
+        --n-shadow-lg: 0 8px 40px rgba(0,0,0,0.1);
+        --n-radius-sm: 4px;
+        --n-radius-md: 8px;
+        --n-radius-lg: 12px;
+        --n-radius-xl: 16px;
+        --n-radius-pill: 999px;
+        --ar: 16/9;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; background: var(--n-bg); color: var(--n-ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+      body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.5; }
+
+      .stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+      .preview-ar .stage { width: auto; height: auto; aspect-ratio: var(--ar); max-width: 100vw; max-height: 100vh; border: 1px solid var(--n-border); }
+
+      /* Camera with perspective for depth */
+      .camera { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; transform-origin: center center; perspective: 1200px; }
+      .preview-ar .camera { width: 100%; height: 100%; }
+
+      .shot { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 5vmin; }
+
+      /* ---------- Eyebrow (Notion style) ---------- */
+      .eyebrow { font-size: 13px; font-weight: 600; color: var(--n-accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
+
+      /* ---------- Shot 1: Hero — Full Notion app window ---------- */
+      .shot-1 .app-window {
+        width: 85vw; max-width: 1100px; height: 70vh;
+        background: var(--n-bg); border: 1px solid var(--n-border);
+        border-radius: var(--n-radius-lg); overflow: hidden;
+        box-shadow: var(--n-shadow-lg); display: flex; flex-direction: column;
+      }
+      .shot-1 .app-topbar {
+        display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+        border-bottom: 1px solid var(--n-border-light); background: var(--n-bg);
+      }
+      .shot-1 .app-dot { width: 10px; height: 10px; border-radius: 50%; }
+      .shot-1 .app-title { font-size: 13px; color: var(--n-ink-tertiary); margin-left: 8px; }
+      .shot-1 .app-body { display: flex; flex: 1; overflow: hidden; }
+      .shot-1 .app-sidebar {
+        width: 240px; background: var(--n-bg-sidebar); border-right: 1px solid var(--n-border-light);
+        padding: 16px 12px; flex-shrink: 0; overflow: hidden;
+      }
+      .shot-1 .sidebar-section { margin-bottom: 16px; }
+      .shot-1 .sidebar-header { font-size: 11px; font-weight: 600; color: var(--n-ink-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; padding: 0 8px; }
+      .shot-1 .sidebar-item {
+        display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+        border-radius: var(--n-radius-sm); font-size: 13px; color: var(--n-ink-secondary);
+        cursor: pointer; transition: background 0.15s;
+      }
+      .shot-1 .sidebar-item:hover { background: var(--n-bg-hover); }
+      .shot-1 .sidebar-item.active { background: var(--n-bg-hover); color: var(--n-ink); font-weight: 500; }
+      .shot-1 .sidebar-icon { width: 16px; height: 16px; border-radius: var(--n-radius-sm); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 600; }
+      .shot-1 .sidebar-page { width: 16px; height: 16px; border-radius: var(--n-radius-sm); flex-shrink: 0; }
+      .shot-1 .app-page { flex: 1; padding: 40px 60px; text-align: left; overflow: hidden; }
+      .shot-1 .page-title { font-size: 36px; font-weight: 700; color: var(--n-ink); margin-bottom: 4px; letter-spacing: -0.02em; }
+      .shot-1 .page-emoji { font-size: 28px; margin-right: 8px; }
+      .shot-1 .page-block { font-size: 16px; color: var(--n-ink-secondary); line-height: 1.7; margin-bottom: 2px; padding: 3px 0; }
+      .shot-1 .page-block.empty { color: var(--n-ink-quaternary); }
+      .shot-1 .page-block.h1 { font-size: 28px; font-weight: 600; color: var(--n-ink); margin-top: 16px; margin-bottom: 8px; }
+      .shot-1 .page-block.h2 { font-size: 22px; font-weight: 600; color: var(--n-ink); margin-top: 12px; margin-bottom: 6px; }
+      .shot-1 .page-block.bullet { padding-left: 24px; position: relative; }
+      .shot-1 .page-block.bullet::before { content: "•"; position: absolute; left: 6px; color: var(--n-ink-tertiary); }
+      .shot-1 .page-block.todo { padding-left: 24px; position: relative; }
+      .shot-1 .page-block.todo::before { content: "☐"; position: absolute; left: 4px; color: var(--n-ink-tertiary); font-size: 14px; }
+      .shot-1 .page-block.todo.done { text-decoration: line-through; color: var(--n-ink-quaternary); }
+      .shot-1 .page-block.todo.done::before { content: "☑"; color: var(--n-green); }
+      .shot-1 .page-block.callout {
+        background: var(--n-bg-sidebar); border-radius: var(--n-radius-md);
+        padding: 12px 16px; margin: 8px 0; display: flex; align-items: flex-start; gap: 10px;
+      }
+      .shot-1 .callout-emoji { font-size: 18px; }
+      .shot-1 .callout-text { font-size: 14px; color: var(--n-ink-secondary); }
+      .shot-1 .ai-cursor {
+        display: inline-block; width: 2px; height: 1.2em; background: var(--n-accent);
+        vertical-align: text-bottom; animation: blink 1s step-end infinite;
+      }
+      .shot-1 .slash-hint {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 10px; border-radius: var(--n-radius-sm);
+        background: var(--n-accent-soft); color: var(--n-accent);
+        font-size: 13px; font-weight: 500;
+      }
+
+      /* ---------- Shot 2: Pain — Tab overload ---------- */
+      .shot-2 .tabs-bar {
+        display: flex; gap: 6px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center;
+        max-width: 720px;
+      }
+      .shot-2 .tab-chip {
+        display: flex; align-items: center; gap: 6px;
+        padding: 8px 14px; border-radius: var(--n-radius-md);
+        background: var(--n-bg-sidebar); border: 1px solid var(--n-border);
+        font-size: 13px; color: var(--n-ink-secondary);
+      }
+      .shot-2 .tab-chip.alert { border-color: var(--n-coral); color: var(--n-coral); background: rgba(246,73,50,0.04); }
+      .shot-2 .tab-dot { width: 8px; height: 8px; border-radius: 50%; }
+      .shot-2 .pain-headline { font-size: clamp(28px, 4.5vw, 56px); font-weight: 700; color: var(--n-ink); line-height: 1.15; letter-spacing: -0.02em; }
+      .shot-2 .pain-body { font-size: 16px; color: var(--n-ink-secondary); margin-top: 14px; max-width: 440px; line-height: 1.6; }
+
+      /* ---------- Shot 3: Reveal — Notion AI overlay ---------- */
+      .shot-3 .reveal-stage { position: relative; width: 85vw; max-width: 1000px; height: 65vh; }
+      .shot-3 .reveal-bg {
+        position: absolute; inset: 0; background: var(--n-bg); border: 1px solid var(--n-border);
+        border-radius: var(--n-radius-lg); box-shadow: var(--n-shadow-md); opacity: 0.6;
+      }
+      .shot-3 .reveal-content {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; z-index: 2;
+      }
+      .shot-3 .notion-logo-mark {
+        width: 80px; height: 80px; margin-bottom: 24px;
+      }
+      .shot-3 .notion-logo-mark svg { width: 100%; height: 100%; }
+      .shot-3 .reveal-headline { font-size: clamp(32px, 5vw, 64px); font-weight: 700; color: var(--n-ink); line-height: 1.1; letter-spacing: -0.02em; }
+      .shot-3 .reveal-headline .ai-accent { color: var(--n-accent); }
+      .shot-3 .reveal-body { font-size: 16px; color: var(--n-ink-secondary); margin-top: 16px; max-width: 420px; line-height: 1.6; }
+      .shot-3 .reveal-cta {
+        margin-top: 24px; padding: 10px 24px; border-radius: var(--n-radius-md);
+        background: var(--n-accent); color: #fff; font-size: 14px; font-weight: 600;
+        border: none; cursor: pointer;
+      }
+
+      /* ---------- Shot 4: Feature — AI writing in editor ---------- */
+      .shot-4 .editor-window {
+        width: 80vw; max-width: 900px; background: var(--n-bg);
+        border: 1px solid var(--n-border); border-radius: var(--n-radius-lg);
+        box-shadow: var(--n-shadow-lg); overflow: hidden;
+      }
+      .shot-4 .editor-toolbar {
+        display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+        border-bottom: 1px solid var(--n-border-light); background: var(--n-bg-warm);
+      }
+      .shot-4 .toolbar-btn {
+        padding: 4px 8px; border-radius: var(--n-radius-sm); font-size: 12px;
+        color: var(--n-ink-tertiary); background: transparent; border: none; cursor: pointer;
+      }
+      .shot-4 .toolbar-btn.active { background: var(--n-bg-hover); color: var(--n-ink); font-weight: 500; }
+      .shot-4 .editor-canvas { padding: 40px 60px; text-align: left; }
+      .shot-4 .editor-h1 { font-size: 32px; font-weight: 700; color: var(--n-ink); margin-bottom: 8px; letter-spacing: -0.02em; }
+      .shot-4 .editor-line { font-size: 16px; color: var(--n-ink-secondary); line-height: 1.7; margin-bottom: 2px; padding: 3px 0; }
+      .shot-4 .editor-line.ai { color: var(--n-ink); }
+      .shot-4 .editor-line.ai::before { content: "✨ "; }
+      .shot-4 .ai-suggestion {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px; border-radius: var(--n-radius-md);
+        background: var(--n-accent-soft); color: var(--n-accent);
+        font-size: 13px; font-weight: 500; margin-top: 8px;
+      }
+
+      /* ---------- Shot 5: Feature — Database table ---------- */
+      .shot-5 .db-window {
+        width: 85vw; max-width: 960px; background: var(--n-bg);
+        border: 1px solid var(--n-border); border-radius: var(--n-radius-lg);
+        box-shadow: var(--n-shadow-lg); overflow: hidden;
+      }
+      .shot-5 .db-toolbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 20px; border-bottom: 1px solid var(--n-border-light); background: var(--n-bg-warm);
+      }
+      .shot-5 .db-title { font-size: 14px; font-weight: 600; color: var(--n-ink); }
+      .shot-5 .db-view-tabs { display: flex; gap: 4px; }
+      .shot-5 .db-view-tab {
+        padding: 5px 12px; border-radius: var(--n-radius-sm); font-size: 12px;
+        color: var(--n-ink-tertiary); background: transparent; border: none; cursor: pointer;
+      }
+      .shot-5 .db-view-tab.active { background: var(--n-bg); color: var(--n-ink); font-weight: 500; border: 1px solid var(--n-border); }
+      .shot-5 .db-table { width: 100%; border-collapse: collapse; }
+      .shot-5 .db-table th {
+        text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600;
+        color: var(--n-ink-tertiary); text-transform: uppercase; letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--n-border-light); background: var(--n-bg-warm);
+      }
+      .shot-5 .db-table td { padding: 12px 16px; font-size: 14px; color: var(--n-ink); border-bottom: 1px solid var(--n-border-light); }
+      .shot-5 .db-table tr:last-child td { border-bottom: none; }
+      .shot-5 .db-tag {
+        display: inline-block; padding: 3px 10px; border-radius: var(--n-radius-sm);
+        font-size: 12px; font-weight: 500;
+      }
+      .shot-5 .tag-green { background: #E8F5E9; color: #1B5E20; }
+      .shot-5 .tag-orange { background: #FFF3E0; color: #E65100; }
+      .shot-5 .tag-gray { background: var(--n-bg-warm); color: var(--n-ink-tertiary); }
+      .shot-5 .db-ai-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 2px 8px; border-radius: var(--n-radius-sm);
+        background: var(--n-accent-soft); color: var(--n-accent);
+        font-size: 11px; font-weight: 600;
+      }
+      .shot-5 .db-person { display: flex; align-items: center; gap: 8px; }
+      .shot-5 .person-avatar { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; }
+
+      /* ---------- Shot 6: Feature — AI Search ---------- */
+      .shot-6 .search-window {
+        width: 560px; background: var(--n-bg); border: 1px solid var(--n-border);
+        border-radius: var(--n-radius-lg); box-shadow: var(--n-shadow-lg); overflow: hidden;
+      }
+      .shot-6 .search-input-bar {
+        display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+        border-bottom: 1px solid var(--n-border-light);
+      }
+      .shot-6 .search-mag { width: 18px; height: 18px; color: var(--n-ink-tertiary); flex-shrink: 0; }
+      .shot-6 .search-field { font-size: 16px; color: var(--n-ink); border: none; outline: none; background: transparent; width: 100%; font-family: inherit; }
+      .shot-6 .search-results { padding: 6px 0; text-align: left; }
+      .shot-6 .search-result {
+        display: flex; align-items: center; gap: 12px; padding: 10px 18px;
+        font-size: 14px; color: var(--n-ink); cursor: pointer;
+      }
+      .shot-6 .search-result:hover { background: var(--n-bg-hover); }
+      .shot-6 .result-page-icon { width: 20px; height: 20px; border-radius: var(--n-radius-sm); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 600; }
+      .shot-6 .result-meta { font-size: 12px; color: var(--n-ink-tertiary); margin-left: auto; }
+      .shot-6 .search-ai-answer {
+        padding: 14px 18px; border-top: 1px solid var(--n-border-light);
+        background: var(--n-bg-warm); text-align: left;
+      }
+      .shot-6 .ai-answer-label { font-size: 11px; font-weight: 600; color: var(--n-accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+      .shot-6 .ai-answer-text { font-size: 14px; color: var(--n-ink-secondary); line-height: 1.6; }
+
+      /* ---------- Shot 7: Value — Team workspace ---------- */
+      .shot-7 .workspace-preview {
+        width: 85vw; max-width: 1000px; height: 60vh; background: var(--n-bg);
+        border: 1px solid var(--n-border); border-radius: var(--n-radius-lg);
+        box-shadow: var(--n-shadow-lg); overflow: hidden; display: flex;
+      }
+      .shot-7 .workspace-sidebar {
+        width: 200px; background: var(--n-bg-sidebar); border-right: 1px solid var(--n-border-light);
+        padding: 16px 12px; flex-shrink: 0;
+      }
+      .shot-7 .workspace-main { flex: 1; padding: 32px 40px; text-align: left; position: relative; }
+      .shot-7 .live-cursors {
+        position: absolute; top: 12px; right: 20px; display: flex; gap: 8px;
+      }
+      .shot-7 .live-cursor {
+        display: flex; align-items: center; gap: 6px;
+        padding: 4px 10px; border-radius: var(--n-radius-pill);
+        background: var(--n-bg); border: 1px solid var(--n-border);
+        font-size: 12px; font-weight: 500;
+      }
+      .shot-7 .cursor-dot { width: 6px; height: 6px; border-radius: 50%; }
+      .shot-7 .workspace-h1 { font-size: 28px; font-weight: 700; color: var(--n-ink); margin-bottom: 12px; }
+      .shot-7 .workspace-line { font-size: 15px; color: var(--n-ink-secondary); line-height: 1.7; margin-bottom: 2px; padding: 3px 0; }
+      .shot-7 .workspace-line.highlight { background: rgba(37,55,177,0.06); border-radius: 2px; }
+      .shot-7 .comment-bubble {
+        position: absolute; right: -12px; top: 80px;
+        padding: 8px 12px; border-radius: var(--n-radius-md);
+        background: var(--n-bg); border: 1px solid var(--n-border);
+        box-shadow: var(--n-shadow-sm); font-size: 12px; color: var(--n-ink-secondary);
+        max-width: 180px;
+      }
+      .shot-7 .comment-bubble::after {
+        content: ""; position: absolute; left: -6px; top: 12px;
+        width: 10px; height: 10px; background: var(--n-bg); border-left: 1px solid var(--n-border); border-bottom: 1px solid var(--n-border);
+        transform: rotate(45deg);
+      }
+
+      /* ---------- Shot 8: CTA — Final ---------- */
+      .shot-8 .cta-logo { width: 56px; height: 56px; margin-bottom: 24px; }
+      .shot-8 .cta-logo svg { width: 100%; height: 100%; }
+      .shot-8 .cta-headline { font-size: clamp(36px, 6vw, 72px); font-weight: 700; color: var(--n-ink); line-height: 1.1; letter-spacing: -0.02em; max-width: 600px; }
+      .shot-8 .cta-headline .accent { color: var(--n-accent); }
+      .shot-8 .cta-body { font-size: 16px; color: var(--n-ink-secondary); margin-top: 16px; max-width: 400px; line-height: 1.6; }
+      .shot-8 .cta-btn-row { display: flex; gap: 12px; margin-top: 28px; }
+      .shot-8 .cta-btn-primary {
+        padding: 12px 24px; border-radius: var(--n-radius-md);
+        background: var(--n-accent); color: #fff; font-size: 14px; font-weight: 600;
+        border: none; cursor: pointer; transition: background 0.15s;
+      }
+      .shot-8 .cta-btn-primary:hover { background: var(--n-accent-hover); }
+      .shot-8 .cta-btn-secondary {
+        padding: 12px 24px; border-radius: var(--n-radius-md);
+        background: transparent; color: var(--n-ink); font-size: 14px; font-weight: 600;
+        border: 1px solid var(--n-border); cursor: pointer;
+      }
+      .shot-8 .cta-sub { font-size: 13px; color: var(--n-ink-tertiary); margin-top: 16px; }
+
+      /* Animations */
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+      /* JS gate */
+      .js .shot { opacity: 0; }
+
+      /* Dev tools */
+      #devtools { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; }
+      #export-btn { position: fixed; right: 16px; top: 16px; z-index: 10; font: inherit; padding: 8px 14px; border: 1px solid var(--n-border); background: var(--n-bg); color: var(--n-ink); cursor: pointer; border-radius: var(--n-radius-md); font-size: 13px; }
+      #export-status { position: fixed; right: 16px; top: 58px; z-index: 10; max-width: 360px; margin: 0; padding: 10px 12px; background: var(--n-ink); color: var(--n-bg); font: 12px/1.5 "Inter", ui-monospace, monospace; border-radius: var(--n-radius-md); white-space: pre-wrap; }
+      @media (prefers-reduced-motion: reduce) { #export-btn, #export-status { display: none; } }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <div class="camera">
+
+        <!-- Shot 1: Hero — Full Notion app with sidebar + page -->
+        <section class="shot shot-1">
+          <div class="app-window">
+            <div class="app-topbar">
+              <div class="app-dot" style="background:#E16259"></div>
+              <div class="app-dot" style="background:#f5c542"></div>
+              <div class="app-dot" style="background:#4ade80"></div>
+              <span class="app-title">Q3 Product Roadmap — Notion</span>
+            </div>
+            <div class="app-body">
+              <div class="app-sidebar">
+                <div class="sidebar-section">
+                  <div class="sidebar-header">Workspace</div>
+                  <div class="sidebar-item active"><span class="sidebar-icon" style="background:#E16259">R</span>Q3 Roadmap</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#4ade80"></span>Meeting Notes</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#60a5fa"></span>User Research</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#f5c542"></span>Design System</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#a78bfa"></span>Untitled</div>
+                </div>
+                <div class="sidebar-section">
+                  <div class="sidebar-header">Private</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#2a9d99"></span>My Tasks</div>
+                  <div class="sidebar-item"><span class="sidebar-page" style="background:#ff8a33"></span>Inbox</div>
+                </div>
+              </div>
+              <div class="app-page">
+                <div class="page-title"><span class="page-emoji">🚀</span>Q3 Product Roadmap</div>
+                <div class="page-block">Our focus this quarter is on three key areas:</div>
+                <div class="page-block h2">1. AI-powered features</div>
+                <div class="page-block bullet">Smart autocomplete across all blocks</div>
+                <div class="page-block bullet">Natural language database queries</div>
+                <div class="page-block h2">2. Performance</div>
+                <div class="page-block todo done">Reduce initial load time by 40%</div>
+                <div class="page-block todo">Optimize real-time sync protocol</div>
+                <div class="page-block h2">3. Collaboration</div>
+                <div class="page-block todo">Live cursors for all team members</div>
+                <div class="page-block empty">Type '/' for commands or '..' for AI <span class="ai-cursor"></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shot 2: Pain — Tab overload + scattered tools -->
+        <section class="shot shot-2">
+          <div class="tabs-bar">
+            <div class="tab-chip"><span class="tab-dot" style="background:#E16259"></span>Q3 Roadmap</div>
+            <div class="tab-chip"><span class="tab-dot" style="background:#4ade80"></span>Meeting Notes</div>
+            <div class="tab-chip alert"><span class="tab-dot" style="background:#f5c542"></span>Untitled-12</div>
+            <div class="tab-chip"><span class="tab-dot" style="background:#60a5fa"></span>User Research</div>
+            <div class="tab-chip alert"><span class="tab-dot" style="background:#a78bfa"></span>Untitled-33</div>
+            <div class="tab-chip"><span class="tab-dot" style="background:#2a9d99"></span>Team Wiki</div>
+            <div class="tab-chip"><span class="tab-dot" style="background:#ff8a33"></span>Sprint Retro</div>
+            <div class="tab-chip"><span class="tab-dot" style="background:#ff83dd"></span>Design Crit</div>
+          </div>
+          <div class="pain-headline">Everything's scattered.</div>
+          <div class="pain-body">Your best ideas are trapped across a dozen tools. 47 tabs open. Still can't find that one doc from last week.</div>
+        </section>
+
+        <!-- Shot 3: Reveal — Meet Notion AI -->
+        <section class="shot shot-3">
+          <div class="reveal-stage">
+            <div class="reveal-bg"></div>
+            <div class="reveal-content">
+              <div class="notion-logo-mark">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.017 4.313l55.333-4.087c6.797-.583 8.543-.19 12.817 2.917l17.663 12.443c2.913 2.14 3.883 2.723 3.883 5.053v68.243c0 4.277-1.553 6.807-6.99 7.193L24.467 99.967c-4.08.193-6.023-.39-8.16-3.113L3.3 79.94c-2.333-3.113-3.3-5.443-3.3-8.167V11.113c0-3.497 1.553-6.413 6.017-6.8z" fill="#111"/>
+                  <path d="M68.133 36.793c.387 1.75 0 3.5-1.75 3.7l-2.72.58v42.58c-2.333 1.36-4.47 2.14-6.217 2.14-2.913 0-3.693-.973-5.83-3.5l-19.03-29.94v28.97l5.637 1.36s0 3.5-4.857 3.5l-13.173.777c-.39-.78 0-2.723 1.357-3.11l3.497-.97v-38.3L30.48 40.667c-.39-1.75.58-4.277 3.3-4.473l14.127-.973 19.8 30.327v-26.83l-4.663-.58c-.39-2.143 1.163-3.7 3.103-3.89l13.173-.78z" fill="#fff"/>
+                </svg>
+              </div>
+              <div class="reveal-headline">Meet <span class="ai-accent">Notion AI</span></div>
+              <div class="reveal-body">The missing layer that connects everything you've written to everything you need to do.</div>
+              <button class="reveal-cta">Try it free →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shot 4: Feature — AI writing in real editor -->
+        <section class="shot shot-4">
+          <div class="editor-window">
+            <div class="editor-toolbar">
+              <button class="toolbar-btn active">Text</button>
+              <button class="toolbar-btn">Heading 1</button>
+              <button class="toolbar-btn">Heading 2</button>
+              <button class="toolbar-btn">Bullet</button>
+              <button class="toolbar-btn">To-do</button>
+              <button class="toolbar-btn">Quote</button>
+            </div>
+            <div class="editor-canvas">
+              <div class="editor-h1">Product Brief</div>
+              <div class="editor-line">We need to launch the new feature by Friday.</div>
+              <div class="editor-line">The team has been working on this for two sprints.</div>
+              <div class="editor-line" style="margin-top:12px;"><span class="ai-suggestion">✨ Ask AI to write, summarize, or translate...</span></div>
+              <div class="editor-line ai" style="margin-top:12px;">Here's a draft project brief based on your notes...</div>
+              <div class="editor-line ai">1. Objective: Ship v2.0 by Friday EOD</div>
+              <div class="editor-line ai">2. Key stakeholders: Design, Eng, PM</div>
+              <div class="editor-line ai">3. Risks: API latency, QA coverage</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shot 5: Feature — Database with AI auto-fill -->
+        <section class="shot shot-5">
+          <div class="db-window">
+            <div class="db-toolbar">
+              <div class="db-title">📋 Sprint Tasks</div>
+              <div class="db-view-tabs">
+                <button class="db-view-tab active">Table</button>
+                <button class="db-view-tab">Board</button>
+                <button class="db-view-tab">Timeline</button>
+                <button class="db-view-tab">Calendar</button>
+              </div>
+            </div>
+            <table class="db-table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Design system audit</td>
+                  <td><div class="db-person"><span class="person-avatar" style="background:#E16259">S</span>Sarah</div></td>
+                  <td><span class="db-tag tag-green">Done</span></td>
+                  <td>Jun 12</td>
+                </tr>
+                <tr>
+                  <td>API integration <span class="db-ai-pill">AI</span></td>
+                  <td><div class="db-person"><span class="person-avatar" style="background:#4ade80">M</span>Marcus</div></td>
+                  <td><span class="db-tag tag-orange">In Progress</span></td>
+                  <td>Jun 15</td>
+                </tr>
+                <tr>
+                  <td>User testing round 3</td>
+                  <td><div class="db-person"><span class="person-avatar" style="background:#60a5fa">J</span>Jin</div></td>
+                  <td><span class="db-tag tag-gray">To Do</span></td>
+                  <td>Jun 18</td>
+                </tr>
+                <tr>
+                  <td>Launch checklist</td>
+                  <td><div class="db-person"><span class="person-avatar" style="background:#f5c542;color:#333">S</span>Sofia</div></td>
+                  <td><span class="db-tag tag-gray">To Do</span></td>
+                  <td>Jun 20</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Shot 6: Feature — AI Search with instant answer -->
+        <section class="shot shot-6">
+          <div class="search-window">
+            <div class="search-input-bar">
+              <svg class="search-mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="search-field" value="Q3 launch date" readonly>
+            </div>
+            <div class="search-results">
+              <div class="search-result">
+                <span class="result-page-icon" style="background:#E16259">R</span>
+                <span>Q3 Roadmap</span>
+                <span class="result-meta">Product</span>
+              </div>
+              <div class="search-result">
+                <span class="result-page-icon" style="background:#60a5fa">L</span>
+                <span>Launch Checklist</span>
+                <span class="result-meta">Projects</span>
+              </div>
+              <div class="search-result">
+                <span class="result-page-icon" style="background:#4ade80">S</span>
+                <span>Sprint Planning</span>
+                <span class="result-meta">Engineering</span>
+              </div>
+            </div>
+            <div class="search-ai-answer">
+              <div class="ai-answer-label">AI Answer</div>
+              <div class="ai-answer-text">The Q3 launch is scheduled for <strong>Friday, June 20th</strong>. See "Launch Checklist" for the full timeline and blockers.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shot 7: Value — Live team workspace -->
+        <section class="shot shot-7">
+          <div class="workspace-preview">
+            <div class="workspace-sidebar">
+              <div class="sidebar-section">
+                <div class="sidebar-header">Team</div>
+                <div class="sidebar-item active"><span class="sidebar-page" style="background:#E16259"></span>Product Brief</div>
+                <div class="sidebar-item"><span class="sidebar-page" style="background:#4ade80"></span>Meeting Notes</div>
+                <div class="sidebar-item"><span class="sidebar-page" style="background:#60a5fa"></span>Design System</div>
+              </div>
+            </div>
+            <div class="workspace-main">
+              <div class="live-cursors">
+                <div class="live-cursor"><span class="cursor-dot" style="background:#E16259"></span>Alice</div>
+                <div class="live-cursor"><span class="cursor-dot" style="background:#4ade80"></span>Marcus</div>
+                <div class="live-cursor"><span class="cursor-dot" style="background:#60a5fa"></span>Sofia</div>
+              </div>
+              <div class="workspace-h1">Product Brief</div>
+              <div class="workspace-line">We need to launch the new feature by Friday.</div>
+              <div class="workspace-line">The team has been working on this for two sprints.</div>
+              <div class="workspace-line highlight">Here's a draft based on your notes...</div>
+              <div class="workspace-line">1. Objective: Ship v2.0 by Friday EOD</div>
+              <div class="workspace-line">2. Key stakeholders: Design, Eng, PM</div>
+              <div class="comment-bubble">"Looks good, let's ship it!" — Sofia</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shot 8: CTA — Final -->
+        <section class="shot shot-8">
+          <div class="cta-logo">
+            <svg viewBox="0 0 100 100" fill="none">
+              <path d="M6.017 4.313l55.333-4.087c6.797-.583 8.543-.19 12.817 2.917l17.663 12.443c2.913 2.14 3.883 2.723 3.883 5.053v68.243c0 4.277-1.553 6.807-6.99 7.193L24.467 99.967c-4.08.193-6.023-.39-8.16-3.113L3.3 79.94c-2.333-3.113-3.3-5.443-3.3-8.167V11.113c0-3.497 1.553-6.413 6.017-6.8z" fill="#111"/>
+              <path d="M68.133 36.793c.387 1.75 0 3.5-1.75 3.7l-2.72.58v42.58c-2.333 1.36-4.47 2.14-6.217 2.14-2.913 0-3.693-.973-5.83-3.5l-19.03-29.94v28.97l5.637 1.36s0 3.5-4.857 3.5l-13.173.777c-.39-.78 0-2.723 1.357-3.11l3.497-.97v-38.3L30.48 40.667c-.39-1.75.58-4.277 3.3-4.473l14.127-.973 19.8 30.327v-26.83l-4.663-.58c-.39-2.143 1.163-3.7 3.103-3.89l13.173-.78z" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="cta-headline">Your wiki, docs, &amp; projects.<br><span class="accent">Together.</span></div>
+          <div class="cta-body">One tool to write, plan, and organize. Now with AI that thinks alongside you.</div>
+          <div class="cta-btn-row">
+            <button class="cta-btn-primary">Get Notion free →</button>
+            <button class="cta-btn-secondary">Request a demo</button>
+          </div>
+          <div class="cta-sub">Free for personal use. No credit card required.</div>
+        </section>
+
+      </div>
+    </main>
+
+    <div id="devtools"></div>
+    <button id="export-btn" type="button">Export video</button>
+    <pre id="export-status" hidden></pre>
+
+    <script>
+      (() => {
+        const m = /(?:[?&]ar=)([^&]+)/.exec(location.search);
+        if (m) { document.documentElement.style.setProperty("--ar", decodeURIComponent(m[1])); document.documentElement.classList.add("preview-ar"); }
+      })();
+    </script>
+
+    <script type="module" src="./scene.js?v=8"></script>
+
+    <script type="module">
+      import { gsap } from "https://esm.sh/gsap@3.15.0";
+      import GSDevTools from "https://esm.sh/gsap@3.15.0/GSDevTools";
+      const mount = () => {
+        if (window.__RENDERING || !window.__studio || !window.__studio.tl) return;
+        gsap.registerPlugin(GSDevTools);
+        GSDevTools.create({ animation: window.__studio.tl, container: "#devtools" });
+      };
+      if (window.__studio && window.__studio.tl) mount();
+      else window.addEventListener("__studio:ready", mount, { once: true });
+
+      const btn = document.getElementById("export-btn");
+      const status = document.getElementById("export-status");
+      if (btn && !window.__RENDERING) {
+        btn.addEventListener("click", () => {
+          status.hidden = false;
+          status.textContent = "In terminal:\n  npm install\n  node render.mjs --preset 1080p\n  # presets: 1080p | 4k | vertical | square";
+        });
+      }
+    </script>
+  </body>
+</html>
