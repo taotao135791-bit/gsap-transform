@@ -1,325 +1,246 @@
-```text
-  ███╗   ███╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗
-  ████╗ ████║██╔═══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║
-  ██╔████╔██║██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║
-  ██║╚██╔╝██║██║   ██║   ██║   ██║██║   ██║██║╚██╗██║
-  ██║ ╚═╝ ██║╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║
-  ╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
-  ██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗
-  ██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║
-  ██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║
-  ██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║
-  ██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║
-  ╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+# GSAP Transform
 
-  GSAP Skills
-  ──●────●────●────●────●────●──
-  不是文档搬运。是让 agent 做出来的东西，不像 AI 做的。
+Motion Director for Coding Agents.
+
+GSAP Transform is a community, third-party, agent-oriented GSAP motion skill
+system. It helps coding agents read motion taste, edit motion state, and
+generate previewable or renderable GSAP animation artifacts.
+
+This repository is not published by GreenSock, Webflow, or any official GSAP
+team.
+
+[中文版 README_CN.md](./README_CN.md)
+
+## What This Is
+
+GSAP Transform is a skill system for coding agents such as Codex, Cursor,
+Claude Code, Gemini, Copilot, and Windsurf.
+
+It gives agents a default motion workflow:
+
+```text
+Brief / product context
+  -> Design Read
+  -> motion dials
+  -> state.json edits
+  -> primitives
+  -> generated scene
+  -> preview/render
+  -> anti-slop check
 ```
 
-[中文版 README_CN.md →](./README_CN.md)
+## What This Is Not
 
-# GSAP Motion Design Skills
+- Not an official GreenSock project.
+- Not an official Webflow integration.
+- Not a replacement for the GSAP docs.
+- Not a general video editor.
+- Not a promise that taste is automatic.
+- Not a mandate to hand-edit generated `scene.js`.
 
-> 用一套规则让 AI agent 停止产出千篇一律的 `Inter` + 紫色渐变 + `back.out(1.7)` + 居中 hero。
-> **Three layers**: Design (taste) · State (timeline as data) · API (GSAP correctness).
-> Plus 16 animation primitives and 20 templates — the agent-native **ChatCut**.
+## Why This Exists
 
-Community, third-party, agent-oriented GSAP motion skills.
-This repository is not published by GreenSock or Webflow.
+Coding agents often default to the same motion cliches:
 
-Three layers:
+- `Inter` everywhere
+- AI-purple gradients on dark mesh
+- centered hero with three cards below
+- `back.out(1.7)` as the default ease
+- parallax on every section
+- hover lift, scale, and shadow all at once
+- no `prefers-reduced-motion` branch
 
-- **Design Layer** teaches agents *taste*: brief inference, dials, recipes, and anti-slop rules.
-- **State Layer** keeps timelines as editable data.
-- **API Layer** teaches agents correct GSAP implementation.
+GSAP is powerful. Agents need a stronger product and motion direction before
+they start writing GSAP calls.
 
-Design fires before code, State carries the edit loop, and API depth is loaded when code is written.
+## Architecture
 
----
+### Design Layer
 
-## 30-second quickstart
+Loads first. It reads the brief, product context, and brand context before any
+GSAP code is written.
+
+Includes:
+
+| Skill | Role |
+|---|---|
+| `motion-design-taste` | Design Read, motion dials, motion mode, routing |
+| `motion-anti-slop` | deterministic checks against generic AI motion |
+| `video-grammar` | video-native shot, camera, transition, and pacing rules |
+
+The Design Layer sets:
+
+- `MOTION_INTENSITY`
+- `DESIGN_VARIANCE`
+- `VISUAL_DENSITY`
+
+It decides which State and API skills the agent should load.
+
+### State Layer
+
+The default editing layer. It turns motion into data that can be read, changed,
+validated, regenerated, previewed, and rendered.
+
+Includes:
+
+| Asset | Role |
+|---|---|
+| `motion-state` | `state.json` schema and runtime |
+| `motion-primitives` | reusable motion verbs such as `fadeUp`, `splitReveal`, `cameraPush` |
+| `templates/` | reusable `state.json` skeletons |
+| `state.json` workflow | the default source of truth |
+
+By default, agents edit `state.json`, not generated `scene.js`.
+
+`scene.js` / `scene.mjs` are generated artifacts. Advanced users can still use
+hand-written scenes as an escape hatch, but that is not the normal agent path.
+
+### API Layer
+
+Loads after Design and State when implementation depth is needed.
+
+Includes:
+
+| Skill | Role |
+|---|---|
+| `gsap-core` | tweens, transforms, `autoAlpha`, `matchMedia` |
+| `gsap-timeline` | sequencing, labels, position parameter |
+| `gsap-scrolltrigger` | scroll-linked motion, pinning, scrub, cleanup |
+| `gsap-plugins` | SplitText, MorphSVG, DrawSVG, MotionPath, Flip, Draggable, and more |
+| `gsap-react` | React lifecycle and `useGSAP` |
+| `gsap-frameworks` | Vue, Nuxt, Svelte lifecycle and cleanup |
+| `gsap-performance` | transforms, batching, `will-change`, render safety |
+
+API skills are implementation depth. They are not the product entry point.
+
+## Quickstart
 
 ```bash
-git clone https://github.com/taotao135791-bit/gsap-transform.git && cd gsap-transform
-npm run verify                             # consistency gate
-npm run pick product-hero-reveal            # clone template → projects/product-hero-reveal/
-node scripts/state-to-scene.mjs projects/product-hero-reveal   # regenerate scene.js
+git clone https://github.com/taotao135791-bit/gsap-transform.git
+cd gsap-transform
+npm run verify
+npm test
+npm run pick product-hero-reveal
+node scripts/state-to-scene.mjs projects/product-hero-reveal
 cd projects/product-hero-reveal
-npm install                                # install project render deps
-node serve.mjs                              # browser preview w/ GSDevTools
-node render.mjs --preset vertical --dry-run # 1080×1920 seek-loop smoke test
-node render.mjs --preset vertical           # → output.mp4
+npm install
+node serve.mjs
+node render.mjs --preset vertical --dry-run
 ```
 
-The chatcut edit loop:
+`npm run pick product-hero-reveal` clones a real template into
+`projects/product-hero-reveal/` and runs the generator.
+
+The edit loop is:
 
 ```bash
 # edit projects/{slug}/state.json
-# e.g. move a beat, change a duration, add a layer
 node scripts/state-to-scene.mjs projects/{slug}
-# refresh the browser tab — done
+# refresh the preview
 ```
 
-The agent does **not** edit `scene.js` by hand. It edits `state.json`. See [docs/SPEC.md](./docs/SPEC.md) for the full contract.
+## Agent Workflow
 
----
+Agents should use this order:
 
-## Template gallery
+1. Read the brief and declare a Design Read.
+2. Set `MOTION_INTENSITY`, `DESIGN_VARIANCE`, and `VISUAL_DENSITY`.
+3. Pick or adapt a template state.
+4. Edit `state.json`.
+5. Use primitives for beats.
+6. Generate `scene.js`.
+7. Preview or render.
+8. Run anti-slop checks.
+9. Run `npm run verify` and `npm test` after repository changes.
 
-20 ship in v1.
-Each is a folder under `templates/{slug}/` with `state.json` + `README.md`;
-gallery thumbnails live under `assets/motion-templates/`.
-Pick one with `npm run pick {slug}`.
+## Templates
 
-- ![phr](assets/motion-templates/product-hero-reveal.svg) **Product Hero Reveal** — `product-hero-reveal`
-- ![pfg](assets/motion-templates/product-feature-grid.svg) **Feature Grid** — `product-feature-grid`
-- ![pss](assets/motion-templates/product-specs-stack.svg) **Specs Stack** — `product-specs-stack`
-- ![p360](assets/motion-templates/product-360-spin.svg) **360 Spin** — `product-360-spin`
-- ![pcc](assets/motion-templates/product-cta-card.svg) **CTA Card** — `product-cta-card`
-- ![ppt](assets/motion-templates/product-pricing-tier.svg) **Pricing Tier** — `product-pricing-tier`
-- ![lw](assets/motion-templates/logo-wordmark.svg) **Wordmark Logo** — `logo-wordmark`
-- ![lm](assets/motion-templates/logo-morph.svg) **Logo Morph** — `logo-morph`
-- ![lp](assets/motion-templates/logo-particles.svg) **Particle Logo** — `logo-particles`
-- ![lcs](assets/motion-templates/logo-color-shift.svg) **Color Shift** — `logo-color-shift`
-- ![ct](assets/motion-templates/cinematic-title.svg) **Cinematic Title** — `cinematic-title`
-- ![kts](assets/motion-templates/kinetic-type-stagger.svg) **Kinetic Type** — `kinetic-type-stagger`
-- ![lt](assets/motion-templates/lower-third.svg) **Lower Third** — `lower-third`
-- ![cr](assets/motion-templates/credit-roll.svg) **Credit Roll** — `credit-roll`
-- ![bcg](assets/motion-templates/bar-chart-grow.svg) **Bar Chart** — `bar-chart-grow`
-- ![kc](assets/motion-templates/kpi-counter.svg) **KPI Counter** — `kpi-counter`
-- ![ld](assets/motion-templates/line-draw.svg) **Line Draw** — `line-draw`
-- ![qc](assets/motion-templates/quote-card.svg) **Quote Card** — `quote-card`
-- ![ba](assets/motion-templates/before-after.svg) **Before/After** — `before-after`
-- ![lr](assets/motion-templates/list-reveal.svg) **List Reveal** — `list-reveal`
+Templates live under `templates/{slug}/`.
 
-Want a template that's not here?
-Open an issue, or write a `state.json` and contribute.
-Adding a template takes one file: see [`docs/SPEC.md` Section 4](./docs/SPEC.md).
+Each template is a reusable `state.json` skeleton with a README. The shipped
+templates are starting states for agent work, not just demos.
 
----
-
-## Why this exists
-
-Every AI coding agent trained on the same SaaS templates. Ask for "an animated landing page" and you get:
-
-- `Inter` for everything
-- AI-purple gradients on a dark mesh
-- centered hero with three equal cards below
-- `back.out(1.7)` on every entrance
-- parallax on every section, scrub on every block
-- no `prefers-reduced-motion` branch
-
-This is the slop pool. The GSAP API is powerful; the design direction given to the agent is not. **This skill set solves the direction problem.**
-
----
-
-## The three-layer architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  DESIGN LAYER (load FIRST — before any code)                    │
-│                                                                 │
-│  motion-design-taste   → brief inference, 3 dials, motion mode  │
-│  motion-recipes        → 8 clone-able aesthetic × motion combos │
-│  motion-anti-slop      → 32+ deterministic block/warn checks    │
-│  motion-craft          → 11 commands (/init … /studio /export)  │
-│  motion-studio         → preview project + render mp4/webm/mov  │
-│  video-grammar         → shots, camera, transitions, beat-sync  │
-└─────────────────────────────────────────────────────────────────┘
-                          ↓ declares
-┌─────────────────────────────────────────────────────────────────┐
-│  STATE LAYER (NEW in v0.3) — the chatcut core                   │
-│                                                                 │
-│  motion-state          → state.json schema + runtime + window.  │
-│                            __studio.state (query / add / remove)│
-│  motion-primitives     → 16 verbs (fadeUp, splitReveal, ...)    │
-│                                                                 │
-│  20 templates/         → clone-able state.json + thumbnail.svg  │
-└─────────────────────────────────────────────────────────────────┘
-                          ↓ routes to
-┌─────────────────────────────────────────────────────────────────┐
-│  API LAYER (load AFTER — when writing GSAP code)                │
-│                                                                 │
-│  gsap-core · gsap-timeline · gsap-scrolltrigger · gsap-plugins  │
-│  gsap-utils · gsap-react · gsap-frameworks · gsap-performance   │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-The Design Layer reads the user's brief, outputs a one-line **Design Read**,
-sets three dials (`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`),
-picks a motion mode (Restrained / Expressive / Cinematic),
-and routes the agent to the right API skills.
-It also runs 32+ anti-slop checks before shipping.
-
----
-
-## Workflow (the 5-step path agents actually follow)
-
-```
-1. motion-design-taste    "Reading this as: agency landing, cinematic mode, 8/8/3."
-2. motion-recipes         Clone the Editorial Kinetic skeleton.
-3. gsap-* API skills      Load gsap-scrolltrigger + gsap-plugins (SplitText).
-4. motion-anti-slop       Walk A→G. Fix every block failure.
-5. motion-craft /audit    Structured report. → /polish → /adapt.
-```
-
-No step is optional. Skipping step 1 is how slop happens.
-
----
-
-## Installing
-
-### npx skills (recommended)
+Pick one:
 
 ```bash
-npx skills add https://github.com/taotao135791-bit/gsap-transform
+npm run pick product-hero-reveal
 ```
 
-Works with any agent that supports the [Agent Skills format](https://agentskills.io). Deep adapters are shipped for the following agents (see table below).
+List available templates:
 
-### Adapter coverage
-
-This repo ships dedicated configuration for each of these agents, in addition to the universal `skills/{name}/SKILL.md` format:
-
-| Agent | Adapter file(s) | What you get |
-|-------|----------------|--------------|
-| **Claude Code** | `CLAUDE.md`, `.claude-plugin/{plugin,marketplace}.json` | Session hard rules + plugin install |
-| **OpenAI Codex** | `AGENTS.md` | Hard rules at session start (Codex official standard) |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/{skill}.instructions.md` | Repo hints + path rules |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` + `.cursor/rules/{skill}.mdc` | Marketplace install + path rules |
-| **Google Gemini / Antigravity** | `GEMINI.md` | Session hard rules |
-| **Windsurf** | `.windsurf/rules/gsap.md` (current format) + `.windsurfrules` (legacy fallback) | Project-wide hard rules |
-
-Any agent supporting the `skills/{name}/SKILL.md` format (OpenCode, Pi, Qoder, and most other Agent Skills clients) works via the universal Manual copy below.
-
-### Claude Code
-
-```
-/plugin marketplace add taotao135791-bit/gsap-transform
+```bash
+node scripts/pick-template.mjs
 ```
 
-### Cursor
+## State Workflow
 
-Two install paths:
-- **Remote rules market** — Settings → Rules → Add Rule → Remote Rule (Github) → `taotao135791-bit/gsap-transform`.
-- **Project-level** — copy `.cursor/rules/` into your project; Cursor auto-attaches each skill when files matching its `globs` open.
+The state contract is described in [docs/SPEC.md](./docs/SPEC.md).
 
-### GitHub Copilot
+Core fields include:
 
-Copy `.github/copilot-instructions.md` and the entire `.github/instructions/` directory into your project's `.github/`. Copilot reads them automatically.
+- `schemaVersion`
+- `duration`
+- `fps`
+- `width`
+- `height`
+- `layers`
+- `beats`
+- optional `assets`
 
-### Windsurf
+Each beat names a primitive and a target layer. Unknown primitives, missing
+layers, bad timing, and incompatible layer types should fail validation.
 
-Copy `.windsurf/rules/gsap.md` into your project (current format). For older Windsurf versions, copy `.windsurfrules` to your project root instead.
+## Adapter Coverage
 
-### Manual copy (any Agent Skills-compatible agent)
+This repository ships agent-specific adapters in addition to
+`skills/{name}/SKILL.md`.
 
-| Agent | Skill Directory |
-|-------|-----------------|
-| Claude Code | `~/.claude/skills/` |
-| Cursor | `~/.cursor/skills/` |
-| OpenCode | `~/.config/opencode/skills/` |
-| OpenAI Codex | `~/.codex/skills/` |
-| Google Antigravity | `~/.gemini/antigravity/skills/` |
-| Pi | `~/.pi/agent/skills/` |
-| Qoder | `~/.qoder/skills/` |
-
----
-
-## Skills index — from the user's problem, not the SKILL name
-
-### "I need aesthetic direction before coding"
-
-| Load | What it does |
-|------|-------------|
-| **motion-design-taste** | Brief inference → Design Read → 3 dials → motion mode → routes to API skills |
-| **motion-recipes** | 8 ready-to-clone aesthetic × motion pairings |
-| **motion-anti-slop** | 32+ deterministic anti-slop rules in 7 groups |
-| **motion-craft** | 11 commands: `/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/studio` `/export` |
-| **motion-studio** | preview project, `serve.mjs`, and `render.mjs` |
-| **video-grammar** | shots, virtual camera, transitions, BPM sync, safe areas |
-
-### "I need correct GSAP implementation"
-
-| Load | Covers |
-|------|--------|
-| **gsap-core** | `to` / `from` / `fromTo` / `set`, easing, stagger, `matchMedia`, transform aliases, `autoAlpha` |
-| **gsap-timeline** | sequencing, position parameter, labels, nesting |
-| **gsap-scrolltrigger** | pin, scrub, batch, refresh, containerAnimation, scrollerProxy |
-| **gsap-plugins** | SplitText, MorphSVG, DrawSVG, MotionPath, Flip, Draggable, Inertia, Observer, CustomEase, ScrambleText, Physics2D, and more |
-| **gsap-utils** | clamp, mapRange, interpolate, distribute, snap, wrap, toArray, pipe |
-| **gsap-react** | `useGSAP` hook, scope, contextSafe, SSR |
-| **gsap-frameworks** | Vue, Nuxt, Svelte lifecycle + cleanup |
-| **gsap-performance** | `quickTo`, transform-only, `will-change`, batch vs loop |
-
----
-
-## What the Design Layer actually prevents (examples)
-
-| Without this skill set | With it |
+| Agent | Adapter file(s) |
 |---|---|
-| `ease: "back.out(1.7)"` on every entrance | Reserved for one branded moment; default `expo.out` / `power3.out` per motion mode band |
-| `Inter` + slate-900 everywhere | Design Read picks a font pool; `Inter` is only allowed when the brief says "Linear-style" |
-| Purple gradient hero with glowing radial | Accent is inferred from the brief; palette alternatives enforced when default-reaching for beige+brass or AI-purple |
-| No `prefers-reduced-motion` | Every project wrapped in `gsap.matchMedia()`; shipping without it is a Pre-Flight Failure |
-| `parallax` on every section | Parallax earns one or two sections; the rest hold still (Anti-Slop C4) |
-| Hover `y: -8` + `scale: 1.05` + heavier shadow | Pick one signal — lift OR scale OR shadow (Anti-Slop C3) |
-| `cdn.jsdelivr.net/npm/gsap/{Plugin}.js` for browser ESM | `esm.sh` with default import for every plugin (Anti-Slop G3 + G4) |
+| Codex | `AGENTS.md` |
+| Claude Code | `CLAUDE.md`, `.claude-plugin/` |
+| Gemini / Antigravity | `GEMINI.md` |
+| GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions/{skill}.instructions.md` |
+| Cursor | `.cursor/rules/{skill}.mdc`, `.cursor-plugin/` |
+| Windsurf | `.windsurf/rules/gsap.md`, `.windsurfrules` |
 
----
+When a skill changes, update its adapters in the same change.
 
-## Structure
+## Validation
 
-```
-gsap-transform/
-  README.md / README_CN.md
-  AGENTS.md
-  docs/SPEC.md                # binding dev spec + acceptance criteria
-  skills/
-    # Design Layer
-    motion-design-taste/  SKILL.md
-    motion-recipes/       SKILL.md
-    motion-anti-slop/     SKILL.md
-    motion-craft/         SKILL.md
-    # State Layer (v0.3)
-    motion-state/         SKILL.md  schema.json  runtime.mjs
-    motion-primitives/    SKILL.md  *.js × 16
-    # API Layer
-    gsap-core/            SKILL.md
-    gsap-timeline/        SKILL.md
-    gsap-scrolltrigger/   SKILL.md
-    gsap-plugins/         SKILL.md
-    gsap-utils/           SKILL.md
-    gsap-react/           SKILL.md
-    gsap-performance/     SKILL.md
-    gsap-frameworks/      SKILL.md
-    # Delivery
-    motion-studio/        SKILL.md  templates/{index.html,scene.js,render.mjs,…}
-    video-grammar/        SKILL.md
-  templates/                # 20 clone-able state.json + README + thumbnail
-  assets/motion-templates/  # SVG thumbnails
-  examples/
-    vanilla/ react/ vue/ nuxt/
-    showcase/{editorial-kinetic,brutalist-scroll,liquid-glass-hover}
-    studio/{cinematic-title,cookware-promo,helix-launch}      # hand-written
-    studio-state/product-hero-reveal/                        # state-driven
-  tests/                    # node:test, 73 assertions
-    motion-primitives/  motion-state/  templates/  render/
-  scripts/                  # verify-consistency / gen-templates / state-to-scene / pick-template
-  projects/                 # local working dirs (gitignored)
+Run:
+
+```bash
+npm run verify
+npm test
 ```
 
----
+`npm run verify` checks cross-adapter consistency, skill metadata, primitive
+coverage, template presence, and Windsurf parity.
 
-## GSAP is free
+`npm test` runs the Node test suite for primitives, state validation, and
+templates.
 
-> Every plugin — SplitText, MorphSVG, DrawSVG, Flip, Draggable, all of them —
-> is **100% free** since Webflow's acquisition of GSAP.
-> Install from the public `gsap` npm package.
-> No `.npmrc`, no auth token, no Club membership.
+## Common Failure Modes
 
----
+- Editing generated `scene.js` as the default workflow.
+- Skipping the Design Layer and going directly to GSAP API calls.
+- Treating `state.json` as optional for normal agent edits.
+- Adding a primitive without updating registry, docs, and tests.
+- Adding a template with an invalid or unvalidated `state.json`.
+- Updating a skill without updating Cursor, Copilot, and Windsurf adapters.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+Keep the product path small and verifiable:
+
+```text
+Design Layer -> State Layer -> API Layer
+```
+
+Do not lower verification standards to make a change look green.
 
 ## License
 

@@ -14,4 +14,6 @@ jobs:
         with:
           node-version: 22
       - name: Verify cross-adapter consistency
-        run: node scripts/verify-consistency.mjs
+        run: npm run verify
+      - name: Run tests
+        run: npm test

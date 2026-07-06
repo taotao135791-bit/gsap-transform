@@ -18,7 +18,7 @@ Load this skill **in addition to** [motion-design-taste](../motion-design-taste/
 
 ## Section 0 — The `.camera` wrapper (the one idea everything builds on)
 
-A video frames a subject. In GSAP-that-renders-to-video, framing is done by a **single `.camera` wrapper** that holds every shot's content; the master timeline animates the *camera* (scale + translate), the shot's content animates *inside* it. Two layers, never mixed:
+A video frames a subject. In GSAP-that-renders-to-video, framing is done by a **single `.camera` wrapper** that holds every shot's content; the master timeline animates the *camera* (scale + translate), and the shot content animates *inside* it. Keep those two animation surfaces separate:
 
 ```html
 <main class="stage">              <!-- the stage IS the output frame; overflow: hidden -->

@@ -66,7 +66,7 @@ export default {
 
 ## How to add a new primitive
 
-1. Create `skills/motion-primitives/<name>.js`. Follow the contract above.
+1. Create `skills/motion-primitives/{name}.js`. Follow the contract above.
 2. Export it from `skills/motion-primitives/index.js`.
 3. Add it to `PRIMITIVE_NAMES` and `PRIMITIVE_LAYER_TYPES` in `skills/motion-state/runtime.mjs`.
 4. Add the primitive to the catalog table above.

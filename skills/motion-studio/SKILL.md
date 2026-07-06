@@ -1,6 +1,6 @@
 ---
 name: motion-studio
-description: The delivery shell that turns a GSAP scene into a previewable, tunable, multi-resolution video artifact. Use when the user wants to produce a self-contained "preview project" they can open in a browser, scrub on a timeline, and render to mp4/webm/mov — i.e. when the goal is a video file, not a web page. Provides the preview-project template (index.html + scene.js + render.mjs), the window.__studio seek contract that lets render.mjs drive the master timeline frame-by-frame, the GSDevTools timeline UI (hidden during render), and resolution presets (1080p / 4k / vertical / square). Trigger words: preview project, render video, export mp4, render to video, GSDevTools timeline, multi-resolution, vertical video, /studio, effect video, promo video, video artifact, chatcut-style.
+description: The delivery shell that turns a generated or hand-written GSAP scene into a previewable, tunable, multi-resolution video artifact. Use when the user wants to produce a self-contained "preview project" they can open in a browser, scrub on a timeline, and render to mp4/webm/mov — i.e. when the goal is a video file, not a web page. Default agent path is state.json -> generated scene.js -> preview/render shell; hand-written scenes are an escape hatch. Provides the seek contract, GSDevTools timeline UI (hidden during render), and resolution presets (1080p / 4k / vertical / square). Trigger words: preview project, render video, export mp4, render to video, GSDevTools timeline, multi-resolution, vertical video, /studio, effect video, promo video, video artifact, chatcut-style.
 license: MIT
 ---
 
@@ -8,22 +8,23 @@ license: MIT
 
 The layer that turns an animated GSAP scene into a **video artifact**: a self-contained folder the user opens in a browser, scrubs on a timeline, tunes by chat, and renders to a multi-resolution mp4. This is the bridge from "GSAP web animation" to "the user gets an .mp4" — the missing end of the pipeline that `/export` ([motion-craft](../motion-craft/SKILL.md)) only sketched.
 
-It is a **delivery shell**, not a design skill. Aesthetic direction still comes from [motion-design-taste](../motion-design-taste/SKILL.md) and [motion-recipes](../motion-recipes/SKILL.md); the GSAP API still comes from the `gsap-*` skills. Motion Studio owns only the preview/export mechanics.
+It is a **delivery shell**, not a design skill. Aesthetic direction still comes from [motion-design-taste](../motion-design-taste/SKILL.md); editable timeline state comes from [motion-state](../motion-state/SKILL.md) and [motion-primitives](../motion-primitives/SKILL.md); GSAP API details come from the `gsap-*` skills. Motion Studio owns only the preview/export mechanics.
 
 ## When to Use This Skill
 
 Apply when the user wants the output as a **video file** (mp4 / webm / mov), or describes the work as a promo / spot / sting / reel / title sequence rather than a scrollable page. The canonical entry point is the [`/studio`](../motion-craft/SKILL.md) command, which loads this skill together with the design layer.
 
-**Related skills:** [motion-design-taste](../motion-design-taste/SKILL.md) and [motion-recipes](../motion-recipes/SKILL.md) for the aesthetic brain; [motion-anti-slop](../motion-anti-slop/SKILL.md) Group **G6** for the seek-contract checks; [gsap-timeline](../gsap-timeline/SKILL.md) and [gsap-plugins](../gsap-plugins/SKILL.md) (SplitText, MorphSVG, GSDevTools) for the API; [motion-craft](../motion-craft/SKILL.md) `/studio` for the command that orchestrates this skill.
+**Related skills:** [motion-design-taste](../motion-design-taste/SKILL.md) for the aesthetic brain; [motion-state](../motion-state/SKILL.md) and [motion-primitives](../motion-primitives/SKILL.md) for the default state workflow; [motion-anti-slop](../motion-anti-slop/SKILL.md) Group **G6** for the seek-contract checks; [gsap-timeline](../gsap-timeline/SKILL.md) and [gsap-plugins](../gsap-plugins/SKILL.md) (SplitText, MorphSVG, GSDevTools) for the API; [motion-craft](../motion-craft/SKILL.md) `/studio` for the command that orchestrates this skill.
 
 ## Section 1 — The preview-project artifact
 
-Every `/studio` run produces one folder, e.g. `projects/cookware-promo/`, with four files. The agent **copies the templates** in `templates/` and fills only the content — the shell is stable scaffolding.
+Every `/studio` run produces one folder, e.g. `projects/cookware-promo/`. The default path starts from `state.json`, then `scripts/state-to-scene.mjs` generates the choreography file. The shell files are stable scaffolding.
 
 | File | Responsibility | Edit during tuning? |
 |---|---|---|
+| `state.json` | Default source of truth: duration, fps, layers, beats, primitive refs, assets. | **Yes — default tuning surface** |
 | `index.html` | Static shell: fonts, `--accent` lock, `.stage`, `#devtools` mount, Export button, `.js`/`.no-js` gate, dev `?ar=` preview, the GSDevTools-mount inline module. **No choreography.** | Rarely (only fonts/accent/copy) |
-| `scene.js` | The GSAP choreography. Exposes `window.__studio = { gsap, tl, duration }`. Wrapped in `gsap.matchMedia`. | **Yes — this is the only file tuning touches** |
+| `scene.js` | Generated GSAP choreography. Exposes `window.__studio = { gsap, tl, duration }`. Wrapped in `gsap.matchMedia`. | Generated artifact; escape-hatch edits require explicit choice |
 | `render.mjs` | Node CLI: drives the timeline frame-by-frame in headless Chrome and encodes to video. Copied verbatim from the template. | Never |
 | `package.json` | Declares `puppeteer-core` + `@ffmpeg-installer/ffmpeg`. Copied verbatim. | Never |
 
@@ -121,14 +122,15 @@ When converting a recipe's scroll beat to a time beat, replace `scrollTrigger: {
 The user tunes by **chat**, not by editing code:
 
 > user: "make the headline slower"
-> → agent edits **only** `scene.js` (a duration / stagger / ease)
-> → bumps the cache-buster: `<script src="./scene.js?v=N+1">`
+> → agent edits `state.json`
+> → runs `node scripts/state-to-scene.mjs projects/{slug}`
 > → user refreshes the browser tab — the new choreography + GSDevTools timeline update live.
 
 Rules for the agent during tuning:
 
-- **Only edit `scene.js`.** `index.html`, `render.mjs`, `package.json` are stable scaffolding.
-- **Bump `?v=` in index.html** every meaningful change, or the browser serves the cached module ([motion-craft](../motion-craft/SKILL.md) smoke-test note).
+- **Default to editing `state.json`.** `scene.js` is generated from it.
+- **Direct scene edits require an explicit escape hatch.** If you do, clearly state that the file is no longer purely generated.
+- **Refresh after regeneration.** If browser module caching bites, bump `?v=` in index.html.
 - **No build step.** Refreshing the `node serve.mjs` browser tab *is* the hot reload. Do NOT double-click `index.html` — ES modules are blocked under `file://` (R-G1); run `npm run preview` (or `node serve.mjs`) and open the printed URL.
 
 ## Section 8 — GSDevTools hiding (three layers)
@@ -152,8 +154,8 @@ GSDevTools is dev-only in production web pages too ([gsap-plugins](../gsap-plugi
 ## Best Practices
 
 - ✅ Produce **one master timeline** and expose it via `window.__studio`; never let multiple top-level tweens dangle (the showcase pattern lets them dangle — the studio pattern must collect them).
-- ✅ Re-run [motion-anti-slop](../motion-anti-slop/SKILL.md) Group **G6** after every `scene.js` edit.
-- ✅ When the user asks for a different aspect ratio, re-render with a new `--preset`; do **not** rewrite the scene. The same `scene.js` must look acceptable across presets (use `clamp()` / `vmin` units).
+- ✅ Re-run [motion-anti-slop](../motion-anti-slop/SKILL.md) Group **G6** after every generated-scene change.
+- ✅ When the user asks for a different aspect ratio, re-render with a new `--preset`; do **not** rewrite the scene. The same generated scene must look acceptable across presets (use `clamp()` / `vmin` units).
 - ✅ Capture `originalPath = el.getAttribute("d")` for any MorphSVG target and restore it before a re-render — `clearProps` does not restore `d` ([gsap-plugins](../gsap-plugins/SKILL.md) §MorphSVG reset).
 
 ## Do Not

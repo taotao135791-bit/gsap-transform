@@ -1,6 +1,6 @@
 ---
 name: motion-craft
-description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft <subcommand>, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export). Sequences the design layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-studio) and the GSAP API skills into a repeatable eleven-command flow that maps to the user's intent. Pair with motion-design-taste, motion-recipes, motion-anti-slop, motion-studio, and the gsap-* API skills.
+description: A command-style workflow for building, polishing, and auditing GSAP motion. Use when the user invokes /motion-craft {subcommand}, or asks for a structured pass on an animated interface (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export). Sequences the design layer, state layer, and GSAP API skills into a repeatable eleven-command flow that maps to the user's intent. Pair with motion-design-taste, motion-state, motion-primitives, motion-anti-slop, motion-studio, and the gsap-* API skills.
 license: MIT
 ---
 
@@ -12,7 +12,7 @@ An eleven-command workflow that orchestrates the rest of the motion-design layer
 
 Apply when the user invokes a `/motion-craft <command>` style call, when the user asks for a phased / staged build of an animated interface, or when the conversation already produced a draft and the user wants a follow-up pass ("polish this", "tone it down", "make it bolder", "add reduced-motion").
 
-**Related skills:** [motion-design-taste](../motion-design-taste/SKILL.md) for direction; [motion-recipes](../motion-recipes/SKILL.md) for clone-able patterns; [motion-anti-slop](../motion-anti-slop/SKILL.md) for deterministic checks; [gsap-core](../gsap-core/SKILL.md), [gsap-timeline](../gsap-timeline/SKILL.md), [gsap-scrolltrigger](../gsap-scrolltrigger/SKILL.md), [gsap-plugins](../gsap-plugins/SKILL.md), [gsap-utils](../gsap-utils/SKILL.md), [gsap-react](../gsap-react/SKILL.md), [gsap-frameworks](../gsap-frameworks/SKILL.md), [gsap-performance](../gsap-performance/SKILL.md) for API depth.
+**Related skills:** [motion-design-taste](../motion-design-taste/SKILL.md) for direction; [motion-state](../motion-state/SKILL.md) and [motion-primitives](../motion-primitives/SKILL.md) for editable timeline state; [motion-recipes](../motion-recipes/SKILL.md) for clone-able patterns; [motion-anti-slop](../motion-anti-slop/SKILL.md) for deterministic checks; [gsap-core](../gsap-core/SKILL.md), [gsap-timeline](../gsap-timeline/SKILL.md), [gsap-scrolltrigger](../gsap-scrolltrigger/SKILL.md), [gsap-plugins](../gsap-plugins/SKILL.md), [gsap-utils](../gsap-utils/SKILL.md), [gsap-react](../gsap-react/SKILL.md), [gsap-frameworks](../gsap-frameworks/SKILL.md), [gsap-performance](../gsap-performance/SKILL.md) for API depth.
 
 ## Command Index
 
@@ -28,7 +28,7 @@ Apply when the user invokes a `/motion-craft <command>` style call, when the use
 | **bolder** | "make it bolder", "amplify", "boring" | One-step amplification along the same scale, with discipline |
 | **adapt** | "make it accessible", "mobile responsive", "reduced motion" | Add prefers-reduced-motion + breakpoint-aware motion via `gsap.matchMedia` |
 | **export** | "export as transparent video", "render to webm", "png sequence", "/motion-craft export" | A `capture.js` script (Puppeteer) + FFmpeg commands for WebM VP9 alpha or ProRes 4444 |
-| **studio** | "make me a promo video", "build a preview project", "render this as a video", "/motion-craft studio" | A self-contained `projects/<slug>/` folder (index.html + scene.js + render.mjs + serve.mjs); run `node render.mjs --preset vertical` for mp4 |
+| **studio** | "make me a promo video", "build a preview project", "render this as a video", "/motion-craft studio" | A self-contained `projects/{slug}/` folder (`state.json`, generated `scene.js`, index/render/serve shell); run `node render.mjs --preset vertical` for mp4 |
 
 Each command runs with a clear input contract, a sequence of skill calls, and an output contract. Commands are **invokable directly** (`/motion-craft polish the hero`) or **composable** (`init` → `shape` → `animate` → `polish` → `audit`).
 
@@ -295,14 +295,14 @@ ffmpeg ...                           # encode to webm or mov
 **Sequence:**
 1. Run `/init` internally — Design Read, three dials, recipe selection, `MOTION.md`.
 2. Run `/shape` internally, but **reframe each beat from scroll-driven to time-driven** (a scroll `scrub` beat becomes `tl.to(el, {...}, "<0.4")` on the master timeline). If the recipe is `Brutalist Scroll` or `Cinematic Pinned Scrub` (scroll-bound), warn and fall back to a time-driven recipe — see [motion-studio](../motion-studio/SKILL.md) §5.
-3. **Scaffold** the project by copying [motion-studio](../motion-studio/SKILL.md) `templates/{index.html,scene.js,render.mjs,serve.mjs,package.json}` → `projects/<slug>/`, then fill `scene.js` with the time-driven beats.
+3. **Scaffold** the project with a valid `projects/{slug}/state.json`; copy the preview/render shell from [motion-studio](../motion-studio/SKILL.md) templates only if missing, then run `node scripts/state-to-scene.mjs projects/{slug}`.
 4. Wire the seek contract: `window.__studio = { gsap, tl, duration }`, dispatch `__studio:ready`, gate `GSDevTools.create()` on `!window.__RENDERING`. Run [motion-anti-slop](../motion-anti-slop/SKILL.md) Group G6.
-5. **Smoke-test**: `npm install && npm run preview` → open the URL → confirm GSDevTools scrubs the timeline, the Export button is present, console is clean, single-accent `getComputedStyle` passes (F6). Bump `scene.js?v=N` on every edit.
-6. **Output the run instructions**: `node render.mjs --preset <vertical|1080p|4k|square>` → `projects/<slug>/output.mp4`.
+5. **Smoke-test**: `npm install && npm run preview` → open the URL → confirm GSDevTools scrubs the timeline, the Export button is present, console is clean, single-accent `getComputedStyle` passes (F6).
+6. **Output the run instructions**: `node render.mjs --preset vertical` → `projects/{slug}/output.mp4`.
 
-**Output contract:** the `projects/<slug>/` folder + a 3-line "how to run" message. The artifact is the deliverable.
+**Output contract:** the `projects/{slug}/` folder + a 3-line "how to run" message. The artifact is the deliverable.
 
-**Tuning:** chat-driven — edit **only** `scene.js`, bump `?v=N`, the user refreshes the preview tab ([motion-studio](../motion-studio/SKILL.md) §7).
+**Tuning:** chat-driven through `state.json` by default — edit state, regenerate `scene.js`, refresh. Direct scene edits require an explicit escape hatch ([motion-studio](../motion-studio/SKILL.md) §7).
 
 **Phase-1 recipe allowlist (time-driven only):** Editorial Kinetic, Minimal Fade, Kinetic Type Stagger, Bento Flip (entrance only), Grid Break Overlap (entrance only). Refuse Liquid Glass Hover (G6.4 — `quickTo`), Brutalist Scroll / Cinematic Pinned Scrub (§5 — scroll-bound).
 
@@ -311,7 +311,7 @@ ffmpeg ...                           # encode to webm or mov
 Common chains:
 
 - **Greenfield:** `init` → `shape` → `animate` → `audit` → `polish` → `adapt`.
-- **Video artifact:** `studio` (runs `init` → `shape` → scaffold-preview internally — one command to a renderable `projects/<slug>/` folder).
+- **Video artifact:** `studio` (runs `init` → `shape` → scaffold-preview internally — one command to a renderable `projects/{slug}/` folder).
 - **Inherited code:** `audit` → `critique` → (`quieter` | `bolder`) → `polish` → `adapt`.
 - **Bug-fix scope:** `audit` → `polish` (or `adapt` / `quieter` based on what audit flags). `audit` alone never modifies code; pair it with the matching fix command.
 - **Quick tone change:** (`quieter` | `bolder`) → `audit`.

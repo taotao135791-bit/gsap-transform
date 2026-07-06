@@ -16,15 +16,25 @@ Minimal demos that follow the skills exactly: transforms, autoAlpha, timelines, 
 
 These examples are intended as reference implementations for AI agents and for quick manual verification of the skill patterns.
 
-## Showcase — design layer + API layer integration
+## Showcase — design, state, and API integration
 
-Full pages that demonstrate the **two-layer** workflow end-to-end: a Design Read drives the recipe, the recipe drives the GSAP code, and `motion-anti-slop` rules are applied. Each showcase has its own `README.md` listing the design-layer decisions and API-layer skills used.
+Full pages that demonstrate the older hand-written scene escape hatch and the
+current three-layer thinking: a Design Read drives the direction, state or
+recipe choices define the timeline, GSAP API skills implement details, and
+`motion-anti-slop` rules are applied. Each showcase has its own `README.md`
+listing the design decisions and API skills used.
 
 - **examples/showcase/editorial-kinetic/** — Editorial Kinetic recipe. SplitText line-mask reveal, sequenced timeline, single burnt-orange accent on bone paper. Plugins: ScrollTrigger, SplitText.
 - **examples/showcase/brutalist-scroll/** — Brutalist Scroll recipe. Pinned scrubbed hero scene, neon-yellow accent, `Flip` density toggle. Plugins: ScrollTrigger, Flip.
 - **examples/showcase/liquid-glass-hover/** — Liquid Glass Hover recipe. Magnetic CTA buttons via `gsap.quickTo`, cursor-tracking spotlight on glass cards, single-signal hover. Plugins: ScrollTrigger.
 
-Each showcase runs from a static directory: `npx serve examples/showcase/<name>` then open the printed local URL.
+Each showcase runs from a static directory:
+
+```bash
+npx serve examples/showcase/{name}
+```
+
+Then open the printed local URL.
 
 ## Vue
 

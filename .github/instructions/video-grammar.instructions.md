@@ -8,7 +8,7 @@ Load this **in addition to** motion-design-taste when the artifact is a rendered
 
 When building a `/studio` scene that renders as video, follow `skills/video-grammar/SKILL.md`:
 
-- Put all shot content inside ONE `.camera` wrapper; the master timeline animates the camera (`scale`/`xPercent`/`yPercent`), content animates inside. Two layers, never mixed.
+- Put all shot content inside ONE `.camera` wrapper; the master timeline animates the camera (`scale`/`xPercent`/`yPercent`), and content animates inside. Keep those two animation surfaces separate.
 - Shot type = camera scale (WS 1.0 → CU 2.2 → ECU 3.0+). Open on a WS hold ≥ 1 beat before the first move.
 - ONE camera move per shot (V1). Cut (hard or one signature transition) between moves.
 - At most ONE hero transition (whip pan / morph / match cut / glitch) per video; the rest are hard cuts (V2).

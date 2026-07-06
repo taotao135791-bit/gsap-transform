@@ -9,7 +9,7 @@ alwaysApply: false
 The aesthetic layer for **video**, beside motion-design-taste. motion-design-taste owns the page (dials, modes, type, color, layout); video-grammar owns what a page never has — **shot framing, virtual camera movement, transitions, beat-synced pacing, aspect-ratio composition**.
 
 ## The `.camera` wrapper (the one idea)
-All shot content lives inside one `.camera` wrapper; the master timeline animates the *camera* (`scale`/`xPercent`/`yPercent`), the shot's content animates *inside* it. Two layers, never mixed (mixing = the "everything moves at once" AI tell).
+All shot content lives inside one `.camera` wrapper; the master timeline animates the *camera* (`scale`/`xPercent`/`yPercent`), and the shot content animates *inside* it. Keep those two animation surfaces separate; mixing them creates the "everything moves at once" AI tell.
 
 ## Shot types = camera scale
 EWS 0.7–0.85 · WS 1.0 · MS 1.3 · MCU 1.6 · CU 2.2 · ECU 3.0–4.0. Offset with `xPercent`/`yPercent` to rule-of-thirds, not dead center every time.

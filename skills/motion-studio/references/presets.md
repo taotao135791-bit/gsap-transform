@@ -1,6 +1,6 @@
 # Resolution Presets & Output Formats
 
-Pass presets with `node render.mjs --preset <name>` and formats with `--format <name>`.
+Pass presets with `node render.mjs --preset vertical` and formats with `--format mp4`.
 
 ## Presets (`--preset`)
 

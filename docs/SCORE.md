@@ -1,12 +1,14 @@
-# Scorecard — post v0.3 revision
+# Scorecard — historical post v0.3 revision
 
-> Historical scorecard. For the current checkout, treat `npm run verify` plus the template smoke test as the active verification gate.
+> Historical scorecard. For the current checkout, treat `npm run verify` and
+> `npm test` as the active verification gates. Do not use the old assertion
+> counts below as current evidence unless the tests exist in this checkout.
 
 ## Verification results
 
 ```
 npm run verify  → consistency checks PASS
-npm test        → node test runner starts; this checkout currently reports 0 tests
+npm test        → must run the current Node test suite
 npm run pick    → 20 templates listed, clone + scene-gen pipeline works
 ```
 
@@ -23,7 +25,7 @@ npm run pick    → 20 templates listed, clone + scene-gen pipeline works
 | Pointer/scroll in render | 5 | 7 | +2 | `scroll-driver.mjs` + `pointer-driver.mjs` shipped as Phase 2 stepping stones |
 | Docs / onboarding | 7 | 9 | +2 | 30-second quickstart + 20-template gallery + docs/SPEC.md |
 | Cross-agent adapters | 8 | 9 | +1 | Cursor .mdc + Copilot .instructions.md for both new skills |
-| **Test coverage** | **2** | **9** | **+7** | 77 tests: 13 state, 47 primitives, 20 templates, 2 render, 4 stubs |
+| **Test coverage** | **2** | historical 9 | historical | Re-check the current `tests/` directory and `npm test`; do not rely on old assertion counts |
 
 **Weighted average: 8.1 → 8.7** (audio stays at 1 by explicit user decision)
 
@@ -54,19 +56,20 @@ before-after              list-reveal
 - `scripts/gen-studio-example.mjs` — bootstraps `examples/studio-state/`
 - `scripts/verify-consistency.mjs` — extended from 7 → 9 checks
 
-### New tests (77)
-- `tests/motion-primitives/all.test.mjs` — 47 assertions across 16 verbs
-- `tests/motion-primitives/fadeUp.test.mjs` — focused unit tests
-- `tests/motion-state/runtime.test.mjs` — 13 assertions (S1, S2, S4, S5, at, add, remove, update, summary)
-- `tests/templates/all.test.mjs` — 22 assertions (20 templates + count gate)
-- `tests/render/dry-run.test.mjs` — 2 assertions (state→scene round-trip + plugin auto-detect)
-- `tests/motion-studio/stubs.test.mjs` — 4 assertions (audio gated no-op)
+### Historical test plan
+- Motion primitives coverage
+- Motion state runtime coverage
+- Template smoke coverage
+- Render dry-run coverage
+- Motion studio stub coverage
+
+Check the actual `tests/` directory before claiming any of these exist.
 
 ### New docs
 - `docs/SPEC.md` — binding dev spec + acceptance criteria
 - `docs/SCORE.md` — this file
 - `README.md` — 30-second quickstart + 20-template gallery
-- 20 × `templates/<slug>/README.md`
+- 20 x `templates/{slug}/README.md`
 - `examples/studio-state/README.md`
 
 ## What is NOT shipped (explicit non-goals)
@@ -80,7 +83,7 @@ before-after              list-reveal
 ## How to verify yourself
 
 ```bash
-git clone <repo>
+git clone {repo}
 cd gsap-transform
 npm install
 npm run verify        # 20/20

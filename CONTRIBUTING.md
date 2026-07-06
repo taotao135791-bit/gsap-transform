@@ -1,75 +1,155 @@
 # Contributing to gsap-transform
 
-This file is for developers contributing to this skill repository (adding new SKILLs, editing existing ones). For guidance on **how AI agents should write GSAP code**, see [AGENTS.md](./AGENTS.md).
+This file is for contributors editing this skill repository. For how agents
+should use the skills, see [AGENTS.md](./AGENTS.md).
 
-## Repo structure
+GSAP Transform is a community, third-party, agent-oriented GSAP motion skill
+system. Do not present it as an official GreenSock or Webflow project.
 
-- **skills/** — Each subdirectory is one skill. The CLI and agents discover skills by scanning `skills/` for directories that contain `SKILL.md`.
-- **Skill directory name** must exactly match the `name` in that skill's frontmatter (e.g. `skills/gsap-core/` ↔ `name: gsap-core`).
-- **Two layers**:
-  - **Design Layer** (`motion-design-taste`, `motion-recipes`, `motion-anti-slop`, `motion-craft`) — aesthetic direction, motion language, anti-slop checks, command-style workflow.
-  - **API Layer** (`gsap-core`, `gsap-timeline`, `gsap-scrolltrigger`, `gsap-plugins`, `gsap-utils`, `gsap-react`, `gsap-frameworks`, `gsap-performance`) — correct GSAP API usage, plugins, framework integration, performance.
+## Product Model
 
-## SKILL.md requirements
+All docs, skills, and adapters should describe the same three-layer system:
 
-- **Frontmatter (YAML):**
-  - `name` (required): lowercase, hyphens only, max 64 chars, must match parent directory name.
-  - `description` (required): what the skill does and when to use it; include trigger terms so agents know when to apply it. Max 1024 chars.
-  - `license` (optional): e.g. `MIT` if the skill is under the repo license.
-- **Body:** Markdown instructions. Keep under ~600 lines; put long reference material in `references/` or `scripts/` and link from SKILL.md.
+1. **Design Layer** — brief reading, Design Read, dials, motion mode,
+   anti-slop, video grammar.
+2. **State Layer** — `state.json` as source of truth, reusable primitives, and
+   templates as state skeletons.
+3. **API Layer** — concrete GSAP APIs, plugins, framework lifecycle, and
+   performance details.
 
-## Conventions
+Default agent workflow:
 
-- Write descriptions in **third person** (e.g. "Use when…" not "You can use when…").
-- Be concise; avoid restating general GSAP docs. Focus on correct API usage, pitfalls, and cleanup.
-- When adding a new skill: create `skills/<skill-name>/SKILL.md`, then update:
-  - `README.md` "Skills" table and `Structure` section
-  - `README_CN.md` corresponding tables
-  - `skills/llms.txt` index
-  - Marketplace JSON files: `.claude-plugin/marketplace.json`, `.cursor-plugin/marketplace.json`
-  - Per-agent path-triggered files (if applicable):
-    - `.cursor/rules/<skill>.mdc` — Cursor project-level rule with `globs:` frontmatter
-    - `.github/instructions/<skill>.instructions.md` — GitHub Copilot path-scoped instruction with `applyTo:` frontmatter
-
-## Cross-layer linking
-
-- Every API-layer SKILL.md must end its `description` with a "Pair with motion-design-taste…" sentence so agents always reach for the design layer first. Two acceptable forms; pick one per skill and stay consistent inside that description:
-  - **Compact:** `Pair with motion-design-taste for aesthetic direction before implementing.`
-  - **Detailed (current convention for gsap-core):** `Pair with motion-design-taste, motion-recipes, motion-anti-slop, motion-craft for aesthetic direction.`
-- Every API-layer SKILL.md must extend its `Related skills` line with: `For aesthetic direction, recipes, and anti-slop checks use the design-layer skills: motion-design-taste, motion-recipes, motion-anti-slop, motion-craft.`
-- Design-layer SKILLs route to API-layer SKILLs through a decision table (see `motion-design-taste` Section 9). Do **not** restate API rules in the design layer.
-- Design-layer SKILLs reference each other by relative path (`../motion-design-taste/SKILL.md`).
-
-## When to write which layer
-
-- Adding a **new GSAP API surface** (new plugin, new framework integration, new performance technique) → write or extend an **API-layer** SKILL. Keep it API-focused; do not include aesthetic recommendations.
-- Adding a **new aesthetic direction**, **new motion language**, **new anti-slop rule**, or **new workflow command** → write or extend a **Design-layer** SKILL. Reference API skills for implementation depth instead of duplicating.
-- A new **recipe** (aesthetic × motion combo with a code skeleton) belongs in `skills/motion-recipes/SKILL.md`, not as a new directory.
-
-## Per-agent adapter files
-
-When a new SKILL is added or an existing SKILL's API surface changes, update these adapter files in addition to `SKILL.md`:
-
-| File | Purpose | Convention |
-|---|---|---|
-| `.cursor/rules/<skill>.mdc` | Cursor project-level rule, auto-attached when files matching `globs` are open | Frontmatter: `description`, `globs`, optional `alwaysApply`. Body: short summary + link to `skills/<skill>/SKILL.md` |
-| `.github/instructions/<skill>.instructions.md` | GitHub Copilot path-scoped instruction | Frontmatter: `applyTo` (glob array). Body: 6-12 short bullet rules |
-| `.claude-plugin/marketplace.json` | Claude Code marketplace listing | Update `description` if the skill scope changes |
-| `.cursor-plugin/marketplace.json` | Cursor remote-rule marketplace listing | Update `description` if the skill scope changes |
-| `.windsurf/rules/gsap.md` | Windsurf rule (current format) | Append a short rule for the new skill if it changes hard rules |
-| `.windsurfrules` | Windsurf single-file rule (legacy fallback) | Keep the rule body identical to `.windsurf/rules/gsap.md` — CI compares them |
-
-After editing any adapter, run the consistency gate locally before opening a PR:
-
-```bash
-node scripts/verify-consistency.mjs
+```text
+Brief / product context
+  -> Design Read
+  -> motion dials
+  -> state.json edits
+  -> primitives
+  -> generated scene
+  -> preview/render
+  -> anti-slop check
 ```
 
-It enforces: a single pinned gsap version across all files, Anti-Slop G4 compliance in `examples/`, an identical motion-craft command list everywhere, valid SKILL.md frontmatter, real (non-symlink) `CLAUDE.md` / `GEMINI.md` pointer files, full per-skill adapter coverage, and Windsurf legacy/current parity. The same script runs in CI (`.github/workflows/verify-consistency.yml`) on every push and PR.
+Generated `scene.js` / `scene.mjs` files are not the default source of truth.
+Hand-written scenes can exist as an escape hatch, but do not document them as
+the normal agent editing path.
+
+## Repository Structure
+
+- `skills/{name}/SKILL.md` — one skill per directory.
+- `skills/llms.txt` — cross-skill index and loading order.
+- `templates/{slug}/state.json` — reusable state skeletons.
+- `skills/motion-primitives/` — reusable motion verbs.
+- `skills/motion-state/` — state schema and runtime.
+- `.github/instructions/{skill}.instructions.md` — GitHub Copilot adapters.
+- `.cursor/rules/{skill}.mdc` — Cursor adapters.
+- `.windsurf/rules/gsap.md` and `.windsurfrules` — Windsurf hard rules.
+
+## SKILL.md Requirements
+
+Frontmatter:
+
+- `name` is required, lowercase, hyphenated, and must match the directory name.
+- `description` is required and should explain when to use the skill.
+- `license` is optional.
+
+Body:
+
+- Keep instructions focused on agent behavior.
+- Put long references in `references/` or scripts and link to them.
+- Keep product wording aligned with the three-layer model.
+
+## Adding Or Editing Skills
+
+When adding a new skill:
+
+1. Create `skills/{name}/SKILL.md`.
+2. Update `skills/llms.txt`.
+3. Add `.cursor/rules/{skill}.mdc`.
+4. Add `.github/instructions/{skill}.instructions.md`.
+5. Update README files if the skill changes the public product surface.
+6. Update Windsurf rules if the skill changes hard rules.
+7. Run `npm run verify` and `npm test`.
+
+When editing an existing skill, update the same adapters if the skill contract,
+trigger surface, or hard rules changed.
+
+## State And Template Rules
+
+New templates must include a valid `state.json` with:
+
+- `schemaVersion`
+- `duration`
+- `fps`
+- `width`
+- `height`
+- `layers`
+- `beats`
+- primitive references that exist
+- layer references that exist
+
+Templates are reusable state skeletons, not just demos.
+
+Do not make generated `scene.js` the source of truth for normal agent work.
+
+## Primitive Rules
+
+New primitives must have:
+
+- a stable name
+- clear params/default args
+- registry export in `skills/motion-primitives/index.js`
+- validator alignment in the State Layer where needed
+- docs and adapter updates when the public contract changes
+- tests
+
+Do not rewrite primitives wholesale to satisfy a narrow test.
+
+## Adapter Coverage
+
+Every skill should have:
+
+| Surface | File |
+|---|---|
+| Skill source | `skills/{name}/SKILL.md` |
+| Cursor | `.cursor/rules/{skill}.mdc` |
+| GitHub Copilot | `.github/instructions/{skill}.instructions.md` |
+
+Windsurf has two files and they must stay synchronized:
+
+- `.windsurf/rules/gsap.md`
+- `.windsurfrules`
+
+The consistency gate checks adapter coverage and Windsurf parity.
+
+## Validation
+
+Before opening a PR, run:
+
+```bash
+npm run verify
+npm test
+```
+
+Do not lower verification or test standards to make a change pass.
+
+`npm run verify` checks skill metadata, adapter coverage, Windsurf sync, GSAP
+ESM import safety, primitive barrel coverage, and template presence.
+
+`npm test` should cover behavior that this repository actually supports.
+
+## Non-Goals For Contributions
+
+- Do not make this look official.
+- Do not expand the repo with large studio tooling unless that is the explicit
+  task.
+- Do not add generated scenes as the default editing surface.
+- Do not claim tests, reports, or render features exist until they are present
+  and verified.
 
 ## References
 
 - [Agent Skills specification](https://agentskills.io/specification.md)
-- [skills CLI (discovery, install)](https://github.com/vercel-labs/skills)
+- [skills CLI](https://github.com/vercel-labs/skills)
 - [Cursor Rules MDC format](https://docs.cursor.com/context/rules)
 - [GitHub Copilot custom instructions](https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot)

@@ -15,4 +15,4 @@ Each primitive declares:
 - `antiSlop` (which Group G/S rules it would trip)
 - `apply(target, args, ctx)` — wraps the GSAP call
 
-Adding a primitive = new file in `skills/motion-primitives/<name>.js`, export from `index.js`, add to `PRIMITIVE_NAMES` in `skills/motion-state/runtime.mjs`, add a test in `tests/motion-primitives/`.
+Adding a primitive = new file in `skills/motion-primitives/{name}.js`, export from `index.js`, add to `PRIMITIVE_NAMES` in `skills/motion-state/runtime.mjs`, add a test in `tests/motion-primitives/`.

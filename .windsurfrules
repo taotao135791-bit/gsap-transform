@@ -1,84 +1,133 @@
-# GSAP — Windsurf rules
+# GSAP Transform — Windsurf Rules
 
-> Legacy single-file format, kept for older Windsurf versions. Current Windsurf reads `.windsurf/rules/gsap.md` (same content, with `trigger` frontmatter). Edit both together — `scripts/verify-consistency.mjs` checks they stay in sync.
+> Legacy single-file format, kept for older Windsurf versions. Current Windsurf reads `.windsurf/rules/gsap.md`. Edit both together.
 
-When generating GSAP (GreenSock Animation Platform) code in this project, follow these hard rules.
+When generating or editing GSAP motion in this project, follow these hard rules.
+GSAP Transform is a third-party, community, agent-oriented skill system, not an
+official GreenSock or Webflow project.
 
-## Three-layer skill system
+## Three-Layer Skill System
 
-This project has **gsap-transform** installed (under `skills/`). Always traverse it in order:
+Always traverse the system in order:
 
-1. **Design Layer first** — read `skills/motion-design-taste/SKILL.md` before any GSAP code, declare a one-line **Design Read** ("Reading this as: \<page kind\> for \<audience\>, with a \<vibe\> language…"), pick a motion mode (Restrained / Expressive / Cinematic). Use `skills/motion-recipes/SKILL.md` for clone-able starting skeletons.
-2. **State Layer for editable timelines** — use `skills/motion-state/` for the `state.json` workflow and schema/runtime, `skills/motion-primitives/` for reusable animation verbs, and `templates/` for clone-able starting states.
-3. **API Layer after** — `skills/gsap-core/`, `skills/gsap-timeline/`, `skills/gsap-scrolltrigger/`, `skills/gsap-plugins/`, `skills/gsap-utils/`, `skills/gsap-react/`, `skills/gsap-frameworks/`, `skills/gsap-performance/`.
+1. **Design Layer first** — read the brief, declare a Design Read, choose a
+   motion mode, and set `MOTION_INTENSITY`, `DESIGN_VARIANCE`, and
+   `VISUAL_DENSITY`.
+2. **State Layer second** — edit `state.json`, use motion primitives, and
+   regenerate the scene. `state.json` is the default source of truth.
+3. **API Layer last** — load GSAP API skills only when implementation details
+   are needed.
 
-The cross-skill index is `skills/llms.txt`. Read it first if you do not know which skill to load.
+Read `skills/llms.txt` if you do not know which skill to load.
 
-## Hard rules
+## Default Agent Workflow
 
-### Imports & registration
-- `import { gsap } from "gsap"` (npm install `gsap` — all plugins free since Webflow acquisition; no `.npmrc` / auth token / Club membership).
-- For browser-native ESM (no bundler): `https://esm.sh/gsap@3.15.0` + **default imports** for plugins. Named imports may resolve to `undefined`. Never use `cdn.jsdelivr.net/npm/gsap/<Plugin>.js` (module graph breaks).
-- Register every plugin once: `gsap.registerPlugin(ScrollTrigger, ...)`.
+```text
+Brief / product context
+  -> Design Read
+  -> motion dials
+  -> state.json edits
+  -> primitives
+  -> generated scene
+  -> preview/render
+  -> anti-slop check
+```
+
+Do not hand-edit generated `scene.js` as the normal workflow. Regenerate it
+after editing state:
+
+```bash
+node scripts/state-to-scene.mjs projects/{slug}
+```
+
+Hand-written scenes are an escape hatch for advanced users or historical
+examples.
+
+## Hard Rules
+
+### Imports And Registration
+
+- Use `import { gsap } from "gsap"` for npm projects.
+- For browser-native ESM, use `https://esm.sh/gsap@3.15.0` and default plugin
+  imports.
+- Never use named plugin imports from `esm.sh`.
+- Never use `cdn.jsdelivr.net/npm/gsap/{Plugin}.js` for browser-native ESM.
+- Register every plugin once with `gsap.registerPlugin(...)`.
 
 ### Sequencing
-- `gsap.timeline()` with the position parameter (`"+=0.5"`, `"<"`, labels). Avoid chained `delay`.
-- Multiple `from()` / `fromTo()` on the same property: `immediateRender: false` on the later ones.
 
-### Transforms & opacity
-- Prefer GSAP aliases (`x`, `y`, `scale`, `rotation`, `xPercent`, `yPercent`) over raw CSS `transform` or layout (`top`, `left`, `width`).
-- Prefer `autoAlpha` over `opacity` (also sets `visibility`).
-- Don't write CSS `transform` on elements you plan to animate — GSAP doesn't parse pre-existing CSS transforms as the start state.
-- `gsap.from(autoAlpha:0)` on a CSS-hidden element animates 0 → 0. Use `gsap.fromTo()`.
+- Use `gsap.timeline()` with the position parameter.
+- Avoid chained `delay` values for multi-step choreography.
+- Use `immediateRender: false` on later `from()` / `fromTo()` tweens that
+  target the same property.
 
-### Accessibility (mandatory)
+### Transforms And Opacity
+
+- Prefer GSAP aliases such as `x`, `y`, `scale`, `rotation`, `xPercent`, and
+  `yPercent`.
+- Prefer `autoAlpha` over raw `opacity`.
+- Do not write CSS `transform` on elements GSAP will animate; declare the start
+  state with `gsap.set()` or `fromTo()`.
+
+### Accessibility
+
 Every project wraps GSAP work in `gsap.matchMedia()`:
+
 ```js
 gsap.matchMedia().add({
   isMotionOK: "(prefers-reduced-motion: no-preference)",
-  isReduced:  "(prefers-reduced-motion: reduce)"
+  isReduced: "(prefers-reduced-motion: reduce)"
 }, (ctx) => {
-  if (!ctx.conditions.isMotionOK) { /* paint end state, return */ }
-  // motion code
+  if (!ctx.conditions.isMotionOK) {
+    // Paint end state and return.
+    return;
+  }
+  // Motion code.
 });
 ```
-Shipping without this is a Pre-Flight Failure.
+
+Under `prefers-reduced-motion: reduce`, do not use scrub or pin.
 
 ### ScrollTrigger
-- Pick **scrub** OR **toggleActions**, not both.
-- Never put a ScrollTrigger on a tween that is a **child** of a timeline.
-- `ScrollTrigger.refresh()` after DOM/layout changes.
-- Under `prefers-reduced-motion: reduce`: do NOT use scrub or pin.
 
-### SVG plugins
-- `MotionPath` and `DrawSVG` accept `<path>` only — not `<circle>`, `<rect>`, `<ellipse>`.
-- `MorphSVG` writes to the `<path>` `d` attribute, not inline CSS. `clearProps` does NOT restore it. Capture original `d` at load time and restore manually.
+- Pick scrub or `toggleActions`, not both.
+- Never put a ScrollTrigger on a tween that is a child of a timeline.
+- Call `ScrollTrigger.refresh()` after DOM/layout changes.
 
-### React / framework lifecycle
-- React: prefer `useGSAP()` from `@gsap/react` with a `scope` ref. Use `contextSafe` to wrap callbacks.
-- Vue / Nuxt / Svelte: create in `onMounted` / `onMount`; revert / kill in `onUnmounted` / cleanup.
+### SVG Plugins
 
-### Avoid LLM-default slop
-Without explicit brief direction, do NOT reach for:
+- `MotionPath` and `DrawSVG` accept `<path>` elements only.
+- `MorphSVG` writes to the `<path>` `d` attribute. `clearProps` does not
+  restore it; capture and restore the original `d` manually.
+
+### Avoid LLM-Default Motion
+
+Without explicit brief direction, do not reach for:
+
 - `Inter` for everything
 - AI-purple gradients on dark mesh
-- Centered hero with H1 over a glowing radial blur
-- `back.out(1.7)` / `elastic.*` / `bounce.*` as default ease (only ONE branded character moment per page)
-- Parallax on every section
-- Hover stack of `y:-8 + scale:1.05 + heavier shadow` — pick ONE signal
+- centered hero over glowing radial blur
+- `back.out(1.7)`, `elastic.*`, or `bounce.*` as default ease
+- parallax on every section
+- hover lift + scale + shadow all at once
 
-### Single accent lock
-The brief produces one accent color. Lock it. Verify at smoke-test that all uses (CTA bg, eyebrow color, focus ring) `getComputedStyle` return the same `rgb(...)`.
+### Single Accent Lock
 
-## Slash commands
+The brief produces one accent color. Lock it. At smoke test, verify CTA,
+eyebrow, focus ring, and link accents resolve to the same computed color when
+they are intended to share the accent.
 
-When the user invokes `/motion-craft <subcommand>` (init, shape, animate, polish, audit, critique, quieter, bolder, adapt, export), load `skills/motion-craft/SKILL.md` and follow that command's exact Sequence and Output contract.
+## Slash Commands
 
-## Smoke-test before shipping
+When the user invokes `/motion-craft {subcommand}`, load
+`skills/motion-craft/SKILL.md` and follow that command's contract. The default
+product path still goes through Design Layer and State Layer before API code.
 
-1. Open in browser, no console error / warn.
-2. Single accent verified: `getComputedStyle(cta).bg === getComputedStyle(eyebrow).color`.
-3. OS Reduce Motion → animation skips, end state painted.
-4. Walk the `motion-anti-slop` Group A–G checklist; no `block` items.
+## Smoke Test Before Shipping
 
-For full guidance: see `AGENTS.md` and `skills/{name}/SKILL.md`.
+1. Open in browser with no console errors or warnings.
+2. Verify single accent usage when applicable.
+3. Toggle OS Reduce Motion and confirm the end state is painted.
+4. Walk the `motion-anti-slop` checklist; no block-severity item should remain.
+
+For full guidance, see `AGENTS.md` and `skills/{name}/SKILL.md`.

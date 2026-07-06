@@ -10,11 +10,11 @@ GSAP is the engine. Primitives are the **verbs an agent uses** to drive it. With
 
 Catalog (16): `fadeUp`, `fadeIn`, `scaleIn`, `slideInLeft`, `slideInRight`, `splitReveal`, `typewriter`, `scrambleText`, `morphTo`, `drawOn`, `parallaxY`, `staggerIn`, `loopPulse`, `shake`, `cameraPush`, `hold`.
 
-If the agent is about to call `tl.from / tl.to / tl.fromTo` directly, **stop** — use a primitive. If none fits, **add one** to `skills/motion-primitives/<name>.js` and export it from `index.js`.
+If the agent is about to call `tl.from / tl.to / tl.fromTo` directly, **stop** — use a primitive. If none fits, **add one** to `skills/motion-primitives/{name}.js` and export it from `index.js`.
 
 Adding a primitive also requires:
 1. Adding the name to `PRIMITIVE_NAMES` in `skills/motion-state/runtime.mjs`.
-2. A test in `tests/motion-primitives/<name>.test.mjs`.
+2. A test in `tests/motion-primitives/{name}.test.mjs`.
 3. Update of `PRIMITIVE_NAMES` in `docs/SPEC.md` §3.
 
 For the full contract, plugin requirements, and limitations: see `skills/motion-primitives/SKILL.md`.

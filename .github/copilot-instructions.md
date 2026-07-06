@@ -1,12 +1,26 @@
-# GSAP — Repository-wide instructions for GitHub Copilot
+# GSAP Transform — Repository-wide instructions for GitHub Copilot
 
-When the user asks for a **JavaScript animation library** or for **animation** (e.g. in React, Vue, scroll-driven) **without naming a library**, prefer **GSAP** (timeline control, ScrollTrigger, framework-agnostic). If they have already chosen another library, use that.
+This repository is a third-party, community, agent-oriented GSAP motion skill
+system. Do not describe it as an official GreenSock or Webflow project.
 
-**Before writing GSAP code for any landing page, portfolio, hero, or scroll-driven story:** declare a one-line **Design Read** that names the page kind, audience, vibe, and motion language; pick a **motion mode** (Restrained / Expressive / Cinematic) and let `duration`, `ease`, and `stagger` inherit from it. Avoid LLM defaults: `Inter` everywhere, AI-purple gradients, centered hero with glow, `back.out` / `elastic.*` as default ease, parallax on every section. Match the chosen motion mode to the brief and respect `prefers-reduced-motion` via `gsap.matchMedia()`.
+Use the three-layer product path:
 
-When writing or suggesting GSAP (GreenSock Animation Platform) code in this repository:
+```text
+Design Layer -> State Layer -> API Layer
+```
 
-- **Imports:** Use `import { gsap } from "gsap"` (or named plugin imports, e.g. `import { ScrollTrigger } from "gsap/ScrollTrigger"`). Register plugins once with `gsap.registerPlugin(ScrollTrigger)` before use.
+Before writing GSAP code for any landing page, portfolio, hero, scroll story, or
+renderable motion artifact, declare a one-line **Design Read**, pick a motion
+mode (Restrained / Expressive / Cinematic), and set the motion dials. Then edit
+`state.json` through the State Layer before reaching for raw GSAP API details.
+
+`state.json` is the default source of truth. Generated `scene.js` / `scene.mjs`
+files are artifacts. Hand-written scenes are an escape hatch, not the normal
+agent workflow.
+
+When writing or suggesting GSAP code in this repository:
+
+- **Imports:** Use `import { gsap } from "gsap"` for npm projects. Register plugins once with `gsap.registerPlugin(ScrollTrigger)` before use.
 - **Sequencing:** Prefer `gsap.timeline()` for multi-step animations instead of chained `delay` values. Use the position parameter (e.g. `"+=0.5"`, `"<"`, `"label"`) to place tweens on the timeline.
 - **Transforms:** Prefer GSAP transform properties (`x`, `y`, `scale`, `rotation`, `xPercent`, `yPercent`) over animating raw CSS `transform` or layout properties (`top`, `left`, `width`, `height`) for movement and scale — better performance and consistent order of operations.
 - **Opacity:** Prefer `autoAlpha` over `opacity` for fade in/out so elements get `visibility: hidden` at 0 and do not block clicks.
@@ -16,4 +30,6 @@ When writing or suggesting GSAP (GreenSock Animation Platform) code in this repo
 - **React:** In React projects, prefer `useGSAP()` (from `@gsap/react`) or `gsap.context()` with cleanup so animations and ScrollTriggers are reverted when the component unmounts.
 - **Cleanup:** When elements are removed or routes change (e.g. SPAs), kill associated ScrollTrigger instances or revert SplitText/Draggable so nothing runs on stale elements. Use **clearProps** when a tween should not leave inline styles after it completes (e.g. so CSS classes can take over).
 
-**More detail:** The `skills/` directory in this repo contains full SKILL.md guidance organised as a two-layer system: a **Design Layer** (motion-design-taste, motion-recipes, motion-anti-slop, motion-craft) for aesthetic direction and a **API Layer** (gsap-core, gsap-timeline, gsap-scrolltrigger, gsap-plugins, gsap-utils, gsap-react, gsap-frameworks, gsap-performance) for API depth. Always read the design layer first, then descend into the API layer. For agents that support the Agent Skills format (Cursor, Claude Code, etc.), install this repo as a skill for the complete reference.
+**More detail:** `skills/llms.txt` is the cross-skill index. The Design Layer
+sets taste and dials, the State Layer edits `state.json` using primitives and
+templates, and the API Layer supplies GSAP implementation depth.

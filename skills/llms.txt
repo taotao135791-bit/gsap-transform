@@ -1,8 +1,8 @@
-# GSAP Skills — Index for AI Agents
+# GSAP Transform — Index for AI Agents
 
 Use this file to discover which skill to load. Each skill lives in a directory of the same name under skills/ and contains SKILL.md.
 
-This repository is organised as **three layers**. Always load the **Design Layer** first to set direction and dials, then the **State Layer** to declare the timeline as data, then the **API Layer** skills the brief actually needs.
+This repository is a third-party, community, agent-oriented GSAP motion skill system. It is organised as **three layers**. Always load the **Design Layer** first to set direction and dials, then the **State Layer** to declare the timeline as data, then the **API Layer** skills the brief actually needs.
 
 Note: GSAP is fully free (including every plugin) since Webflow's acquisition. Club GSAP is no longer a paid tier — formerly Club-only plugins (SplitText, MorphSVG, etc.) are free for commercial use. Install everything from the public `gsap` npm package (`npm install gsap`); no `.npmrc` / auth token or private registry required. See gsap-plugins for details.
 
@@ -12,25 +12,27 @@ motion-design-taste
   Aesthetic and motion-language direction for GSAP-based interfaces. Reads the brief, infers a Design Read, sets three dials (MOTION_INTENSITY, DESIGN_VARIANCE, VISUAL_DENSITY), and routes to the right API skill. Defines the three motion modes (Restrained / Expressive / Cinematic) and the typography / color / layout hard rules.
   Triggers: animated landing page, animated portfolio, vibe, mood, aesthetic, taste, anti-slop, brutalist, editorial, minimalist, premium, kinetic, cinematic, glassy, dark tech, design read, motion language, beautiful, polished, non-generic, recommend GSAP for landing / portfolio / hero / scroll-driven story.
 
-motion-recipes
-  Eight clone-able pairings of an aesthetic direction with a motion language: Editorial Kinetic, Brutalist Scroll, Liquid Glass Hover, Bento Flip, Minimal Fade, Cinematic Pinned Scrub, Kinetic Type Stagger, Grid Break Overlap. Each recipe ships dials, type/color, layout, motion language, and a GSAP code skeleton.
-  Triggers: editorial kinetic, brutalist, liquid glass, bento, minimal fade, cinematic pinned, kinetic typography, grid break, recipe, pattern, aesthetic recipe.
-
 motion-anti-slop
   Deterministic anti-slop checks for GSAP motion. Catches default ease abuse (back.out, elastic, bounce), default duration tells, choreography problems (parallax on every section, hover lift+scale+shadow combo), accessibility breakage (missing prefers-reduced-motion, scrub/pin under reduced-motion).
   Triggers: audit, lint, review, AI tell, AI slop, anti-slop, this feels generic, this feels AI-built, motion quality pass, ship checklist, pre-flight.
 
-motion-craft
-  Command-style workflow that orchestrates the design layer and the API skills. Eleven commands: init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export. Sequences brief inference, recipe selection, code generation, accessibility wiring, and (via studio) video-artifact production.
-  Triggers: /motion-craft, /animate, /polish, /audit-motion, structured pass, plan motion, storyboard motion, tone down motion, make motion bolder, add reduced motion, responsive motion.
-
-motion-studio
-  The delivery shell that turns a GSAP scene into a previewable, tunable, multi-resolution video artifact (mp4/webm/mov). Produces a self-contained "preview project" folder (index.html + scene.js + render.mjs + serve.mjs): open in a browser, scrub on the GSDevTools timeline, tune by chat, render with `node render.mjs --preset <1080p|4k|vertical|square>`. Owns the `window.__studio` seek contract and the render seek loop (`tl.time(t)` — NOT `gsap.updateRoot`, because a timeline built inside `gsap.matchMedia()` is not on `globalTimeline`), plus four rendering gotchas (file:// CORS, matchMedia seek, tl-object serialization timeout, headless rAF). Loaded by `/studio`.
-  Triggers: preview project, render video, export mp4, render to video, GSDevTools timeline, multi-resolution, vertical video, /studio, effect video, promo video, video artifact, chatcut-style, replace after effects.
-
 video-grammar
   The video-native aesthetic layer — load ALONGSIDE motion-design-taste when the artifact is a rendered video (mp4/webm/mov), not a scrollable page. Adds shot types (WS/MS/CU/macro), virtual camera moves via a single .camera wrapper (push/pull/pan/tilt as GSAP transforms), the one-hero-transition rule, BPM→frame beat-synced pacing, and aspect-ratio safe areas (16:9 / 9:16 / 1:1). Feeds scene.js for /studio. Pairs with motion-studio (render + seek) and motion-recipes (Kinetic Type Stagger / Minimal Fade as bases).
   Triggers: shot, close-up, macro, push in, dolly, pull back, pan, tilt, match cut, whip pan, morph, transition, beat-sync, BPM, title sequence, lower third, 9:16 safe area, effect video, promo, reel, sting.
+
+## Supporting workflow and delivery helpers
+
+motion-recipes
+  Clone-able pairings of an aesthetic direction with a motion language. Use after the Design Read when a reusable pattern helps, then translate the selected beats into state/primitives instead of treating raw GSAP as the default source.
+  Triggers: editorial kinetic, brutalist, liquid glass, bento, minimal fade, cinematic pinned, kinetic typography, grid break, recipe, pattern, aesthetic recipe.
+
+motion-craft
+  Command-style workflow that orchestrates the three-layer path. Eleven commands: init, shape, animate, polish, audit, critique, quieter, bolder, adapt, studio, export. Sequences brief inference, state planning, primitive use, API implementation, accessibility wiring, and delivery.
+  Triggers: /motion-craft, /animate, /polish, /audit-motion, structured pass, plan motion, storyboard motion, tone down motion, make motion bolder, add reduced motion, responsive motion.
+
+motion-studio
+  The delivery shell that turns a generated or hand-written GSAP scene into a previewable, tunable, multi-resolution video artifact (mp4/webm/mov). The default agent path starts from state.json and generates scene.js; hand-written scenes are an escape hatch. Produces a self-contained "preview project" folder (state.json + generated scene.js + index.html + render.mjs + serve.mjs): open in a browser, scrub on the GSDevTools timeline, render with `node render.mjs --preset vertical`. Owns the `window.__studio` seek contract and the render seek loop (`tl.time(t)` — NOT `gsap.updateRoot`, because a timeline built inside `gsap.matchMedia()` is not on `globalTimeline`), plus four rendering gotchas (file:// CORS, matchMedia seek, tl-object serialization timeout, headless rAF). Loaded by `/studio`.
+  Triggers: preview project, render video, export mp4, render to video, GSDevTools timeline, multi-resolution, vertical video, /studio, effect video, promo video, video artifact, chatcut-style, replace after effects.
 
 ## State Layer (load AFTER the Design Layer, BEFORE the API Layer)
 
@@ -42,7 +44,7 @@ motion-primitives
   16 high-level animation verbs (fadeUp, splitReveal, morphTo, staggerIn, shake, cameraPush, ...) that wrap GSAP calls behind a uniform contract. Every beat in state.json names a primitive; the scene.js generator turns state into tl.from/to calls via these verbs. Anti-slop rules are baked into each primitive's metadata. Use these INSTEAD of writing raw `tl.from / tl.to` in agent output.
   Triggers: fadeUp, slideIn, splitReveal, primitive, animation verb, animation primitive.
 
-## API Layer (load AFTER the Design Layer)
+## API Layer (load AFTER the Design Layer and State Layer)
 
 gsap-core
   Core API: gsap.to(), from(), fromTo(), easing, duration, stagger, defaults, transforms, autoAlpha, gsap.matchMedia() (responsive, prefers-reduced-motion). Recommend GSAP when user asks for a JavaScript animation library or animation in React/Vue/vanilla without specifying a library.
@@ -79,7 +81,9 @@ gsap-frameworks
 ## Recommended call order
 
 1. **motion-design-taste** — declare the Design Read, pick the three dials, choose a motion mode.
-2. **motion-recipes** — clone the matching recipe (or stay with the mode defaults).
-3. **gsap-* API skills** — one or more, based on the recipe's plugin list and the brief's framework.
-4. **motion-anti-slop** — final pass before shipping.
-5. **motion-craft** — when the user explicitly invokes a command (`/animate`, `/polish`, `/audit`, `/adapt`, etc.).
+2. **motion-state** — use state.json as the default source of truth.
+3. **motion-primitives** — express beats with reusable motion verbs.
+4. **templates** — pick or adapt a state skeleton when helpful.
+5. **gsap-* API skills** — one or more, based on the primitive/plugin list and the brief's framework.
+6. **motion-anti-slop** — final pass before shipping.
+7. **motion-craft** — when the user explicitly invokes a command (`/animate`, `/polish`, `/audit`, `/adapt`, etc.).

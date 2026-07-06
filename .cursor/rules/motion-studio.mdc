@@ -1,12 +1,14 @@
 ---
-description: The delivery shell that turns a GSAP scene into a previewable, tunable, multi-resolution video artifact (mp4/webm/mov). Use when the user wants a preview project they can scrub on a timeline and render to video (/studio), or asks to export motion as an mp4/webm/mov. Produces a self-contained folder (index.html + scene.js + render.mjs + serve.mjs). Loaded by /motion-craft studio.
+description: The delivery shell that turns a generated or hand-written GSAP scene into a previewable, tunable, multi-resolution video artifact (mp4/webm/mov). Use when the user wants a preview project they can scrub on a timeline and render to video (/studio), or asks to export motion as an mp4/webm/mov. Default path is state.json -> generated scene.js -> render shell. Loaded by /motion-craft studio.
 globs:
 alwaysApply: false
 ---
 
 # motion-studio
 
-Produces a self-contained **preview project** (`projects/<slug>/`): `index.html` + `scene.js` + `render.mjs` + `serve.mjs` + `package.json`. Preview with `node serve.mjs` (timeline UI via GSDevTools), render with `node render.mjs --preset <1080p|4k|vertical|square>`.
+Produces a self-contained **preview project** (`projects/{slug}/`): `state.json` + generated `scene.js` + `index.html` + `render.mjs` + `serve.mjs` + `package.json`. Preview with `node serve.mjs` (timeline UI via GSDevTools), render with `node render.mjs --preset vertical` or another supported preset.
+
+Default tuning path: edit `state.json`, run `node scripts/state-to-scene.mjs projects/{slug}`, then refresh. Hand-written `scene.js` is an escape hatch, not the normal agent workflow.
 
 **Seek contract** (enforced by motion-anti-slop Group G6):
 - expose `window.__studio = { gsap, tl, duration }` and dispatch `__studio:ready`;

@@ -16,4 +16,10 @@ Every state mutation must call `validate(state)` before returning. Schema is in 
 - S4: `schemaVersion: 1` is required
 - S5: total beats ≤ 200
 
-After editing state.json, regenerate scene.js: `node scripts/state-to-scene.mjs projects/<slug>`. Render with `node projects/<slug>/render.mjs --preset <vertical|1080p|4k|square>`.
+After editing state.json, regenerate scene.js:
+
+```bash
+node scripts/state-to-scene.mjs projects/{slug}
+```
+
+Render from the project directory with `node render.mjs --preset vertical` or another supported preset.
