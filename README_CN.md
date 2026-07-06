@@ -23,9 +23,16 @@
 
 > 一套规则，让 AI agent 停止产出千篇一律的 `Inter` + 紫色渐变 + `back.out(1.7)` + 居中 hero。
 
-这是一个 community / third-party / agent-oriented 的 GSAP motion skill 仓库，不是 GreenSock 或 Webflow 官方发布的包。
+这是一个 community / third-party / agent-oriented 的 GSAP motion skill 仓库，
+不是 GreenSock 或 Webflow 官方发布的包。
 
-三层体系：**Design Layer / 设计层**教 agent「品味」（brief 推断、三调节杆、配方、反 AI-tell 规则），**State Layer / 状态层**把时间线保存成可编辑数据，**API Layer / API 层**教 agent「正确的 GSAP 实现」。设计层在写任何代码之前触发，状态层承载编辑循环，API 层在写代码时触发。
+三层体系：
+
+- **Design Layer / 设计层**教 agent「品味」：brief 推断、三调节杆、配方、反 AI-tell 规则。
+- **State Layer / 状态层**把时间线保存成可编辑数据。
+- **API Layer / API 层**教 agent「正确的 GSAP 实现」。
+
+设计层在写任何代码之前触发，状态层承载编辑循环，API 层在写代码时触发。
 
 ---
 
@@ -74,7 +81,10 @@
 └────────────────────────────────────────────────────────────────┘
 ```
 
-设计层读 brief → 输出一行 **Design Read** → 设三调节杆（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→ 选动效模式（克制 / 表现 / 电影感）→ 状态层保存可编辑时间线 → 路由到对应 API skill。上线前仍要跑 32+ 条 anti-slop 规则。
+设计层读 brief → 输出一行 **Design Read** → 设三调节杆
+（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→
+选动效模式（克制 / 表现 / 电影感）→ 状态层保存可编辑时间线 →
+路由到对应 API skill。上线前仍要跑 32+ 条 anti-slop 规则。
 
 ---
 
@@ -104,18 +114,18 @@ npx skills add https://github.com/taotao135791-bit/gsap-transform
 
 ### 适配覆盖
 
-除了通用的 `skills/<name>/SKILL.md` 格式，本仓库为以下 agent 提供了专用配置文件：
+除了通用的 `skills/{name}/SKILL.md` 格式，本仓库为以下 agent 提供了专用配置文件：
 
 | Agent | 适配文件 | 你得到什么 |
 |-------|---------|---------|
-| **Claude Code** | `CLAUDE.md`（→`AGENTS.md`）、`.claude-plugin/{plugin,marketplace}.json` | 会话启动时加载硬规则 + 插件市场安装 |
+| **Claude Code** | `CLAUDE.md`、`.claude-plugin/{plugin,marketplace}.json` | 会话硬规则 + 插件安装 |
 | **OpenAI Codex** | `AGENTS.md` | 会话启动时加载硬规则（Codex 官方标准） |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（16 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（16 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
-| **Google Gemini / Antigravity** | `GEMINI.md`（→`AGENTS.md`） | 会话启动时加载硬规则 |
-| **Windsurf** | `.windsurf/rules/gsap.md`（新版格式）+ `.windsurfrules`（旧版回退） | 项目级硬规则 |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/{skill}.instructions.md` | 仓库提示 + 路径规则 |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` + `.cursor/rules/{skill}.mdc` | 市场安装 + 路径规则 |
+| **Google Gemini / Antigravity** | `GEMINI.md` | 会话硬规则 |
+| **Windsurf** | `.windsurf/rules/gsap.md` + `.windsurfrules` | 项目级硬规则 |
 
-任何支持 `skills/<name>/SKILL.md` 格式的 agent（OpenCode、Pi、Qoder 及其他多数 Agent Skills 客户端）可通过下面的“手动拷贝”使用。
+任何支持 `skills/{name}/SKILL.md` 格式的 agent（OpenCode、Pi、Qoder 及其他多数 Agent Skills 客户端）可通过下面的“手动拷贝”使用。
 
 ### Claude Code
 
@@ -158,23 +168,23 @@ npx skills add https://github.com/taotao135791-bit/gsap-transform
 | 加载 | 干什么 |
 |------|--------|
 | **motion-design-taste** | brief 推断 → Design Read → 三调节杆 → 动效模式 → 路由到 API skill |
-| **motion-recipes** | 8 个配方：Editorial Kinetic / Brutalist Scroll / Liquid Glass Hover / Bento Flip / Minimal Fade / Cinematic Pinned Scrub / Kinetic Type Stagger / Grid Break Overlap |
-| **motion-anti-slop** | 7 组 32+ 条规则，每条有检测特征、错误示例、修复方法、严重度（block / warn） |
+| **motion-recipes** | 8 个可克隆的审美 × 动效配方 |
+| **motion-anti-slop** | 7 组 32+ 条 anti-slop 规则 |
 | **motion-craft** | 11 命令：`/init` `/shape` `/animate` `/polish` `/audit` `/critique` `/quieter` `/bolder` `/adapt` `/studio` `/export` |
-| **motion-studio** | 预览工程模板 + `render.mjs`（mp4/webm/mov · 1080p/4k/vertical/square）+ `serve.mjs` 时间轴预览。`/studio` 产出可拖动 + 可渲染的独立文件夹 |
-| **video-grammar** | 景别 / 虚拟摄像机（`.camera` 推/拉/摇）/ 转场 / BPM 节奏同步 / 画幅安全区。产出是视频时与 motion-design-taste 一起加载 |
+| **motion-studio** | 预览工程、`serve.mjs` 时间轴预览、`render.mjs` 渲染 |
+| **video-grammar** | 景别、虚拟摄像机、转场、BPM 节奏、安全区 |
 
 ### "写代码时需要正确的 GSAP 用法"
 
 | 加载 | 覆盖 |
 |------|------|
-| **gsap-core** | `to / from / fromTo / set`、缓动、stagger、`matchMedia`、transform 别名、`autoAlpha` |
+| **gsap-core** | tween、缓动、stagger、`matchMedia`、transform、`autoAlpha` |
 | **gsap-timeline** | 编排、位置参数、标签、嵌套 |
-| **gsap-scrolltrigger** | pin、scrub、batch、refresh、containerAnimation、scrollerProxy |
-| **gsap-plugins** | SplitText、MorphSVG、DrawSVG、MotionPath、Flip、Draggable、Inertia、Observer、CustomEase、ScrambleText、Physics2D 等 |
+| **gsap-scrolltrigger** | pin、scrub、batch、refresh、scrollerProxy |
+| **gsap-plugins** | SplitText、MorphSVG、DrawSVG、MotionPath、Flip 等 |
 | **gsap-utils** | clamp、mapRange、interpolate、distribute、snap、wrap、toArray、pipe |
 | **gsap-react** | `useGSAP` hook、scope、contextSafe、SSR |
-| **gsap-frameworks** | Vue / Nuxt / Svelte 生命周期 + 清理 |
+| **gsap-frameworks** | Vue / Nuxt / Svelte 生命周期与清理 |
 | **gsap-performance** | `quickTo`、transform-only、`will-change`、batch vs loop |
 
 ---
@@ -189,7 +199,7 @@ npx skills add https://github.com/taotao135791-bit/gsap-transform
 | 无 `prefers-reduced-motion` | 全程 `gsap.matchMedia()` 包裹；缺失即 Pre-Flight Failure |
 | 每个 section 都有 `parallax` | parallax 最多允许 1-2 个 section（Anti-Slop C4） |
 | hover 三件套 `y:-8 + scale:1.05 + shadow` | 只选一种信号（Anti-Slop C3） |
-| `cdn.jsdelivr.net/npm/gsap/<Plugin>.js` 做浏览器 ESM | `esm.sh` + default import（Anti-Slop G3 + G4） |
+| `cdn.jsdelivr.net/npm/gsap/{Plugin}.js` 做浏览器 ESM | `esm.sh` + default import（Anti-Slop G3 + G4） |
 | `gsap.from(autoAlpha:0)` 写在 CSS `opacity:0` 元素上 | 用 `gsap.fromTo` 显式起终点（Anti-Slop G1） |
 
 ---
@@ -254,7 +264,9 @@ gsap-transform/
 
 ## GSAP 完全免费
 
-> 所有插件 — SplitText、MorphSVG、DrawSVG、Flip、Draggable、全部 — 在 Webflow 收购 GSAP 后 **100% 免费**。从公开 `gsap` npm 包安装即可，无需 `.npmrc`，无需 auth token，无需 Club 会员。
+> 所有插件 — SplitText、MorphSVG、DrawSVG、Flip、Draggable、全部 —
+> 在 Webflow 收购 GSAP 后 **100% 免费**。
+> 从公开 `gsap` npm 包安装即可，无需 `.npmrc`，无需 auth token，无需 Club 会员。
 
 ---
 
