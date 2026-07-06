@@ -25,7 +25,7 @@
 
 这是一个 community / third-party / agent-oriented 的 GSAP motion skill 仓库，不是 GreenSock 或 Webflow 官方发布的包。
 
-双层体系：**设计层**教 agent「品味」（brief 推断、三调节杆、配方、反 AI-tell 规则），**API 层**教 agent「正确的 GSAP 实现」。设计层在写任何代码之前触发；API 层在写代码时触发。
+三层体系：**Design Layer / 设计层**教 agent「品味」（brief 推断、三调节杆、配方、反 AI-tell 规则），**State Layer / 状态层**把时间线保存成可编辑数据，**API Layer / API 层**教 agent「正确的 GSAP 实现」。设计层在写任何代码之前触发，状态层承载编辑循环，API 层在写代码时触发。
 
 ---
 
@@ -44,7 +44,7 @@
 
 ---
 
-## 双层架构
+## 三层架构
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -57,16 +57,24 @@
 │  motion-studio         → 预览工程 + 渲染 mp4/webm/mov          │
 │  video-grammar         → 镜头/运镜/转场/BPM 节奏               │
 └────────────────────────────────────────────────────────────────┘
+                          ↓ 声明
+┌────────────────────────────────────────────────────────────────┐
+│  状态层（State Layer）                                         │
+│                                                                │
+│  motion-state          → state.json schema + runtime           │
+│  motion-primitives     → 16 个动效原语                         │
+│  templates/            → 可克隆的 state.json 模板              │
+└────────────────────────────────────────────────────────────────┘
                           ↓ 路由到
 ┌────────────────────────────────────────────────────────────────┐
-│  API 层（后加载 — 写 GSAP 代码时）                             │
+│  API 层（API Layer，后加载 — 写 GSAP 代码时）                  │
 │                                                                │
 │  gsap-core · gsap-timeline · gsap-scrolltrigger · gsap-plugins │
 │  gsap-utils · gsap-react · gsap-frameworks · gsap-performance  │
 └────────────────────────────────────────────────────────────────┘
 ```
 
-设计层读 brief → 输出一行 **Design Read** → 设三调节杆（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→ 选动效模式（克制 / 表现 / 电影感）→ 路由到对应 API skill。并在上线前跑 32+ 条 anti-slop 规则。
+设计层读 brief → 输出一行 **Design Read** → 设三调节杆（`MOTION_INTENSITY`, `DESIGN_VARIANCE`, `VISUAL_DENSITY`）→ 选动效模式（克制 / 表现 / 电影感）→ 状态层保存可编辑时间线 → 路由到对应 API skill。上线前仍要跑 32+ 条 anti-slop 规则。
 
 ---
 

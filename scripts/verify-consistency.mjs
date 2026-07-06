@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Consistency gate for the gsap-skills repo.
+ * Consistency gate for the gsap-transform repo.
  *
  * The 6 agent adapters (AGENTS.md, CLAUDE.md, GEMINI.md, .cursor/rules/,
  * .github/instructions/, .windsurfrules + .windsurf/rules/) are hand-written

@@ -6,7 +6,7 @@ When generating GSAP (GreenSock Animation Platform) code in this project, follow
 
 ## Two-layer skill system
 
-This project has **gsap-skills** installed (under `skills/`). Always traverse it in order:
+This project has **gsap-transform** installed (under `skills/`). Always traverse it in order:
 
 1. **Design Layer first** — read `skills/motion-design-taste/SKILL.md` before any GSAP code, declare a one-line **Design Read** ("Reading this as: \<page kind\> for \<audience\>, with a \<vibe\> language…"), pick a motion mode (Restrained / Expressive / Cinematic). Use `skills/motion-recipes/SKILL.md` for clone-able starting skeletons.
 2. **API Layer after** — `skills/gsap-core/`, `skills/gsap-timeline/`, `skills/gsap-scrolltrigger/`, `skills/gsap-plugins/`, `skills/gsap-utils/`, `skills/gsap-react/`, `skills/gsap-frameworks/`, `skills/gsap-performance/`.

@@ -27,7 +27,7 @@
 
 Community, third-party, agent-oriented GSAP motion skills. This repository is not published by GreenSock or Webflow.
 
-Two layers: a **Design Layer** that teaches agents *taste* (brief inference, dials, recipes, anti-slop rules), and an **API Layer** that teaches agents *correct GSAP implementation*. The first layer fires before any code is written; the second fires when code is written.
+Three layers: a **Design Layer** that teaches agents *taste* (brief inference, dials, recipes, anti-slop rules), a **State Layer** that keeps timelines as editable data, and an **API Layer** that teaches agents *correct GSAP implementation*. Design fires before code, State carries the edit loop, and API depth is loaded when code is written.
 
 ---
 
@@ -48,9 +48,9 @@ node render.mjs --preset vertical           # → output.mp4
 The chatcut edit loop:
 
 ```bash
-# edit projects/<slug>/state.json
+# edit projects/{slug}/state.json
 # e.g. move a beat, change a duration, add a layer
-node scripts/state-to-scene.mjs projects/<slug>
+node scripts/state-to-scene.mjs projects/{slug}
 # refresh the browser tab — done
 ```
 
@@ -60,7 +60,7 @@ The agent does **not** edit `scene.js` by hand. It edits `state.json`. See [docs
 
 ## Template gallery
 
-20 ship in v1. Each is a folder under `templates/<slug>/` with `state.json` + `README.md`; gallery thumbnails live under `assets/motion-templates/`. Pick one with `npm run pick <slug>`.
+20 ship in v1. Each is a folder under `templates/{slug}/` with `state.json` + `README.md`; gallery thumbnails live under `assets/motion-templates/`. Pick one with `npm run pick {slug}`.
 
 | | | | | |
 |---|---|---|---|---|

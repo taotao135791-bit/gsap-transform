@@ -1,6 +1,6 @@
 {
   "name": "gsap-transform",
-  "version": "2.0.0",
+  "version": "0.3.0",
   "description": "Community, third-party GSAP motion skills for Cursor, Claude and other AI agents — a Design Layer (motion-design-taste, motion-recipes, motion-anti-slop, motion-craft) sitting on top of GSAP API skills (core, timelines, ScrollTrigger, plugins, utilities, React, frameworks, performance)",
   "author": {
     "name": "taotao135791-bit",
