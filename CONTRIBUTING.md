@@ -1,4 +1,4 @@
-# Contributing to gsap-skills
+# Contributing to gsap-transform
 
 This file is for developers contributing to this skill repository (adding new SKILLs, editing existing ones). For guidance on **how AI agents should write GSAP code**, see [AGENTS.md](./AGENTS.md).
 

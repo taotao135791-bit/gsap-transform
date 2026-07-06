@@ -1,10 +1,12 @@
 # Scorecard — post v0.3 revision
 
+> Historical scorecard. For the current checkout, treat `npm run verify` plus the template smoke test as the active verification gate.
+
 ## Verification results
 
 ```
-npm run verify  → 20/20 consistency checks PASS
-npm test        → 77/77 tests PASS  (213 ms)
+npm run verify  → consistency checks PASS
+npm test        → node test runner starts; this checkout currently reports 0 tests
 npm run pick    → 20 templates listed, clone + scene-gen pipeline works
 ```
 
@@ -79,14 +81,14 @@ before-after              list-reveal
 
 ```bash
 git clone <repo>
-cd gsap-skills
+cd gsap-transform
 npm install
-npm test              # 77/77
 npm run verify        # 20/20
 npm run pick          # see 20 templates
 npm run pick cinematic-title
 node scripts/state-to-scene.mjs projects/cinematic-title
 cd projects/cinematic-title
+npm install
 # in two terminals:
 node serve.mjs                                    # preview
 node render.mjs --preset vertical --dry-run        # 1080×1920 seek-loop smoke test

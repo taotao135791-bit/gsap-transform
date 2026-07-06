@@ -155,7 +155,7 @@ function rebuild() {
 `;
 }
 
-function generateIndexHtml(state) {
+function generateIndexHtml(state, sceneName = "scene.js") {
   const fonts = state.fonts ?? {};
   const fontLinks = Object.entries(fonts).map(([k, url]) =>
     `<link rel="stylesheet" href="${escapeHtml(url)}" data-font="${escapeHtml(k)}">`
@@ -174,6 +174,7 @@ function generateIndexHtml(state) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=${state.width}, initial-scale=1">
   <title>${escapeHtml(state.title ?? "Motion Studio")}</title>
+  <link rel="icon" href="data:,">
   <style>
     :root { --accent: ${state.accent ?? "#FF5A1F"}; }
     html, body { margin: 0; background: #0B0B0F; color: #fff; font-family: system-ui, sans-serif; }
@@ -199,7 +200,7 @@ function generateIndexHtml(state) {
     ${bodyHtml}
   </div>
   <div id="devtools"></div>
-  <script type="module" src="./__SCENE_FILE__"></script>
+  <script type="module" src="./${escapeHtml(sceneName)}"></script>
 </body>
 </html>
 `;
@@ -236,8 +237,15 @@ async function main() {
   const scene = generateSceneJs(state);
   await writeFile(scenePath, scene, "utf8");
 
-  if (!sceneOnly && !(await exists(indexPath))) {
-    await writeFile(indexPath, generateIndexHtml(state), "utf8");
+  if (!sceneOnly) {
+    if (!(await exists(indexPath))) {
+      await writeFile(indexPath, generateIndexHtml(state, sceneName), "utf8");
+    } else {
+      const existingIndex = await readFile(indexPath, "utf8");
+      if (existingIndex.includes("__SCENE_FILE__")) {
+        await writeFile(indexPath, existingIndex.replaceAll("__SCENE_FILE__", sceneName), "utf8");
+      }
+    }
   }
 
   console.log(`OK  ${scenePath}`);

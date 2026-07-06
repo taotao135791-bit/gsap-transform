@@ -25,6 +25,8 @@
 > **Three layers**: Design (taste) · State (timeline as data) · API (GSAP correctness).
 > Plus 16 animation primitives and 20 templates — the agent-native **ChatCut**.
 
+Community, third-party, agent-oriented GSAP motion skills. This repository is not published by GreenSock or Webflow.
+
 Two layers: a **Design Layer** that teaches agents *taste* (brief inference, dials, recipes, anti-slop rules), and an **API Layer** that teaches agents *correct GSAP implementation*. The first layer fires before any code is written; the second fires when code is written.
 
 ---
@@ -32,11 +34,12 @@ Two layers: a **Design Layer** that teaches agents *taste* (brief inference, dia
 ## 30-second quickstart
 
 ```bash
-git clone <this-repo> && cd gsap-skills
-npm test                                    # 73 tests, ~5s
+git clone https://github.com/taotao135791-bit/gsap-transform.git && cd gsap-transform
+npm run verify                             # consistency gate
 npm run pick product-hero-reveal            # clone template → projects/product-hero-reveal/
 node scripts/state-to-scene.mjs projects/product-hero-reveal   # regenerate scene.js
 cd projects/product-hero-reveal
+npm install                                # install project render deps
 node serve.mjs                              # browser preview w/ GSDevTools
 node render.mjs --preset vertical --dry-run # 1080×1920 seek-loop smoke test
 node render.mjs --preset vertical           # → output.mp4
@@ -57,7 +60,7 @@ The agent does **not** edit `scene.js` by hand. It edits `state.json`. See [docs
 
 ## Template gallery
 
-20 ship in v1. Each is a folder under `templates/<slug>/` with `state.json` + `thumbnail.svg` + `README.md`. Pick one with `npm run pick <slug>`.
+20 ship in v1. Each is a folder under `templates/<slug>/` with `state.json` + `README.md`; gallery thumbnails live under `assets/motion-templates/`. Pick one with `npm run pick <slug>`.
 
 | | | | | |
 |---|---|---|---|---|
@@ -140,7 +143,7 @@ No step is optional. Skipping step 1 is how slop happens.
 ### npx skills (recommended)
 
 ```bash
-npx skills add https://github.com/greensock/gsap-skills
+npx skills add https://github.com/taotao135791-bit/gsap-transform
 ```
 
 Works with any agent that supports the [Agent Skills format](https://agentskills.io). Deep adapters are shipped for the following agents (see table below).
@@ -153,8 +156,8 @@ This repo ships dedicated configuration for each of these agents, in addition to
 |-------|----------------|--------------|
 | **Claude Code** | `CLAUDE.md` (→ `AGENTS.md`), `.claude-plugin/{plugin,marketplace}.json` | Hard rules at session start + plugin marketplace install |
 | **OpenAI Codex** | `AGENTS.md` | Hard rules at session start (Codex official standard) |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (14 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (14 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md` (16 path-scoped files) | Repo-wide hints + path-triggered per-skill rules |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json` (remote) + `.cursor/rules/<skill>.mdc` (16 project-level rules with `globs:` frontmatter) | Marketplace install + auto-attached per-skill rules |
 | **Google Gemini / Antigravity** | `GEMINI.md` (→ `AGENTS.md`) | Hard rules at session start |
 | **Windsurf** | `.windsurf/rules/gsap.md` (current format) + `.windsurfrules` (legacy fallback) | Project-wide hard rules |
 
@@ -163,13 +166,13 @@ Any agent supporting the `skills/<name>/SKILL.md` format (OpenCode, Pi, Qoder, a
 ### Claude Code
 
 ```
-/plugin marketplace add greensock/gsap-skills
+/plugin marketplace add taotao135791-bit/gsap-transform
 ```
 
 ### Cursor
 
 Two install paths:
-- **Remote rules market** — Settings → Rules → Add Rule → Remote Rule (Github) → `greensock/gsap-skills`.
+- **Remote rules market** — Settings → Rules → Add Rule → Remote Rule (Github) → `taotao135791-bit/gsap-transform`.
 - **Project-level** — copy `.cursor/rules/` into your project; Cursor auto-attaches each skill when files matching its `globs` open.
 
 ### GitHub Copilot
@@ -239,7 +242,7 @@ Copy `.windsurf/rules/gsap.md` into your project (current format). For older Win
 ## Structure
 
 ```
-gsap-skills/
+gsap-transform/
   README.md / README_CN.md
   AGENTS.md
   docs/SPEC.md                # binding dev spec + acceptance criteria

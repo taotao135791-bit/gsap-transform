@@ -1,7 +1,7 @@
 {
-  "name": "gsap-skills",
+  "name": "gsap-transform",
   "version": "0.3.0",
-  "description": "Agent-native motion skills — chatcut-style timeline editing via primitives + state.json.",
+  "description": "Community, third-party GSAP motion skills for agent-native timeline editing via primitives + state.json.",
   "type": "module",
   "scripts": {
     "test": "node --test 'tests/**/*.test.mjs'",

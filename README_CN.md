@@ -23,6 +23,8 @@
 
 > 一套规则，让 AI agent 停止产出千篇一律的 `Inter` + 紫色渐变 + `back.out(1.7)` + 居中 hero。
 
+这是一个 community / third-party / agent-oriented 的 GSAP motion skill 仓库，不是 GreenSock 或 Webflow 官方发布的包。
+
 双层体系：**设计层**教 agent「品味」（brief 推断、三调节杆、配方、反 AI-tell 规则），**API 层**教 agent「正确的 GSAP 实现」。设计层在写任何代码之前触发；API 层在写代码时触发。
 
 ---
@@ -87,7 +89,7 @@
 ### npx skills（推荐）
 
 ```bash
-npx skills add https://github.com/greensock/gsap-skills
+npx skills add https://github.com/taotao135791-bit/gsap-transform
 ```
 
 支持任何兼容 [Agent Skills 格式](https://agentskills.io) 的 agent。以下 agent 额外提供了**专用适配文件**（见下表）。
@@ -100,8 +102,8 @@ npx skills add https://github.com/greensock/gsap-skills
 |-------|---------|---------|
 | **Claude Code** | `CLAUDE.md`（→`AGENTS.md`）、`.claude-plugin/{plugin,marketplace}.json` | 会话启动时加载硬规则 + 插件市场安装 |
 | **OpenAI Codex** | `AGENTS.md` | 会话启动时加载硬规则（Codex 官方标准） |
-| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（14 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
-| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（14 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
+| **GitHub Copilot** | `.github/copilot-instructions.md` + `.github/instructions/<skill>.instructions.md`（16 个路径规则文件） | 仓库级提示 + 路径触发的每-skill 规则 |
+| **Cursor** | `.cursor-plugin/{plugin,marketplace}.json`（远程）+ `.cursor/rules/<skill>.mdc`（16 个项目级规则，含 `globs:` frontmatter） | 市场安装 + 按路径自动附加的每-skill 规则 |
 | **Google Gemini / Antigravity** | `GEMINI.md`（→`AGENTS.md`） | 会话启动时加载硬规则 |
 | **Windsurf** | `.windsurf/rules/gsap.md`（新版格式）+ `.windsurfrules`（旧版回退） | 项目级硬规则 |
 
@@ -110,13 +112,13 @@ npx skills add https://github.com/greensock/gsap-skills
 ### Claude Code
 
 ```
-/plugin marketplace add greensock/gsap-skills
+/plugin marketplace add taotao135791-bit/gsap-transform
 ```
 
 ### Cursor
 
 两种安装方式：
-- **远程规则市场** — Settings → Rules → Add Rule → Remote Rule (Github) → `greensock/gsap-skills`。
+- **远程规则市场** — Settings → Rules → Add Rule → Remote Rule (Github) → `taotao135791-bit/gsap-transform`。
 - **项目级** — 拷贝 `.cursor/rules/` 到你的项目，打开匹配 `globs` 的文件时 Cursor 会自动附加对应 skill。
 
 ### GitHub Copilot
@@ -214,7 +216,7 @@ npx skills add https://github.com/greensock/gsap-skills
 ## 目录结构
 
 ```
-gsap-skills/
+gsap-transform/
   README.md / README_CN.md
   AGENTS.md
   skills/

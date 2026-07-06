@@ -20,6 +20,7 @@
  *   --transparent       remove backgrounds + keep alpha  (use with webm/mov)
  *   --out <name>        output basename                  (default "output")
  *   --input <file>      html entry                       (default "index.html")
+ *   --dry-run           seek the timeline without screenshots or ffmpeg
  *   --verbose           print browser console output
  *   CHROME_PATH env     path to system Chrome (if auto-detect fails)
  */
@@ -30,7 +31,7 @@ import { promisify } from "node:util";
 import { mkdir, rm, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { createServer } from "node:http";
-import { resolve, dirname, join, normalize, extname } from "node:path";
+import { resolve, dirname, join, normalize, extname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const execFileAsync = promisify(execFile);
@@ -42,13 +43,17 @@ const MIME = {
   ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".woff2": "font/woff2"
 };
 
-// Serve the project dir over http so ES-module scene.js can load (file:// blocks it).
+const toUrlPath = (p) => p.split("\\").join("/");
+
+// Serve over http so ES-module scene.js can load (file:// blocks it).
+// Generated projects import ../../skills/*, so projects/<slug>/ is served from the repo root.
 function startServer(root) {
+  const serverRoot = normalize(root);
   const server = createServer(async (req, res) => {
     try {
       const pathname = decodeURIComponent(new URL(req.url, "http://x").pathname);
-      let p = normalize(join(root, pathname));
-      if (!p.startsWith(root)) { res.statusCode = 403; return res.end("forbidden"); }
+      let p = normalize(join(serverRoot, pathname));
+      if (!p.startsWith(serverRoot)) { res.statusCode = 403; return res.end("forbidden"); }
       if (!extname(p)) p = join(p, "index.html");          // directory → index.html
       const data = await readFile(p);
       res.setHeader("Content-Type", MIME[extname(p)] || "application/octet-stream");
@@ -70,7 +75,7 @@ const PRESETS = {
 };
 
 function parseArgs(argv) {
-  const a = { preset: "1080p", format: "mp4", fps: 60, transparent: false, out: "output", input: "index.html", verbose: false };
+  const a = { preset: "1080p", format: "mp4", fps: 60, transparent: false, out: "output", input: "index.html", dryRun: false, verbose: false };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
     const v = argv[i + 1];
@@ -80,6 +85,7 @@ function parseArgs(argv) {
     else if (k === "--transparent") { a.transparent = true; }
     else if (k === "--out") { a.out = v; i++; }
     else if (k === "--input") { a.input = v; i++; }
+    else if (k === "--dry-run") { a.dryRun = true; }
     else if (k === "--verbose") { a.verbose = true; }
   }
   return a;
@@ -135,7 +141,9 @@ async function main() {
   const resLabel = preset.scale > 1 ? `${preset.width * preset.scale}×${preset.height * preset.scale}` : `${preset.width}×${preset.height}`;
   console.log(`▶ ${args.preset} → ${resLabel} @ ${args.fps}fps${args.transparent ? " (transparent)" : ""}`);
 
-  const server = await startServer(__dirname);
+  const serverRoot = existsSync(resolve(__dirname, "../../skills")) ? resolve(__dirname, "../..") : __dirname;
+  const inputUrl = toUrlPath(relative(serverRoot, inputPath));
+  const server = await startServer(serverRoot);
   const base = `http://127.0.0.1:${server.address().port}/`;
 
   const browser = await puppeteer.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
@@ -154,7 +162,7 @@ async function main() {
       await client.send("Emulation.setDefaultBackgroundColorOverride", { color: { r: 0, g: 0, b: 0, a: 0 } });
     }
 
-    await page.goto(base + args.input, { waitUntil: "networkidle0" });
+    await page.goto(base + inputUrl, { waitUntil: "networkidle0" });
     // Hide all dev-only chrome (GSDevTools mount, Export button + status) from every rendered
     // frame — belt-and-suspenders alongside the window.__RENDERING gate in index.html.
     await page.addStyleTag({ content: "#devtools,#export-btn,#export-status{display:none!important}" });
@@ -190,14 +198,22 @@ async function main() {
       // (timeScale 0), so this delay cannot drift the playhead. (requestAnimationFrame inside an
       // evaluate can fail to fire under headless CDP and time out the call — use a host-side sleep.)
       await new Promise((r) => setTimeout(r, 16));
-      const padded = String(f).padStart(5, "0");
-      await page.screenshot({ path: join(framesDir, `f${padded}.png`), omitBackground: args.transparent, type: "png" });
+      if (!args.dryRun) {
+        const padded = String(f).padStart(5, "0");
+        await page.screenshot({ path: join(framesDir, `f${padded}.png`), omitBackground: args.transparent, type: "png" });
+      }
       if (f % 10 === 0 || f === totalFrames - 1) process.stdout.write(`\r  frame ${f + 1}/${totalFrames}`);
     }
     console.log("");
   } finally {
     await browser.close();
     server.close();
+  }
+
+  if (args.dryRun) {
+    await rm(framesDir, { recursive: true, force: true });
+    console.log("✓ dry-run complete");
+    return;
   }
 
   // ---------- encode ----------
