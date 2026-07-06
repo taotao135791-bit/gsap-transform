@@ -9,7 +9,7 @@ When generating GSAP (GreenSock Animation Platform) code in this project, follow
 This project has **gsap-transform** installed (under `skills/`). Always traverse it in order:
 
 1. **Design Layer first** — read `skills/motion-design-taste/SKILL.md` before any GSAP code, declare a one-line **Design Read** ("Reading this as: \<page kind\> for \<audience\>, with a \<vibe\> language…"), pick a motion mode (Restrained / Expressive / Cinematic). Use `skills/motion-recipes/SKILL.md` for clone-able starting skeletons.
-2. **State Layer for editable timelines** — use `skills/motion-state/` for `state.json` schema/runtime, `skills/motion-primitives/` for reusable animation verbs, and `templates/` for clone-able starting states.
+2. **State Layer for editable timelines** — use `skills/motion-state/` for the `state.json` workflow and schema/runtime, `skills/motion-primitives/` for reusable animation verbs, and `templates/` for clone-able starting states.
 3. **API Layer after** — `skills/gsap-core/`, `skills/gsap-timeline/`, `skills/gsap-scrolltrigger/`, `skills/gsap-plugins/`, `skills/gsap-utils/`, `skills/gsap-react/`, `skills/gsap-frameworks/`, `skills/gsap-performance/`.
 
 The cross-skill index is `skills/llms.txt`. Read it first if you do not know which skill to load.
